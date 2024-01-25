@@ -19,5 +19,5 @@ def get_model(type="resnet50", num_classes=200, wieghts=None):
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
     model.fc = nn.Linear(in_features, num_classes)
-    print(model)
+
     return model
