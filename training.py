@@ -1,3 +1,5 @@
+from tqdm import tqdm
+import torch
 
 # Training function
 def __train(trainset, model, optimizer, criterion, device):
