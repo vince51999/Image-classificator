@@ -2,11 +2,11 @@ from tqdm import tqdm
 import torch
 
 
+
 # Training function
-def train(trainset, model, optimizer, criterion, device):
-    print("Training")
+def __train(trainset, model, optimizer, criterion, device):
     model.train()
-    train_itr = 0
+    print("Training")
     train_loss_list = []
 
     # initialize tqdm progress bar
@@ -20,14 +20,20 @@ def train(trainset, model, optimizer, criterion, device):
 
         # put data to device
         inputs, labels = inputs.to(device), labels.to(device)
+
         outputs = model(inputs)
         loss = criterion(outputs, labels)
+        loss_value = loss.item()
+        train_loss_list.append(loss_value)
 
         loss.backward()
         optimizer.step()
 
-        loss_value = loss.item()
-        train_loss_list.append(loss_value)
+        # update the loss value beside the progress bar for each iteration
+        prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
+
+    print("Finished training")
+    return train_loss_list
 
 
         # update the loss value beside the progress bar for each iteration
