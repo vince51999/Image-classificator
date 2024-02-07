@@ -29,7 +29,6 @@ def train(trainset, model, optimizer, criterion, device):
         loss_value = loss.item()
         train_loss_list.append(loss_value)
 
-        train_itr += 1
 
         # update the loss value beside the progress bar for each iteration
         prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
