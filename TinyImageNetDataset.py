@@ -15,7 +15,7 @@ class TinyImageNetDataset(Dataset):
     The format of each image is: (3, 64, 64).
     """
 
-    def __init__(self, batch_size, classes=None):
+    def __init__(self, train_batch_size, eval_batch_size, classes=None):
         train = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"), split="train", imagenet_idx=False
         )
@@ -32,10 +32,10 @@ class TinyImageNetDataset(Dataset):
         train, test = TinyImageNetDataset.__create_testset(
             train, self.num_classes, 500, split=0.1
         )
-
-        self.train_dataloader = DataLoader(train, batch_size=batch_size, shuffle=True)
-        self.val_dataloader = DataLoader(val, batch_size=batch_size, shuffle=False)
-        self.test_dataloader = DataLoader(test, batch_size=batch_size, shuffle=False)
+        
+        self.train_dataloader = DataLoader(train, batch_size=train_batch_size, shuffle=True)
+        self.val_dataloader = DataLoader(val, batch_size=eval_batch_size, shuffle=False)
+        self.test_dataloader = DataLoader(test, batch_size=eval_batch_size, shuffle=False)
 
     def __split_classes(dataset, num_classes, itr_break=500):
         """
