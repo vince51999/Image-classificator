@@ -10,6 +10,7 @@ class TinyImageNetDataset(Dataset):
     Tiny ImageNet contains 100000 images of 200 classes (500 for each class)
     downsized to 64x64 colored images.
     Each class has 500 training images, 50 validation images and 50 test images.
+    Test set is not labeled.
 
     The format of each image is: (3, 64, 64).
     """
@@ -45,3 +46,19 @@ class TinyImageNetDataset(Dataset):
                 new_dataset.append(dataset[i])
                 itr += 1
         return new_dataset
+
+    def __create_testset(dataset, num_classes, num_el_per_class, split=0.1):
+        """
+        Split the dataset into test and otherset
+        """
+        testset = []
+        otherset = []
+        for c in range(num_classes):
+            itr = 0
+            for i in range(c * num_el_per_class, (c + 1) * num_el_per_class):
+                if itr < split * num_el_per_class:
+                    testset.append(dataset[i])
+                else:
+                    otherset.append(dataset[i])
+                itr += 1
+        return otherset, testset
