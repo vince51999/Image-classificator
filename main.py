@@ -23,8 +23,27 @@ def main():
     model = model.to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
-    
-    Training.train_loop(dataset.train_dataloader,dataset.val_dataloader, model, optimizer, criterion, DEVICE, NUM_EPOCHS)
-    
+
+    train_losses, valid_losses = Training.train_loop(
+        dataset.train_dataloader,
+        dataset.val_dataloader,
+        model,
+        optimizer,
+        criterion,
+        DEVICE,
+        NUM_EPOCHS,
+    )
+
+    xdata = [t for t in range(NUM_EPOCHS)]
+
+    Training.createChart(
+        "Epochs",
+        "Losses",
+        xdata,
+        [train_losses, valid_losses],
+        "./results/model_loss.pdf",
+        ["train_losses", "valid_losses"],
+    )
+
 if __name__ == "__main__":
     main()
