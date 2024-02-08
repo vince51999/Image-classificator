@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-def get_model(type="resnet50", num_classes=200, wieghts=None):
+def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None):
     """
     Classification architecture is like a Resnet.
 
