@@ -6,7 +6,7 @@ import torch.optim as optim
 import TinyImageNetDataset
 import Model
 import Training
-import Testing
+import Training
 
 TRAIN_BATCH_SIZE = 100  # increase / decrease according to GPU memeory
 EVAL_BATCH_SIZE = 10  # increase / decrease according to GPU memeory
