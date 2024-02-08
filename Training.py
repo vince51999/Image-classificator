@@ -17,6 +17,7 @@ def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
 
         print(f"Epoch #{epoch+1} train loss: {epoch_train_loss:.3f}")
         print(f"Epoch #{epoch+1} validation loss: {epoch_val_loss:.3f}")
+    return train_losses, valid_losses
 
 
 # Training function
