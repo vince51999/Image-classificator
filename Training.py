@@ -1,6 +1,19 @@
-from tqdm import tqdm
 import torch
+import matplotlib.pyplot as plt
 
+from tqdm import tqdm
+
+def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=['chart']):
+    plt.xlabel(xlabel, fontsize=10)
+    plt.ylabel(ylabel, fontsize=10)
+
+    for index, name in enumerate(dataNames):
+        plt.scatter(xdata, ydata[index], label=name)
+    plt.title(f"Training results", fontsize=12)
+    if (dataNames[0] != 'chart'):
+        plt.legend()
+    plt.savefig(path, format="pdf", bbox_inches="tight")
+    plt.clf()
 
 def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
     train_losses = []
