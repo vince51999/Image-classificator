@@ -3,16 +3,20 @@ import torch
 
 
 def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
+    train_losses = []
+    valid_losses = []
     for epoch in range(epochs):
         print(f"\nEPOCH {epoch+1} of {epochs}")
 
         train_loss_list = __train(trainset, model, optimizer, criterion, device)
         val_loss_list = __val(valset, model, criterion, device)
+        epoch_train_loss = sum(train_loss_list) / len(trainset)
+        epoch_val_loss = sum(val_loss_list) / len(valset)
+        train_losses.append(epoch_train_loss)
+        valid_losses.append(epoch_val_loss)
 
-        print(f"Epoch #{epoch+1} train loss: {sum(train_loss_list)//len(trainset):.3f}")
-        print(
-            f"Epoch #{epoch+1} validation loss: {sum(val_loss_list)//len(valset):.3f}"
-        )
+        print(f"Epoch #{epoch+1} train loss: {epoch_train_loss:.3f}")
+        print(f"Epoch #{epoch+1} validation loss: {epoch_val_loss:.3f}")
 
 
 # Training function
