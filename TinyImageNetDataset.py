@@ -33,3 +33,15 @@ class TinyImageNetDataset(Dataset):
         self.train_dataloader = DataLoader(train, batch_size=batch_size, shuffle=True)
         self.val_dataloader = DataLoader(val, batch_size=batch_size, shuffle=False)
         self.test_dataloader = DataLoader(test, batch_size=batch_size, shuffle=False)
+
+    def __split_classes(dataset, num_classes, itr_break=500):
+        """
+        Split the dataset into classes
+        """
+        new_dataset = []
+        for c in num_classes:
+            itr = 0
+            for i in range(c * itr_break, (c + 1) * itr_break):
+                new_dataset.append(dataset[i])
+                itr += 1
+        return new_dataset
