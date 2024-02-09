@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torchvision.transforms as transforms
 import torch.nn as nn
@@ -32,10 +33,13 @@ def random_classes(given_class, num_classes=200):
     return classes
 
 
-def main():
+def main(c=0, num_classes=200):
+    classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         TRAIN_BATCH_SIZE, EVAL_BATCH_SIZE, classes=classes
     )
+    print(f"Training on {num_classes} classes")
+    print(f"Classes: {classes}")
     model = NNArchitecture.get_nn_architecture(
         type="resnet50", num_classes=num_classes, wieghts=None
     )
@@ -65,4 +69,31 @@ def main():
     )
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        prog="ImageNet Training",
+        description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
+    )
+    parser.add_argument(
+        "--cls",
+        help="Specific class that we want in the set of classes. The rest of the classes will be random.",
+        required=True,
+        default="",
+        type=int,
+    )
+    parser.add_argument(
+        "--num_classes",
+        help="Total number of classes to train on. Default is 200. If you want to train on a subset of classes, specify the number of classes here.",
+        required=True,
+        default="",
+        type=int,
+    )
+    args = parser.parse_args()
+    c = args.cls
+    num_classes = args.num_classes
+    if c < 0 or c > 199:
+        print("Class should be between 0 and 199")
+        exit(1)
+    if num_classes < 1 or num_classes > 200:
+        print("Number of classes should be between 1 and 200")
+        exit(1)
+    main(c, num_classes)
