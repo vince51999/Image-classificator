@@ -30,14 +30,25 @@ def random_classes(given_class, num_classes=200):
     return classes
 
 
-def main(c=0, num_classes=200, num_epochs=10, eval_batch_size=100, train_batch_size=100):
+def main(
+    c=0,
+    num_classes=200,
+    num_epochs=10,
+    eval_batch_size=100,
+    train_batch_size=100,
+    tolerance=5,
+    min_delta=0.5,
+):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes
     )
     print(f"Training on {num_classes} classes: {classes}")
-    print(f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}")
-    
+    print(
+        f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
+    )
+    print(f"EarlyStopping: tolerance-{tolerance}, min delta-{min_delta}")
+
     model = NNArchitecture.get_nn_architecture(
         type="resnet50", num_classes=num_classes, wieghts=None
     )
@@ -53,6 +64,8 @@ def main(c=0, num_classes=200, num_epochs=10, eval_batch_size=100, train_batch_s
         criterion,
         DEVICE,
         num_epochs,
+        tolerance,
+        min_delta,
     )
 
     xdata = [t for t in range(num_epochs)]
@@ -106,19 +119,43 @@ if __name__ == "__main__":
         default="",
         type=int,
     )
+    parser.add_argument(
+        "--tolerance",
+        help="Early stopping tolerance. If the validation loss does not improve for this many epochs, the training will stop.",
+        required=True,
+        default="",
+        type=int,
+    )
+    parser.add_argument(
+        "--min_delta",
+        help="Minimum change in validation loss to be considered as an improvement.",
+        required=True,
+        default="",
+        type=float,
+    )
     args = parser.parse_args()
-    
-    train_batch_size = args.train_batch_size
-    eval_batch_size = args.eval_batch_size
-    num_epochs = args.num_epochs
+
     c = args.cls
     num_classes = args.num_classes
-    
+    num_epochs = args.num_epochs
+    eval_batch_size = args.eval_batch_size
+    train_batch_size = args.train_batch_size
+    tolerance = args.tolerance
+    min_delta = args.min_delta
+
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
         exit(1)
     if num_classes < 1 or num_classes > 200:
         print("Number of classes should be between 1 and 200")
         exit(1)
-        
-    main(c, num_classes, num_epochs, eval_batch_size, train_batch_size)
+
+    main(
+        c,
+        num_classes,
+        num_epochs,
+        eval_batch_size,
+        train_batch_size,
+        tolerance,
+        min_delta,
+    )

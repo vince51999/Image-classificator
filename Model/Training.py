@@ -26,10 +26,10 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.clf()
 
 
-def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
+def train_loop(trainset, valset, model, optimizer, criterion, device, epochs, tolerance, min_delta):
     train_losses = []
     valid_losses = []
-    early_stopping = EarlyStopping.EarlyStopping(tolerance=5, min_delta=0.5)
+    early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
     for epoch in range(epochs):
         print(f"\nEPOCH {epoch+1} of {epochs}")

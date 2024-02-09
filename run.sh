@@ -18,9 +18,11 @@ echo  #OMP_NUM_THREADS : $OMP_NUM_THREADS
 
 cls=0
 num_classes=10
-train_batch_size=9
-eval_batch_size=1
 num_epochs=22
+eval_batch_size=1
+train_batch_size=9
+tolerance=3
+min_delta=0.5
 
 module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
@@ -29,6 +31,6 @@ conda activate myenv
 rm -r ./*.eR
 rm -r ./*.oR
 
-python ./main.py --cls $cls --num_classes $num_classes --train_batch_size $train_batch_size --eval_batch_size $eval_batch_size --num_epochs $num_epochs
+python ./main.py --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta 
 
 conda deactivate
