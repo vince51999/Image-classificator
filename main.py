@@ -3,10 +3,10 @@ import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 
-import TinyImageNetDataset
-import Model
-import Training
-import Training
+import Model.TinyImageNetDataset as TinyImageNetDataset
+import Model.NNArchitecture as NNArchitecture
+import Model.Testing as Testing
+import Model.Training as Training
 
 TRAIN_BATCH_SIZE = 100  # increase / decrease according to GPU memeory
 EVAL_BATCH_SIZE = 10  # increase / decrease according to GPU memeory
