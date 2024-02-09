@@ -28,9 +28,6 @@ module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
 conda activate myenv
 
-rm -r ./*.eR
-rm -r ./*.oR
-
 python ./main.py --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta 
 
 conda deactivate
