@@ -35,8 +35,9 @@ def main(c=0, num_classes=200, num_epochs=10, eval_batch_size=100, train_batch_s
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes
     )
-    print(f"Training on {num_classes} classes")
-    print(f"Classes: {classes}")
+    print(f"Training on {num_classes} classes: {classes}")
+    print(f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}")
+    
     model = NNArchitecture.get_nn_architecture(
         type="resnet50", num_classes=num_classes, wieghts=None
     )
