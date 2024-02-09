@@ -1,7 +1,5 @@
 import torch
 
-from tqdm import tqdm
-
 def save_model(epoch, model, optimizer):
     """
     Function to save the trained model till current epoch, or whenver called
@@ -23,10 +21,7 @@ def test(testset, model, criterion, device):
     print("Testing")
     test_loss_list = []
 
-    # initialize tqdm progress bar
-    prog_bar = tqdm(testset, total=len(testset))
-
-    for i, data in enumerate(prog_bar):
+    for i, data in enumerate(testset):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
 
@@ -37,9 +32,6 @@ def test(testset, model, criterion, device):
 
         loss_value = loss.item()
         test_loss_list.append(loss_value)
-
-        # update the loss value beside the progress bar for each iteration
-        prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
 
     print("Finished testing")
     return test_loss_list

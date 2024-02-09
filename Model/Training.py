@@ -2,8 +2,6 @@ import torch
 import matplotlib.pyplot as plt
 import Model.EarlyStopping as EarlyStopping
 
-from tqdm import tqdm
-
 
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.xlabel(xlabel, fontsize=10)
@@ -58,10 +56,7 @@ def __train(trainset, model, optimizer, criterion, device):
     print("Training")
     train_loss_list = []
 
-    # initialize tqdm progress bar
-    prog_bar = tqdm(trainset, total=len(trainset))
-
-    for i, data in enumerate(prog_bar):
+    for i, data in enumerate(trainset):
         # Forward path
         optimizer.zero_grad()
         # get the inputs; data is a list of [inputs, labels]
@@ -78,9 +73,6 @@ def __train(trainset, model, optimizer, criterion, device):
         loss.backward()
         optimizer.step()
 
-        # update the loss value beside the progress bar for each iteration
-        prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
-
     print("Finished training")
     return train_loss_list
 
@@ -92,10 +84,7 @@ def __val(valset, model, criterion, device):
     print("Validating")
     val_loss_list = []
 
-    # initialize tqdm progress bar
-    prog_bar = tqdm(valset, total=len(valset))
-
-    for i, data in enumerate(prog_bar):
+    for i, data in enumerate(valset):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
 
@@ -106,9 +95,6 @@ def __val(valset, model, criterion, device):
 
         loss_value = loss.item()
         val_loss_list.append(loss_value)
-
-        # update the loss value beside the progress bar for each iteration
-        prog_bar.set_description(desc=f"Loss: {loss_value:.4f}")
 
     print("Finished validating")
     return val_loss_list
