@@ -44,7 +44,7 @@ def main(c=0, num_classes=200, num_epochs=10, eval_batch_size=100, train_batch_s
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
 
-    train_losses, valid_losses = Training.train_loop(
+    train_losses, valid_losses, num_epochs = Training.train_loop(
         dataset.train_dataloader,
         dataset.val_dataloader,
         model,
