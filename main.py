@@ -34,9 +34,11 @@ def random_classes(given_class, num_classes=200):
 
 def main():
     dataset = TinyImageNetDataset.TinyImageNetDataset(BATCH_SIZE)
-    model = Model.get_model(type="resnet50", num_classes=200, wieghts=None)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         TRAIN_BATCH_SIZE, EVAL_BATCH_SIZE, classes=classes
+    )
+    model = NNArchitecture.get_nn_architecture(
+        type="resnet50", num_classes=num_classes, wieghts=None
     )
     model = model.to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
