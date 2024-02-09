@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+import Model.EarlyStopping as EarlyStopping
 
 from tqdm import tqdm
 
@@ -24,9 +25,12 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.savefig(path, format="pdf", bbox_inches="tight")
     plt.clf()
 
+
 def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
     train_losses = []
     valid_losses = []
+    early_stopping = EarlyStopping.EarlyStopping(tolerance=5, min_delta=0.5)
+
     for epoch in range(epochs):
         print(f"\nEPOCH {epoch+1} of {epochs}")
 
@@ -39,6 +43,11 @@ def train_loop(trainset, valset, model, optimizer, criterion, device, epochs):
 
         print(f"Epoch #{epoch+1} train loss: {epoch_train_loss:.3f}")
         print(f"Epoch #{epoch+1} validation loss: {epoch_val_loss:.3f}")
+        # early stopping
+        early_stopping(epoch_train_loss, epoch_val_loss)
+        if early_stopping.early_stop:
+            print("We are at epoch:", epoch + 1)
+            break
     return train_losses, valid_losses
 
 
