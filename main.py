@@ -20,7 +20,7 @@ def random_classes(given_class, num_classes=200):
         given_class (int): Specific class that we want in the set of classes. The rest of the classes will be random.
         num_classes (int, optional): Number of classes to return. Defaults to 200.
     """
-    classes = [i for i in range(num_classes)]
+    classes = [i for i in range(200)]
     if num_classes == 200:
         return classes
     classes.remove(given_class)
