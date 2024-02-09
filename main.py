@@ -33,7 +33,6 @@ def random_classes(given_class, num_classes=200):
 
 
 def main():
-    dataset = TinyImageNetDataset.TinyImageNetDataset(BATCH_SIZE)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         TRAIN_BATCH_SIZE, EVAL_BATCH_SIZE, classes=classes
     )
