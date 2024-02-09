@@ -1,12 +1,17 @@
+
 # Image classificator based on resnet and Tiny ImageNet
 
-Description
-
-## Setup environment
-
-To run this project I have used the unipr HPC and I have created personal environment with conda.
-
-
+ Image classificator based on Tiny InageNet and resNet architecture
+ 
+  ##  Import project
+ If you have ssh key access you can clone project with:
+```
+git clone git@github.com:vince51999/Image-classificator.git
+```
+ 
+ ## Setup environment
+ 
+To run this project I have used the unipr HPC and I have created personal environment with conda
 ```
 ssh wn44
 ```
@@ -15,23 +20,41 @@ Load conda:
 module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
 ```
-
 Create environment :
 ```
 conda create -n myenv python=3.9
 ```
-Remember to update pip before installing packages using 
+## Install packages
+
+Go on your enviroment
+```
+source activate myenv
+```
+Update pip before installing packages using
 ```
 pip install --upgrade pip
 ```
-## Install packages
-
 Install pyTorch
 ```
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
+Install tqdm
+```
+pip install tqdm
+```
+Install torchvision-tinyimagenet
 
-Install tinyImageNet
 ```
 pip install tinyimagenet
+```
+Install matplotlib
+```
+pip install matplotlib
+```
+
+## Run application
+
+Run application
+```
+bash run.sh
 ```
