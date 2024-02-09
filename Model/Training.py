@@ -46,7 +46,7 @@ def train_loop(trainset, valset, model, optimizer, criterion, device, epochs, to
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
-            print("We are at epoch:", epoch + 1)
+            print("Early stop at epoch:", epoch + 1)
             break
     return train_losses, valid_losses, epoch + 1
 
