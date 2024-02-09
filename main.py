@@ -10,9 +10,6 @@ import Model.NNArchitecture as NNArchitecture
 import Model.Testing as Testing
 import Model.Training as Training
 
-TRAIN_BATCH_SIZE = 100  # increase / decrease according to GPU memeory
-EVAL_BATCH_SIZE = 10  # increase / decrease according to GPU memeory
-NUM_EPOCHS = 30  # number of epochs to train for
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -33,10 +30,10 @@ def random_classes(given_class, num_classes=200):
     return classes
 
 
-def main(c=0, num_classes=200):
+def main(c=0, num_classes=200, num_epochs=10, eval_batch_size=100, train_batch_size=100):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
-        TRAIN_BATCH_SIZE, EVAL_BATCH_SIZE, classes=classes
+        train_batch_size, eval_batch_size, classes=classes
     )
     print(f"Training on {num_classes} classes")
     print(f"Classes: {classes}")
@@ -54,10 +51,10 @@ def main(c=0, num_classes=200):
         optimizer,
         criterion,
         DEVICE,
-        NUM_EPOCHS,
+        num_epochs,
     )
 
-    xdata = [t for t in range(NUM_EPOCHS)]
+    xdata = [t for t in range(num_epochs)]
 
     Training.createChart(
         "Epochs",
@@ -87,13 +84,40 @@ if __name__ == "__main__":
         default="",
         type=int,
     )
+    parser.add_argument(
+        "--num_epochs",
+        help="Number of epochs to train for.",
+        required=True,
+        default="",
+        type=int,
+    )
+    parser.add_argument(
+        "--eval_batch_size",
+        help="Batch size for evaluation. Increase / decrease according to GPU memeory.",
+        required=True,
+        default="",
+        type=int,
+    )
+    parser.add_argument(
+        "--train_batch_size",
+        help="Batch size for training. Increase / decrease according to GPU memeory.",
+        required=True,
+        default="",
+        type=int,
+    )
     args = parser.parse_args()
+    
+    train_batch_size = args.train_batch_size
+    eval_batch_size = args.eval_batch_size
+    num_epochs = args.num_epochs
     c = args.cls
     num_classes = args.num_classes
+    
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
         exit(1)
     if num_classes < 1 or num_classes > 200:
         print("Number of classes should be between 1 and 200")
         exit(1)
-    main(c, num_classes)
+        
+    main(c, num_classes, num_epochs, eval_batch_size, train_batch_size)
