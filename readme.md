@@ -38,12 +38,7 @@ Install pyTorch
 ```
 conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
-Install tqdm
-```
-pip install tqdm
-```
 Install torchvision-tinyimagenet
-
 ```
 pip install tinyimagenet
 ```
