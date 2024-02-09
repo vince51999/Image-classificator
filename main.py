@@ -2,6 +2,7 @@ import torch
 import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
+import random
 
 import Model.TinyImageNetDataset as TinyImageNetDataset
 import Model.NNArchitecture as NNArchitecture
@@ -12,6 +13,23 @@ TRAIN_BATCH_SIZE = 100  # increase / decrease according to GPU memeory
 EVAL_BATCH_SIZE = 10  # increase / decrease according to GPU memeory
 NUM_EPOCHS = 30  # number of epochs to train for
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def random_classes(given_class, num_classes=200):
+    """
+    Randomly select classes from the dataset.
+    Args:
+        given_class (int): Specific class that we want in the set of classes. The rest of the classes will be random.
+        num_classes (int, optional): Number of classes to return. Defaults to 200.
+    """
+    classes = [i for i in range(num_classes)]
+    if num_classes == 200:
+        return classes
+    classes.remove(given_class)
+    size = num_classes - 1
+    classes = random.sample(classes, size)
+    classes.append(given_class)
+    return classes
 
 
 def main():
