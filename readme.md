@@ -54,14 +54,7 @@ pip install matplotlib
 
 ## Run application
 
-```
-ssh wn44
-```
-Load conda:
-```
-module load miniconda3
-```
 Run application
 ```
-bash run.sh
+sbatch run.sh
 ```
