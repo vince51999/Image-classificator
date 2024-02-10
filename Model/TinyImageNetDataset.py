@@ -26,6 +26,8 @@ class TinyImageNetDataset(Dataset):
             self.num_classes = len(classes)
             train = TinyImageNetDataset.__split_classes(train, classes, 500)
             val = TinyImageNetDataset.__split_classes(val, classes, 50)
+            train = TinyImageNetDataset.__update_labels(train, classes)
+            val = TinyImageNetDataset.__update_labels(val, classes)
         else:
             self.num_classes = 200
 
@@ -68,3 +70,12 @@ class TinyImageNetDataset(Dataset):
                     otherset.append(dataset[i])
                 itr += 1
         return otherset, testset
+
+    def __update_labels(dataset, classes):
+        """
+        Update the labels of the dataset
+        """
+        tmp = []
+        for i in range(len(dataset)):
+            tmp.append(tuple([dataset[i][0], classes.index(dataset[i][1])]))
+        return tmp
