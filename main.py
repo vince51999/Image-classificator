@@ -9,6 +9,7 @@ import Model.TinyImageNetDataset as TinyImageNetDataset
 import Model.NNArchitecture as NNArchitecture
 import Model.Testing as Testing
 import Model.Training as Training
+import Model.Statistics as Statistics
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -55,6 +56,19 @@ def main(
     model = model.to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.CrossEntropyLoss()
+
+    train_stats = Statistics.Statistics(
+        classes,
+        (len(dataset.train_dataloader) * train_batch_size) / num_classes,
+    )
+    val_stats = Statistics.Statistics(
+        classes,
+        (len(dataset.val_dataloader) * eval_batch_size) / num_classes,
+    )
+    test_stats = Statistics.Statistics(
+        classes,
+        (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
+    )
 
     train_losses, valid_losses, num_epochs = Training.train_loop(
         dataset.train_dataloader,
