@@ -7,7 +7,7 @@ class Statistics:
         self.correct = 0.0
         self.classes = classes
         self.sample_class = sample_class
-        self.conf_matrix = torch.zeros(200, 200)
+        self.conf_matrix = torch.zeros(len(classes), len(classes))
 
     def update(self, preds, labels):
         self.correct += Statistics.__get_num_correct(preds, labels)
