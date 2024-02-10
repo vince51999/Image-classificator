@@ -47,7 +47,7 @@ def main(
     print(
         f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
-    print(f"EarlyStopping: tolerance-{tolerance}, min delta-{min_delta}")
+    print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
 
     model = NNArchitecture.get_nn_architecture(
         type="resnet50", num_classes=num_classes, wieghts=None
