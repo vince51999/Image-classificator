@@ -13,6 +13,9 @@ class Statistics:
         for t, p in zip(labels.view(-1), preds.view(-1)):
             self.conf_matrix[t.long(), p.long()] += 1
 
+    def reset(self):
+        self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))
+
     def accuracy(self):
         # accuracy = (TP + TN) / (TP + TN + FP + FN)
         return self.conf_matrix.diag().sum() / self.conf_matrix.sum()
