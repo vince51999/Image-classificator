@@ -14,11 +14,11 @@ class Statistics:
             self.conf_matrix[t.long(), p.long()] += 1
 
     def print(self, str: str):
-        print(f"\n ------- {str} ------- \n")
-        print(f"Accuracy: {self.accuracy():.3f}")
-        print(f"F-Measure: {self.f_measure():.3f}")
-        print(f"Recall: {self.recall():.3f}")
-        print(f"Precision: {self.precision():.3f}\n")
+        print(f"------- {str} -------")
+        print(f"------- Accuracy: {self.accuracy():.3f}")
+        print(f"------- F-Measure: {self.f_measure():.3f}")
+        print(f"------- Recall: {self.recall():.3f}")
+        print(f"------- Precision: {self.precision():.3f}\n")
 
     def reset(self):
         self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))
