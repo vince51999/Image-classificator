@@ -1,5 +1,6 @@
 import torch
 
+
 def save_model(epoch, model, optimizer):
     """
     Function to save the trained model till current epoch, or whenver called
@@ -16,7 +17,7 @@ def save_model(epoch, model, optimizer):
 
 # Test function
 @torch.no_grad()
-def test(testset, model, criterion, device):
+def test(testset, model, criterion, device, test_stats):
     model.eval()
     print("Testing")
     test_loss_list = []
