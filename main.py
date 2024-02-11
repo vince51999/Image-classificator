@@ -80,6 +80,8 @@ def main(
         num_epochs,
         tolerance,
         min_delta,
+        train_stats,
+        val_stats,
     )
 
     xdata = [t for t in range(num_epochs)]

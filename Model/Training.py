@@ -24,7 +24,19 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.clf()
 
 
-def train_loop(trainset, valset, model, optimizer, criterion, device, epochs, tolerance, min_delta):
+def train_loop(
+    trainset,
+    valset,
+    model,
+    optimizer,
+    criterion,
+    device,
+    epochs,
+    tolerance,
+    min_delta,
+    train_stats,
+    val_stats,
+):
     train_losses = []
     valid_losses = []
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
@@ -32,15 +44,22 @@ def train_loop(trainset, valset, model, optimizer, criterion, device, epochs, to
     for epoch in range(epochs):
         print(f"\nEPOCH {epoch+1} of {epochs}")
 
-        train_loss_list = __train(trainset, model, optimizer, criterion, device)
-        val_loss_list = __val(valset, model, criterion, device)
+        train_loss_list = __train(
+            trainset, model, optimizer, criterion, device, train_stats
+        )
+        val_loss_list = __val(valset, model, criterion, device, val_stats)
         epoch_train_loss = sum(train_loss_list) / len(trainset)
         epoch_val_loss = sum(val_loss_list) / len(valset)
         train_losses.append(epoch_train_loss)
         valid_losses.append(epoch_val_loss)
 
-        print(f"Epoch #{epoch+1} train loss: {epoch_train_loss:.3f}")
-        print(f"Epoch #{epoch+1} validation loss: {epoch_val_loss:.3f}")
+        print(f"\nEpoch #{epoch+1}")
+        print(f"Train loss: {epoch_train_loss:.3f}")
+        train_stats.print("Training")
+        print(f"Val loss: {epoch_val_loss:.3f}")
+        val_stats.print("Validation")
+        train_stats.reset()
+        val_stats.reset()
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
@@ -49,9 +68,8 @@ def train_loop(trainset, valset, model, optimizer, criterion, device, epochs, to
     return train_losses, valid_losses, epoch + 1
 
 
-
 # Training function
-def __train(trainset, model, optimizer, criterion, device):
+def __train(trainset, model, optimizer, criterion, device, train_stats):
     model.train()
     print("Training")
     train_loss_list = []
@@ -69,6 +87,7 @@ def __train(trainset, model, optimizer, criterion, device):
         loss = criterion(outputs, labels)
         loss_value = loss.item()
         train_loss_list.append(loss_value)
+        train_stats.update(outputs, labels)
 
         loss.backward()
         optimizer.step()
@@ -79,7 +98,7 @@ def __train(trainset, model, optimizer, criterion, device):
 
 # Validation function
 @torch.no_grad()
-def __val(valset, model, criterion, device):
+def __val(valset, model, criterion, device, val_stats):
     model.eval()
     print("Validating")
     val_loss_list = []
@@ -95,6 +114,7 @@ def __val(valset, model, criterion, device):
 
         loss_value = loss.item()
         val_loss_list.append(loss_value)
+        val_stats.update(outputs, labels)
 
     print("Finished validating")
     return val_loss_list
