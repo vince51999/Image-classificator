@@ -65,10 +65,6 @@ def main(
         classes,
         (len(dataset.val_dataloader) * eval_batch_size) / num_classes,
     )
-    test_stats = Statistics.Statistics(
-        classes,
-        (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
-    )
 
     train_losses, valid_losses, num_epochs = Training.train_loop(
         dataset.train_dataloader,
@@ -94,6 +90,19 @@ def main(
         "./results/model_loss.pdf",
         ["train_losses", "valid_losses"],
     )
+
+    test_stats = Statistics.Statistics(
+        classes,
+        (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
+    )
+    test_losses = Testing.test(
+        dataset.test_dataloader, model, criterion, DEVICE, test_stats
+    )
+
+    print(f"Test loss: {sum(test_losses) / len(dataset.test_dataloader):.3f}")
+    test_stats.print("Test")
+    test_stats.reset()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
