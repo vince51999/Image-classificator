@@ -28,5 +28,11 @@ class Statistics:
         # precision = TP / (TP + FP) for one class
         return self.conf_matrix.diag() / self.conf_matrix.sum(0)
 
+    # We calc recall and precision for all classes with macro-averaging because each class have the same number of samples
+    def recall(self):
+        return self.classes_recall().sum() / len(self.classes)
+
+    def precision(self):
+        return self.classes_precision().sum() / len(self.classes)
     def confusion_matrix(self):
         return self.conf_matrix
