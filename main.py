@@ -87,7 +87,7 @@ def main(
         "Losses",
         xdata,
         [train_losses, valid_losses],
-        "./results/model_loss.pdf",
+        "./train_loss.pdf",
         ["train_losses", "valid_losses"],
     )
 
