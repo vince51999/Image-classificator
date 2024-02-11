@@ -34,5 +34,11 @@ class Statistics:
 
     def precision(self):
         return self.classes_precision().sum() / len(self.classes)
+
+    def f_measure(self):
+        precision = self.precision()
+        recall = self.recall()
+        return 2 * (precision * recall) / (precision + recall)
+
     def confusion_matrix(self):
         return self.conf_matrix
