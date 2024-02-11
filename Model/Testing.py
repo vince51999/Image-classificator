@@ -33,6 +33,7 @@ def test(testset, model, criterion, device, test_stats):
 
         loss_value = loss.item()
         test_loss_list.append(loss_value)
+        test_stats.update(outputs, labels)
 
     print("Finished testing")
     return test_loss_list
