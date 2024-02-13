@@ -67,7 +67,7 @@ def main(
         (len(dataset.val_dataloader) * eval_batch_size) / num_classes,
     )
 
-    train_losses, valid_losses, num_epochs = Training.train_loop(
+    Training.train_loop(
         dataset.train_dataloader,
         dataset.val_dataloader,
         model,

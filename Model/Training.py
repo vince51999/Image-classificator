@@ -15,8 +15,6 @@ def train_loop(
     train_stats,
     val_stats,
 ):
-    train_losses = []
-    valid_losses = []
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
     for epoch in range(epochs):
@@ -28,22 +26,21 @@ def train_loop(
         val_loss_list = __val(valset, model, criterion, device, val_stats)
         epoch_train_loss = sum(train_loss_list) / len(trainset)
         epoch_val_loss = sum(val_loss_list) / len(valset)
-        train_losses.append(epoch_train_loss)
-        valid_losses.append(epoch_val_loss)
 
         print(f"\nEpoch #{epoch+1}")
         print(f"Train loss: {epoch_train_loss:.3f}")
         train_stats.print("Training")
         print(f"Val loss: {epoch_val_loss:.3f}")
         val_stats.print("Validation")
+        train_stats.save_epoch(epoch + 1, epoch_train_loss)
+        val_stats.save_epoch(epoch + 1, epoch_val_loss)
         train_stats.reset()
         val_stats.reset()
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
             print("Early stop at epoch:", epoch + 1)
-            break
-    return train_losses, valid_losses, epoch + 1
+            return
 
 
 # Training function
