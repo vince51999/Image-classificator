@@ -10,6 +10,7 @@ import Model.NNArchitecture as NNArchitecture
 import Model.Testing as Testing
 import Model.Training as Training
 import Model.Statistics as Statistics
+import Model.CreateChart as CreateChart
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -79,17 +80,7 @@ def main(
         train_stats,
         val_stats,
     )
-
-    xdata = [t for t in range(num_epochs)]
-
-    Training.createChart(
-        "Epochs",
-        "Losses",
-        xdata,
-        [train_losses, valid_losses],
-        "./train_loss.pdf",
-        ["train_losses", "valid_losses"],
-    )
+    
 
     test_stats = Statistics.Statistics(
         classes,
