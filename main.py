@@ -90,7 +90,7 @@ def main(
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes
     )
-    print(f"Training on {num_classes} classes: {classes}")
+    print(f"Training {architecture} on {num_classes} classes: {classes}")
     print(
         f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
