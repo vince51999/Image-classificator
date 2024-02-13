@@ -31,6 +31,7 @@ def random_classes(given_class, num_classes=200):
     classes.append(given_class)
     return classes
 
+
 def createCharts(train_stats: Statistics, val_stats: Statistics):
     epochs = train_stats.epochs
     CreateChart.createChart(
@@ -76,6 +77,7 @@ def createCharts(train_stats: Statistics, val_stats: Statistics):
 
 
 def main(
+    architecture="resnet50",
     c=0,
     num_classes=200,
     num_epochs=10,
@@ -95,7 +97,7 @@ def main(
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
 
     model = NNArchitecture.get_nn_architecture(
-        type="resnet50", num_classes=num_classes, wieghts=None
+        type=architecture, num_classes=num_classes, wieghts=None
     )
     model = model.to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -123,7 +125,7 @@ def main(
         train_stats,
         val_stats,
     )
-    
+
     createCharts(train_stats, val_stats)
 
     test_stats = Statistics.Statistics(
@@ -143,6 +145,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="ImageNet Training",
         description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
+    )
+    parser.add_argument(
+        "--architecture",
+        help="Type of resNet architecture to use.",
+        required=True,
+        default="",
+        type=str,
     )
     parser.add_argument(
         "--cls",
@@ -195,6 +204,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    architecture = args.architecture
     c = args.cls
     num_classes = args.num_classes
     num_epochs = args.num_epochs
@@ -211,6 +221,7 @@ if __name__ == "__main__":
         exit(1)
 
     main(
+        architecture,
         c,
         num_classes,
         num_epochs,

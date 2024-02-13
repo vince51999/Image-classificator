@@ -16,9 +16,10 @@ echo $SLURM_JOB_NODELIST
 
 echo  #OMP_NUM_THREADS : $OMP_NUM_THREADS
 
+architecture="resnet50"
 cls=0
 num_classes=10
-num_epochs=22
+num_epochs=25
 eval_batch_size=1
 train_batch_size=9
 tolerance=3
@@ -28,6 +29,6 @@ module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
 conda activate myenv
 
-python ./main.py --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta 
+python ./main.py --architecture $architecture --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta 
 
 conda deactivate
