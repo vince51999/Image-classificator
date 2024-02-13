@@ -31,6 +31,49 @@ def random_classes(given_class, num_classes=200):
     classes.append(given_class)
     return classes
 
+def createCharts(train_stats: Statistics, val_stats: Statistics):
+    epochs = train_stats.epochs
+    CreateChart.createChart(
+        "Epochs",
+        "Losses",
+        epochs,
+        [train_stats.losses, val_stats.losses],
+        "./results/loss.pdf",
+        ["train_losses", "val_losses"],
+    )
+    CreateChart.createChart(
+        "Epochs",
+        "Accuracy",
+        epochs,
+        [train_stats.accuracy, val_stats.accuracy],
+        "./results/accuracy.pdf",
+        ["train_accuracy", "val_accuracy"],
+    )
+    CreateChart.createChart(
+        "Epochs",
+        "F-Measure",
+        epochs,
+        [train_stats.f_measure, val_stats.f_measure],
+        "./results/f_measure.pdf",
+        ["train_f_measure", "val_f_measure"],
+    )
+    CreateChart.createChart(
+        "Epochs",
+        "Recall",
+        epochs,
+        [train_stats.recall, val_stats.recall],
+        "./results/recall.pdf",
+        ["train_recall", "val_recall"],
+    )
+    CreateChart.createChart(
+        "Epochs",
+        "Precision",
+        epochs,
+        [train_stats.precision, val_stats.precision],
+        "./results/precision.pdf",
+        ["train_precision", "val_precision"],
+    )
+
 
 def main(
     c=0,
@@ -81,6 +124,7 @@ def main(
         val_stats,
     )
     
+    createCharts(train_stats, val_stats)
 
     test_stats = Statistics.Statistics(
         classes,
