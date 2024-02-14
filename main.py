@@ -85,6 +85,9 @@ def main(
     train_batch_size=100,
     tolerance=5,
     min_delta=0.5,
+    lr=0.001,
+    momentum=0.0,
+    weight_decay=0,
 ):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
@@ -100,7 +103,18 @@ def main(
         type=architecture, num_classes=num_classes, wieghts=None
     )
     model = model.to(DEVICE)
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    # Check what optimizer better convergence (adam or SGD)
+    optimizer
+    if momentum == 0.0:
+        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+        print(f"Optimizer: Adam, lr: {lr}, weight_decay: {weight_decay}")
+    else:
+        optimizer = optim.SGD(
+            model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay
+        )
+        print(
+            f"Optimizer: SGD, lr: {lr}, momentum: {momentum}, weight_decay: {weight_decay}"
+        )
     criterion = nn.CrossEntropyLoss()
 
     train_stats = Statistics.Statistics(
@@ -202,6 +216,27 @@ if __name__ == "__main__":
         default="",
         type=float,
     )
+    parser.add_argument(
+        "--min_delta",
+        help="Minimum change in validation loss to be considered as an improvement.",
+        required=True,
+        default="",
+        type=float,
+    )
+    parser.add_argument(
+        "--lr",
+        help="Learning rate for the optimizer. Step size for the optimizer.",
+        required=True,
+        default="",
+        type=float,
+    )
+    parser.add_argument(
+        "--weight_decay",
+        help="Weight decay for the optimizer. Regularization parameter.",
+        required=True,
+        default="",
+        type=float,
+    )
     args = parser.parse_args()
 
     architecture = args.architecture
@@ -212,6 +247,9 @@ if __name__ == "__main__":
     train_batch_size = args.train_batch_size
     tolerance = args.tolerance
     min_delta = args.min_delta
+    lr = args.lr
+    momentum = args.momentum
+    weight_decay = args.weight_decay
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -229,4 +267,7 @@ if __name__ == "__main__":
         train_batch_size,
         tolerance,
         min_delta,
+        lr,
+        momentum,
+        weight_decay,
     )
