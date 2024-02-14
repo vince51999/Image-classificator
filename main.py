@@ -217,15 +217,15 @@ if __name__ == "__main__":
         type=float,
     )
     parser.add_argument(
-        "--min_delta",
-        help="Minimum change in validation loss to be considered as an improvement.",
+        "--lr",
+        help="Learning rate for the optimizer. Step size for the optimizer.",
         required=True,
         default="",
         type=float,
     )
     parser.add_argument(
-        "--lr",
-        help="Learning rate for the optimizer. Step size for the optimizer.",
+        "--momentum",
+        help="Momentum for the optimizer. Helps in faster convergence. If 0, optimizer is Adam. If non-zero, optimizer is SGD.",
         required=True,
         default="",
         type=float,
