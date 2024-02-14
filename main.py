@@ -104,7 +104,7 @@ def main(
     )
     model = model.to(DEVICE)
     # Check what optimizer better convergence (adam or SGD)
-    optimizer
+    optimizer = None
     if momentum == 0.0:
         optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
         print(f"Optimizer: Adam, lr: {lr}, weight_decay: {weight_decay}")
