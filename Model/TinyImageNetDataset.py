@@ -36,7 +36,7 @@ class TinyImageNetDataset(Dataset):
             imagenet_idx=False,
             transform=transform,
         )
-        if classes is not None:
+        if classes is not None and len(classes) < 200:
             self.num_classes = len(classes)
             train = TinyImageNetDataset.__split_classes(train, classes, 500)
             val = TinyImageNetDataset.__split_classes(val, classes, 50)
