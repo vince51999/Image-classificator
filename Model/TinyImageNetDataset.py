@@ -16,11 +16,25 @@ class TinyImageNetDataset(Dataset):
     """
 
     def __init__(self, train_batch_size, eval_batch_size, classes=None):
+        transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
         train = TinyImageNet(
-            Path("~/.torchvision/tinyimagenet/"), split="train", imagenet_idx=False
+            Path("~/.torchvision/tinyimagenet/"),
+            split="train",
+            imagenet_idx=False,
+            transform=transform,
         )
         val = TinyImageNet(
-            Path("~/.torchvision/tinyimagenet/"), split="val", imagenet_idx=False
+            Path("~/.torchvision/tinyimagenet/"),
+            split="val",
+            imagenet_idx=False,
+            transform=transform,
         )
         if classes is not None:
             self.num_classes = len(classes)
