@@ -16,12 +16,11 @@ class TinyImageNetDataset(Dataset):
     """
 
     def __init__(self, train_batch_size, eval_batch_size, classes=None):
+        mean, std = TinyImageNetDataset.__mean_std(classes)
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.497, 0.500, 0.502], std=[0.137, 0.139, 0.144]
-                ),
+                transforms.Normalize(mean=mean, std=std),
             ]
         )
         train = TinyImageNet(
@@ -56,6 +55,44 @@ class TinyImageNetDataset(Dataset):
         self.test_dataloader = DataLoader(
             test, batch_size=eval_batch_size, shuffle=False
         )
+
+    def __mean_std(classes):
+        if classes is None or len(classes) > 100:
+            return [0.497, 0.500, 0.502], [0.137, 0.139, 0.144]
+        train = TinyImageNet(
+            Path("~/.torchvision/tinyimagenet/"),
+            split="train",
+            imagenet_idx=False,
+            transform=None,
+        )
+        train = TinyImageNetDataset.__split_classes(train, classes, 500)
+        train_dataloader = DataLoader(train, batch_size=1, shuffle=False)
+        return TinyImageNetDataset.__mean_std_rgb_channels(
+            train_dataloader, "mean"
+        ), TinyImageNetDataset.__mean_std_rgb_channels(train_dataloader, "std")
+
+    def __mean_std_rgb_channels(dataloader, type: str):
+        """
+        Calculate the mean of the RGB channels
+        """
+        r = 0
+        g = 0
+        b = 0
+        length = len(dataloader)
+        for i, data in enumerate(dataloader):
+            # get the inputs; data is a list of [inputs, labels]
+            batch, labels = data
+            for sample in range(len(batch)):
+                match type:
+                    case "mean":
+                        r += batch[sample][0][0].mean()
+                        g += batch[sample][0][1].mean()
+                        b += batch[sample][0][2].mean()
+                    case "std":
+                        r += batch[sample][0][0].std()
+                        g += batch[sample][0][1].std()
+                        b += batch[sample][0][2].std()
+        return [r / length, g / length, b / length]
 
     def __split_classes(dataset, num_classes, itr_break=500):
         """
