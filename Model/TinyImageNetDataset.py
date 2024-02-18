@@ -16,7 +16,6 @@ class TinyImageNetDataset(Dataset):
     """
 
     def __init__(self, train_batch_size, eval_batch_size, classes=None):
-        # We have calculate the mean and std of the dataset
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
