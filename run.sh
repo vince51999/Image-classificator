@@ -16,18 +16,18 @@ echo $SLURM_JOB_NODELIST
 
 echo  #OMP_NUM_THREADS : $OMP_NUM_THREADS
 
-architecture="resnet50"
+architecture="resnet18"
 cls=0
 num_classes=10
-num_epochs=25
+num_epochs=100
 eval_batch_size=1
 train_batch_size=9
-tolerance=3
+tolerance=8
 min_delta=0.5
 lr=0.001
 momentum=0.0
-weight_decay=0
-dropout=0.2
+weight_decay=0.001
+dropout=0.0
 
 module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
