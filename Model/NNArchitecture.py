@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 
-def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None):
+def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None, dropout_rate=0.2):
     """
     Classification architecture is like a Resnet.
 
@@ -19,5 +19,14 @@ def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None):
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
     model.fc = nn.Linear(in_features, num_classes)
-
+    if dropout_rate > 0:
+        __append_dropout(model, rate=dropout_rate)
     return model
+
+def __append_dropout(model, rate=0.2):
+    for name, module in model.named_children():
+        if len(list(module.children())) > 0:
+            __append_dropout(module)
+        if isinstance(module, nn.ReLU):
+            new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=True))
+            setattr(model, name, new)

@@ -88,6 +88,7 @@ def main(
     lr=0.001,
     momentum=0.0,
     weight_decay=0,
+    dropout_rate=0.2,
 ):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
@@ -100,7 +101,7 @@ def main(
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
 
     model = NNArchitecture.get_nn_architecture(
-        type=architecture, num_classes=num_classes, wieghts=None
+        type=architecture, num_classes=num_classes, wieghts=None, dropout_rate=dropout_rate
     )
     model = model.to(DEVICE)
     # Check what optimizer better convergence (adam or SGD)
@@ -237,6 +238,13 @@ if __name__ == "__main__":
         default="",
         type=float,
     )
+    parser.add_argument(
+        "--dropout_rate",
+        help="Dropout rate for the model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+        required=True,
+        default="",
+        type=float,
+    )
     args = parser.parse_args()
 
     architecture = args.architecture
@@ -250,6 +258,7 @@ if __name__ == "__main__":
     lr = args.lr
     momentum = args.momentum
     weight_decay = args.weight_decay
+    dropout_rate = args.dropout_rate
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -270,4 +279,5 @@ if __name__ == "__main__":
         lr,
         momentum,
         weight_decay,
+        dropout_rate,
     )
