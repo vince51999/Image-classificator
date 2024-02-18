@@ -71,7 +71,7 @@ class TinyImageNetDataset(Dataset):
             train_dataloader, "mean"
         ), TinyImageNetDataset.__mean_std_rgb_channels(train_dataloader, "std")
 
-    def __mean_std_rgb_channels(dataloader, type: str):
+    def __mean_std_rgb_channels(dataloader, t: str):
         """
         Calculate the mean of the RGB channels
         """
@@ -83,7 +83,7 @@ class TinyImageNetDataset(Dataset):
             # get the inputs; data is a list of [inputs, labels]
             batch, labels = data
             for sample in range(len(batch)):
-                match type:
+                match t:
                     case "mean":
                         r += batch[sample][0][0].mean()
                         g += batch[sample][0][1].mean()
