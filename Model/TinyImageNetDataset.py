@@ -71,7 +71,7 @@ class TinyImageNetDataset(Dataset):
             train_dataloader, "mean"
         ), TinyImageNetDataset.__mean_std_rgb_channels(train_dataloader, "std")
 
-    def __mean_std_rgb_channels(dataloader, t: str):
+    def __mean_std_rgb_channels(dataloader, type: str):
         """
         Calculate the mean of the RGB channels
         """
@@ -83,15 +83,14 @@ class TinyImageNetDataset(Dataset):
             # get the inputs; data is a list of [inputs, labels]
             batch, labels = data
             for sample in range(len(batch)):
-                match t:
-                    case "mean":
-                        r += batch[sample][0][0].mean()
-                        g += batch[sample][0][1].mean()
-                        b += batch[sample][0][2].mean()
-                    case "std":
-                        r += batch[sample][0][0].std()
-                        g += batch[sample][0][1].std()
-                        b += batch[sample][0][2].std()
+                if type=="mean":
+                    r += batch[sample][0][0].mean()
+                    g += batch[sample][0][1].mean()
+                    b += batch[sample][0][2].mean()
+                elif type=="std":
+                    r += batch[sample][0][0].std()
+                    g += batch[sample][0][1].std()
+                    b += batch[sample][0][2].std()
         return [r / length, g / length, b / length]
 
     def __split_classes(dataset, num_classes, itr_break=500):
