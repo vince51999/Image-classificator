@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 
 
-def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None, dropout_rate=0.2):
+def get_nn_architecture(
+    type="resnet50", num_classes=200, wieghts=None, dropout_rate=0.2
+):
     """
     Classification architecture is like a Resnet.
 
@@ -24,6 +26,7 @@ def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None, dropout_
         __append_dropout(model, rate=dropout_rate)
     return model
 
+
 def __append_dropout(model, rate=0.2):
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
@@ -31,6 +34,6 @@ def __append_dropout(model, rate=0.2):
         if isinstance(module, nn.ReLU):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
-            # When we set implace=false we work on a copy of tensor (not give error but 
+            # When we set implace=false we work on a copy of tensor (not give error but
             new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
             setattr(model, name, new)
