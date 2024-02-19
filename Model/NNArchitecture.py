@@ -18,7 +18,8 @@ def get_nn_architecture(type="resnet50", num_classes=200, wieghts=None, dropout_
     # get the number of input features
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
-    model.fc = nn.Linear(in_features, num_classes)
+    final_fc = nn.Sequential(nn.Linear(in_features, num_classes), nn.Softmax(dim=1))
+    model.fc = final_fc
     if dropout_rate > 0:
         __append_dropout(model, rate=dropout_rate)
     return model
