@@ -27,16 +27,21 @@ def get_nn_architecture(
     in_features = model.fc.in_features
     in_features_d2 = round(in_features / 2)
     # # define a new head for the detector with required number of classes
-    fc = nn.Sequential(
-        nn.Dropout(dropout_rate_fc), nn.Linear(in_features, in_features), nn.ReLU()
-    )
     fc1 = nn.Sequential(
+        nn.Dropout(dropout_rate_fc), nn.Linear(in_features, in_features_x2), nn.ReLU()
+    )
+    fc2 = nn.Sequential(
+        nn.Dropout(dropout_rate_fc),
+        nn.Linear(in_features_x2, in_features),
+        nn.ReLU(),
+    )
+    fc3 = nn.Sequential(
         nn.Dropout(dropout_rate_fc),
         nn.Linear(in_features, in_features_d2),
         nn.ReLU(),
     )
-    fc2 = nn.Sequential(nn.Linear(in_features_d2, num_classes))
-    model.fc = nn.Sequential(fc, fc1, fc2)
+    fc = nn.Sequential(nn.Linear(in_features_d2, num_classes))
+    model.fc = nn.Sequential(fc1, fc2, fc3, fc)
     return model
 
 
