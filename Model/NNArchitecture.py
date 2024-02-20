@@ -3,7 +3,11 @@ import torch.nn as nn
 
 
 def get_nn_architecture(
-    type="resnet50", num_classes=200, wieghts=None, dropout_rate=0.2
+    type="resnet50",
+    num_classes=200,
+    wieghts=None,
+    dropout_rate_bb=0.2,
+    dropout_rate_fc=0.5,
 ):
     """
     Classification architecture is like a Resnet.
@@ -18,11 +22,13 @@ def get_nn_architecture(
     """
     model = torch.hub.load("pytorch/vision:v0.10.0", type, weights=wieghts)
     # get the number of input features
-    if dropout_rate > 0:
-        __append_dropout(model, rate=dropout_rate)
+    if dropout_rate_bb > 0:
+        __append_dropout(model, rate=dropout_rate_bb)
     in_features = model.fc.in_features
-    # define a new head for the detector with required number of classes
-    model.fc = nn.Sequential(nn.Dropout(0.5), nn.Linear(in_features, num_classes))
+    # # define a new head for the detector with required number of classes
+    fc = nn.Sequential(nn.Dropout(dropout_rate_fc), nn.Linear(in_features, in_features), nn.ReLU())
+    fc1 = nn.Sequential(nn.Linear(in_features, num_classes))
+    model.fc = nn.Sequential(fc, fc1)
     return model
 
 
