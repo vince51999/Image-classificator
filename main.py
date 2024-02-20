@@ -88,7 +88,8 @@ def main(
     lr=0.001,
     momentum=0.0,
     weight_decay=0,
-    dropout_rate=0.2,
+    dropout_rate_bb=0.2,
+    dropout_rate_fc=0.5,
 ):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
@@ -99,10 +100,16 @@ def main(
         f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
-    print(f"Dropout rate: {dropout_rate}")
+    print(
+        f"Dropout rate basicBlock: {dropout_rate_bb}, Dropout rate final layer: {dropout_rate_fc}"
+    )
 
     model = NNArchitecture.get_nn_architecture(
-        type=architecture, num_classes=num_classes, wieghts=None, dropout_rate=dropout_rate
+        type=architecture,
+        num_classes=num_classes,
+        wieghts=None,
+        dropout_rate_bb=dropout_rate_bb,
+        dropout_rate_fc=dropout_rate_fc,
     )
     model = model.to(DEVICE)
     # Check what optimizer better convergence (adam or SGD)
@@ -240,8 +247,15 @@ if __name__ == "__main__":
         type=float,
     )
     parser.add_argument(
-        "--dropout_rate",
-        help="Dropout rate for the model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+        "--dropout_rate_bb",
+        help="Dropout rate for basicBlock of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+        required=True,
+        default="",
+        type=float,
+    )
+    parser.add_argument(
+        "--dropout_rate_fc",
+        help="Dropout rate for final layer of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
         required=True,
         default="",
         type=float,
@@ -259,7 +273,8 @@ if __name__ == "__main__":
     lr = args.lr
     momentum = args.momentum
     weight_decay = args.weight_decay
-    dropout_rate = args.dropout_rate
+    dropout_rate_bb = args.dropout_rate_bb
+    dropout_rate_fc = args.dropout_rate_fc
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -280,5 +295,6 @@ if __name__ == "__main__":
         lr,
         momentum,
         weight_decay,
-        dropout_rate,
+        dropout_rate_bb,
+        dropout_rate_fc,
     )
