@@ -101,6 +101,8 @@ def main(
     )
     if test:
         print("Test mode")
+    else:
+        print("Not test mode")
     if pretrained:
         print(f"Training pretrained {architecture} on {num_classes} classes: {classes}")
     else:
