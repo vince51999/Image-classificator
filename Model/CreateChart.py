@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.xlabel(xlabel, fontsize=10)
     plt.ylabel(ylabel, fontsize=10)
@@ -8,10 +9,8 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
         plt.plot(
             xdata,
             ydata[index],
-            marker="o",
-            linestyle="dashed",
+            linestyle="solid",
             linewidth=2,
-            markersize=6,
             label=name,
         )
     plt.title(f"Training results", fontsize=12)
