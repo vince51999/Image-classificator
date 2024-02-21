@@ -42,5 +42,5 @@ def __append_dropout(model, rate=0.2):
             # When we set implace=false we work on a copy of tensor (not give error but
             # Dropout2d before relu: This order encourages the network to learn robust features while maintaining non-linearity.
             # Relu before Dropout2d: The idea is to apply dropout after the non-linearity to prevent overfitting on specific features.
-            new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
+            new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
             setattr(model, name, new)
