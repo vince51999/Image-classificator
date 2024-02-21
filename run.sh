@@ -29,13 +29,13 @@ momentum=0.0
 weight_decay=0.001
 dropout_rate_bb=0.1
 dropout_rate_fc=0.5
-pretrained=False
-test=True
+pretrained=0
+is_test=0
 
 module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
 conda activate myenv
 
-python ./main.py --architecture $architecture --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta --lr $lr --momentum $momentum --weight_decay $weight_decay --dropout_rate_bb $dropout_rate_bb --dropout_rate_fc $dropout_rate_fc --pretrained $pretrained --test $test
+python ./main.py --architecture $architecture --cls $cls --num_classes $num_classes --num_epochs $num_epochs --eval_batch_size $eval_batch_size --train_batch_size $train_batch_size --tolerance $tolerance --min_delta $min_delta --lr $lr --momentum $momentum --weight_decay $weight_decay --dropout_rate_bb $dropout_rate_bb --dropout_rate_fc $dropout_rate_fc --pretrained $pretrained --test $is_test
 
 conda deactivate

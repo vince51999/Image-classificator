@@ -275,17 +275,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pretrained",
-        help="Use pre-trained model or not. Default is False. If True, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
+        help="Use pre-trained model or not. If 1, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
         required=True,
         default="",
-        type=bool,
+        type=int,
     )
     parser.add_argument(
         "--test",
-        help="Test mode. If True, the model is trained on a subset of classes and tested on a fixed set of classes.",
+        help="Test mode. If 1, the model is tested on a fixed set of classes.",
         required=True,
         default="",
-        type=bool,
+        type=int,
     )
     args = parser.parse_args()
 
@@ -302,8 +302,12 @@ if __name__ == "__main__":
     weight_decay = args.weight_decay
     dropout_rate_bb = args.dropout_rate_bb
     dropout_rate_fc = args.dropout_rate_fc
-    pretrained = args.pretrained
-    test = args.test
+    pretrained = False
+    if args.pretrained == 1:
+        pretrained = True
+    test = False
+    if args.test == 1:
+        test = True
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
