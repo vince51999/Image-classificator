@@ -28,21 +28,7 @@ def get_nn_architecture(
     in_features_x2 = round(in_features * 2)
     in_features_d2 = round(in_features / 2)
     # # define a new head for the detector with required number of classes
-    fc1 = nn.Sequential(
-        nn.Dropout(dropout_rate_fc), nn.Linear(in_features, in_features_x2), nn.ReLU()
-    )
-    fc2 = nn.Sequential(
-        nn.Dropout(dropout_rate_fc),
-        nn.Linear(in_features_x2, in_features),
-        nn.ReLU(),
-    )
-    fc3 = nn.Sequential(
-        nn.Dropout(dropout_rate_fc),
-        nn.Linear(in_features, in_features_d2),
-        nn.ReLU(),
-    )
-    fc = nn.Sequential(nn.Linear(in_features_d2, num_classes))
-    model.fc = nn.Sequential(fc1, fc2, fc3, fc)
+    model.fc = nn.Linear(in_features, num_classes)
     return model
 
 
@@ -54,5 +40,7 @@ def __append_dropout(model, rate=0.2):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
             # When we set implace=false we work on a copy of tensor (not give error but
-            new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
+            # Dropout2d before relu: This order encourages the network to learn robust features while maintaining non-linearity.
+            # Relu before Dropout2d: The idea is to apply dropout after the non-linearity to prevent overfitting on specific features.
+            new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
             setattr(model, name, new)
