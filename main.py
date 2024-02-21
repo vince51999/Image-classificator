@@ -113,7 +113,7 @@ def main(
     model = NNArchitecture.get_nn_architecture(
         type=architecture,
         num_classes=num_classes,
-        weights=pretrained,
+        pretrained=pretrained,
         dropout_rate_bb=dropout_rate_bb,
         dropout_rate_fc=dropout_rate_fc,
     )
