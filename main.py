@@ -90,6 +90,7 @@ def main(
     weight_decay=0,
     dropout_rate_bb=0.2,
     dropout_rate_fc=0.5,
+    pretrained=False,
 ):
     classes = random_classes(c, num_classes)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
@@ -107,7 +108,7 @@ def main(
     model = NNArchitecture.get_nn_architecture(
         type=architecture,
         num_classes=num_classes,
-        wieghts=None,
+        weights=pretrained,
         dropout_rate_bb=dropout_rate_bb,
         dropout_rate_fc=dropout_rate_fc,
     )
@@ -260,6 +261,13 @@ if __name__ == "__main__":
         default="",
         type=float,
     )
+    parser.add_argument(
+        "--pretrained",
+        help="Use pre-trained model or not. Default is False. If True, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
+        required=True,
+        default="",
+        type=bool,
+    )
     args = parser.parse_args()
 
     architecture = args.architecture
@@ -275,6 +283,7 @@ if __name__ == "__main__":
     weight_decay = args.weight_decay
     dropout_rate_bb = args.dropout_rate_bb
     dropout_rate_fc = args.dropout_rate_fc
+    pretrained = args.pretrained
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -297,4 +306,5 @@ if __name__ == "__main__":
         weight_decay,
         dropout_rate_bb,
         dropout_rate_fc,
+        pretrained,
     )

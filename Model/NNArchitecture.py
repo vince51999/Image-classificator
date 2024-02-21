@@ -5,7 +5,7 @@ import torch.nn as nn
 def get_nn_architecture(
     type="resnet50",
     num_classes=200,
-    wieghts=None,
+    pretrained=False,
     dropout_rate_bb=0.2,
     dropout_rate_fc=0.5,
 ):
@@ -20,23 +20,17 @@ def get_nn_architecture(
     Returns:
         The model with the specified architecture.
     """
-    model = torch.hub.load("pytorch/vision:v0.10.0", type, weights=wieghts)
+    if pretrained is False:
+        model = torch.hub.load("pytorch/vision:v0.10.0", type)
+    else:
+        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
+        
     # get the number of input features
     if dropout_rate_bb > 0:
         __append_dropout(model, rate=dropout_rate_bb)
     in_features = model.fc.in_features
-    in_features_d2 = round(in_features / 2)
     # define a new head for the detector with required number of classes
-    fc = nn.Sequential(
-        nn.Dropout(dropout_rate_fc), nn.Linear(in_features, in_features), nn.ReLU()
-    )
-    fc1 = nn.Sequential(
-        nn.Dropout(dropout_rate_fc),
-        nn.Linear(in_features, in_features_d2),
-        nn.ReLU(),
-    )
-    fc2 = nn.Sequential(nn.Linear(in_features_d2, num_classes))
-    model.fc = nn.Sequential(fc, fc1, fc2)
+    model.fc = nn.Linear(in_features, num_classes)
     return model
 
 
