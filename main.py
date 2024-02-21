@@ -101,7 +101,12 @@ def main(
     )
     if test:
         print("Test mode")
-    print(f"Training {architecture} on {num_classes} classes: {classes}")
+    if pretrained:
+        print(f"Training pretrained {architecture} on {num_classes} classes: {classes}")
+    else:
+        print(
+            f"Training not-pretrained {architecture} on {num_classes} classes: {classes}"
+        )
     print(
         f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
