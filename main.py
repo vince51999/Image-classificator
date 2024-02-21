@@ -15,13 +15,15 @@ import Model.CreateChart as CreateChart
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def random_classes(given_class, num_classes=200):
+def random_classes(given_class, num_classes=200, test=False):
     """
     Randomly select classes from the dataset.
     Args:
         given_class (int): Specific class that we want in the set of classes. The rest of the classes will be random.
         num_classes (int, optional): Number of classes to return. Defaults to 200.
     """
+    if test:
+        return [183, 93, 137, 124, 69, 134, 23, 165, 39, 0]
     classes = [i for i in range(200)]
     if num_classes == 200:
         return classes
@@ -91,11 +93,14 @@ def main(
     dropout_rate_bb=0.2,
     dropout_rate_fc=0.5,
     pretrained=False,
+    test=False,
 ):
-    classes = random_classes(c, num_classes)
+    classes = random_classes(c, num_classes, test)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes
     )
+    if test:
+        print("Test mode")
     print(f"Training {architecture} on {num_classes} classes: {classes}")
     print(
         f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
@@ -268,6 +273,13 @@ if __name__ == "__main__":
         default="",
         type=bool,
     )
+    parser.add_argument(
+        "--test",
+        help="Test mode. If True, the model is trained on a subset of classes and tested on a fixed set of classes.",
+        required=True,
+        default="",
+        type=bool,
+    )
     args = parser.parse_args()
 
     architecture = args.architecture
@@ -284,6 +296,7 @@ if __name__ == "__main__":
     dropout_rate_bb = args.dropout_rate_bb
     dropout_rate_fc = args.dropout_rate_fc
     pretrained = args.pretrained
+    test = args.test
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -307,4 +320,5 @@ if __name__ == "__main__":
         dropout_rate_bb,
         dropout_rate_fc,
         pretrained,
+        test,
     )
