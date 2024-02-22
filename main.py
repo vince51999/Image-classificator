@@ -324,7 +324,8 @@ if __name__ == "__main__":
     if num_classes < 1 or num_classes > 200:
         print("Number of classes should be between 1 and 200")
         exit(1)
-
+    if test == True:
+        num_classes = 10
     main(
         architecture,
         c,
