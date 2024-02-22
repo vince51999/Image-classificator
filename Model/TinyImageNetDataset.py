@@ -15,7 +15,7 @@ class TinyImageNetDataset(Dataset):
     The format of each image is: (3, 64, 64).
     """
 
-    def __init__(self, train_batch_size, eval_batch_size, classes=None):
+    def __init__(self, train_batch_size, eval_batch_size, classes=None, increment=2):
         mean, std = TinyImageNetDataset.__mean_std(classes)
         transform = transforms.Compose(
             [
@@ -48,6 +48,7 @@ class TinyImageNetDataset(Dataset):
             train, self.num_classes, 500, split=0.1
         )
 
+        train = TinyImageNetDataset.__get_trainset(increment, train)
         self.train_dataloader = DataLoader(
             train, batch_size=train_batch_size, shuffle=True
         )
@@ -126,3 +127,28 @@ class TinyImageNetDataset(Dataset):
         for i in range(len(dataset)):
             tmp.append(tuple([dataset[i][0], classes.index(dataset[i][1])]))
         return tmp
+
+    def __get_trainset(
+        increment: int = 0,
+        train=None,
+    ):
+        transform = transforms.Compose(
+            [
+                transforms.RandomResizedCrop(
+                    size=(64, 64), scale=(0.8, 1.0), antialias=True
+                ),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.RandomVerticalFlip(p=0.5),
+                transforms.RandomRotation(degrees=40),
+            ]
+        )
+        if increment < 0:
+            increment = 0
+        if increment == 0 or train is None:
+            return train
+        new_train = train.copy()
+        for j in range(increment):
+            for i in range(len(train)):
+                tmp = transform(train[i][0])
+                new_train.append(tuple([tmp, train[i][1]]))
+        return new_train

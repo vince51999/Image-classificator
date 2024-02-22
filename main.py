@@ -94,10 +94,11 @@ def main(
     dropout_rate_fc=0.5,
     pretrained=False,
     test=False,
+    increases_trainset=2,
 ):
     classes = random_classes(c, num_classes, test)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
-        train_batch_size, eval_batch_size, classes=classes
+        train_batch_size, eval_batch_size, classes=classes, increment=increases_trainset
     )
     if test:
         print("Test mode")
@@ -287,6 +288,13 @@ if __name__ == "__main__":
         default="",
         type=int,
     )
+    parser.add_argument(
+        "--increases_trainset",
+        help="Increment the trainset by this factor. Default is 2. This is used to increase the number of training samples.",
+        required=True,
+        default="",
+        type=int,
+    )
     args = parser.parse_args()
 
     architecture = args.architecture
@@ -308,6 +316,7 @@ if __name__ == "__main__":
     test = False
     if args.test == 1:
         test = True
+    increases_trainset = args.increases_trainset
 
     if c < 0 or c > 199:
         print("Class should be between 0 and 199")
@@ -332,4 +341,5 @@ if __name__ == "__main__":
         dropout_rate_fc,
         pretrained,
         test,
+        increases_trainset,
     )
