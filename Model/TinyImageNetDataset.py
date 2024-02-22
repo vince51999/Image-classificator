@@ -66,10 +66,9 @@ class TinyImageNetDataset(Dataset):
             transform=None,
         )
         train = TinyImageNetDataset.__split_classes(train, classes, 500)
-        train_dataloader = DataLoader(train, batch_size=1, shuffle=False)
         return TinyImageNetDataset.__mean_std_rgb_channels(
-            train_dataloader, "mean"
-        ), TinyImageNetDataset.__mean_std_rgb_channels(train_dataloader, "std")
+            train, "mean"
+        ), TinyImageNetDataset.__mean_std_rgb_channels(train, "std")
 
     def __mean_std_rgb_channels(dataloader, type: str):
         """
@@ -81,16 +80,14 @@ class TinyImageNetDataset(Dataset):
         length = len(dataloader)
         for i, data in enumerate(dataloader):
             # get the inputs; data is a list of [inputs, labels]
-            batch, labels = data
-            for sample in range(len(batch)):
-                if type=="mean":
-                    r += batch[sample][0][0].mean()
-                    g += batch[sample][0][1].mean()
-                    b += batch[sample][0][2].mean()
-                elif type=="std":
-                    r += batch[sample][0][0].std()
-                    g += batch[sample][0][1].std()
-                    b += batch[sample][0][2].std()
+            if type == "mean":
+                r += data[0][0].mean()
+                g += data[0][1].mean()
+                b += data[0][2].mean()
+            elif type == "std":
+                r += data[0][0].std()
+                g += data[0][1].std()
+                b += data[0][2].std()
         return [r / length, g / length, b / length]
 
     def __split_classes(dataset, num_classes, itr_break=500):
