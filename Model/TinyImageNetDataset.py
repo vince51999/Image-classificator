@@ -57,8 +57,8 @@ class TinyImageNetDataset(Dataset):
         )
 
     def __mean_std(classes):
-        if classes is None or len(classes) > 100:
-            return [0.497, 0.500, 0.502], [0.137, 0.139, 0.144]
+        if classes is None or len(classes) > 30:
+            return [0.480, 0.448, 0.398], [0.230, 0.226, 0.226]
         train = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"),
             split="train",
