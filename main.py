@@ -117,6 +117,7 @@ def main(
     print(
         f"Dropout rate basicBlock: {dropout_rate_bb}, Dropout rate final layer: {dropout_rate_fc}"
     )
+    print(f"Train size: {len(dataset.train_dataloader)*train_batch_size}, Val size: {len(dataset.val_dataloader)*eval_batch_size}, Test size: {len(dataset.test_dataloader)*eval_batch_size}")
 
     model = NNArchitecture.get_nn_architecture(
         type=architecture,
