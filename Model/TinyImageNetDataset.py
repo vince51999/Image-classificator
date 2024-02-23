@@ -29,7 +29,7 @@ class TinyImageNetDataset(Dataset):
             imagenet_idx=False,
             transform=transform,
         )
-        val = TinyImageNet(
+        test = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"),
             split="val",
             imagenet_idx=False,
@@ -38,14 +38,14 @@ class TinyImageNetDataset(Dataset):
         if classes is not None and len(classes) < 200:
             self.num_classes = len(classes)
             train = TinyImageNetDataset.__split_classes(train, classes, 500)
-            val = TinyImageNetDataset.__split_classes(val, classes, 50)
+            test = TinyImageNetDataset.__split_classes(test, classes, 50)
             train = TinyImageNetDataset.__update_labels(train, classes)
-            val = TinyImageNetDataset.__update_labels(val, classes)
+            test = TinyImageNetDataset.__update_labels(test, classes)
         else:
             self.num_classes = 200
 
-        train, test = TinyImageNetDataset.__split_set(
-            train, self.num_classes, 500, split=0.1
+        train, val = TinyImageNetDataset.__split_set(
+            train, self.num_classes, 500, split=0.2
         )
 
         train = TinyImageNetDataset.__get_trainset(increment, train)
