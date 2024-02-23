@@ -44,7 +44,7 @@ class TinyImageNetDataset(Dataset):
         else:
             self.num_classes = 200
 
-        train, test = TinyImageNetDataset.__create_testset(
+        train, test = TinyImageNetDataset.__split_set(
             train, self.num_classes, 500, split=0.1
         )
 
@@ -103,21 +103,21 @@ class TinyImageNetDataset(Dataset):
                 itr += 1
         return new_dataset
 
-    def __create_testset(dataset, num_classes, num_el_per_class, split=0.1):
+    def __split_set(dataset, num_classes, num_el_per_class, split=0.1):
         """
-        Split the dataset into test and otherset
+        Split the dataset into 2 datasets
         """
-        testset = []
-        otherset = []
+        newset = []
+        oldset = []
         for c in range(num_classes):
             itr = 0
             for i in range(c * num_el_per_class, (c + 1) * num_el_per_class):
                 if itr < split * num_el_per_class:
-                    testset.append(dataset[i])
+                    newset.append(dataset[i])
                 else:
-                    otherset.append(dataset[i])
+                    oldset.append(dataset[i])
                 itr += 1
-        return otherset, testset
+        return oldset, newset
 
     def __update_labels(dataset, classes):
         """
