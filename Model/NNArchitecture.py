@@ -30,12 +30,13 @@ def get_nn_architecture(
         __append_dropout(model, rate=dropout_rate_bb)
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
+    fc = nn.Linear(in_features, num_classes)
+    if num_classes == 1:
+        fc = nn.Sequential(fc, nn.Sigmoid())
     if dropout_rate_fc > 0:
-        model.fc = nn.Sequential(
-            nn.Dropout(dropout_rate_fc), nn.Linear(in_features, num_classes)
-        )
+        model.fc = nn.Sequential(nn.Dropout(dropout_rate_fc), fc)
     else:
-        model.fc = nn.Linear(in_features, num_classes)
+        model.fc = fc
     return model
 
 
