@@ -24,13 +24,18 @@ def get_nn_architecture(
         model = torch.hub.load("pytorch/vision:v0.10.0", type)
     else:
         model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
-        
+
     # get the number of input features
     if dropout_rate_bb > 0:
         __append_dropout(model, rate=dropout_rate_bb)
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
-    model.fc = nn.Linear(in_features, num_classes)
+    if dropout_rate_fc > 0:
+        model.fc = nn.Sequential(
+            nn.Dropout(dropout_rate_fc), nn.Linear(in_features, num_classes)
+        )
+    else:
+        model.fc = nn.Linear(in_features, num_classes)
     return model
 
 
