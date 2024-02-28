@@ -27,7 +27,7 @@ class TinyImageNetDataset(Dataset):
             Path("~/.torchvision/tinyimagenet/"),
             split="train",
             imagenet_idx=False,
-            transform=transform,
+            transform=transforms.RandomHorizontalFlip(p=0),
         )
         test = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"),
@@ -47,8 +47,8 @@ class TinyImageNetDataset(Dataset):
         train, val = TinyImageNetDataset.__split_set(
             train, self.num_classes, 500, split=0.2
         )
-
-        train = TinyImageNetDataset.__get_trainset(increment, train)
+        val = TinyImageNetDataset.__apply_transforms(val, transform)
+        train = TinyImageNetDataset.__get_trainset(transform, increment, train)
         self.train_dataloader = DataLoader(
             train, batch_size=train_batch_size, shuffle=True
         )
@@ -129,6 +129,7 @@ class TinyImageNetDataset(Dataset):
         return tmp
 
     def __get_trainset(
+        basic_trasform,
         increment: int = 0,
         train=None,
     ):
@@ -139,16 +140,24 @@ class TinyImageNetDataset(Dataset):
                 ),
                 transforms.RandomHorizontalFlip(p=0.5),
                 transforms.RandomVerticalFlip(p=0.5),
-                transforms.RandomRotation(degrees=40),
+                transforms.RandomRotation(degrees=45),
+                transforms.ColorJitter(
+                    brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1
+                ),
+                basic_trasform,
             ]
         )
+        new_train = TinyImageNetDataset.__apply_transforms(train, basic_trasform)
         if increment < 0:
             increment = 0
         if increment == 0 or train is None:
-            return train
-        new_train = train.copy()
+            return new_train
         for j in range(increment):
-            for i in range(len(train)):
-                tmp = transform(train[i][0])
-                new_train.append(tuple([tmp, train[i][1]]))
+            new_train += TinyImageNetDataset.__apply_transforms(train, transform)
         return new_train
+
+    def __apply_transforms(dataset, transform):
+        newset = []
+        for i in range(len(dataset)):
+            newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))
+        return newset
