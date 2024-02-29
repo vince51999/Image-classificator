@@ -13,22 +13,6 @@ import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-architecture = "resnet50"
-c = 0
-num_classes = 10
-num_epochs = 20
-eval_batch_size = 1
-train_batch_size = 10
-tolerance = 3
-min_delta = 0.1
-lr = 0.001
-momentum = 0.0
-weight_decay = 0
-dropout_rate_bb = 0.2
-dropout_rate_fc = 0.5
-pretrained = False
-test = True
-increases_trainset = 2
 
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
