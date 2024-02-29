@@ -149,14 +149,13 @@ if args.pretrained == 1:
 test = False
 if args.test == 1:
     test = True
+    num_classes = 10
 increases_trainset = args.increases_trainset
 
 if c < 0 or c > 199:
     c = 0
 if num_classes < 1 or num_classes > 200:
     num_classes = 200
-if test == True:
-    num_classes = 10
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
