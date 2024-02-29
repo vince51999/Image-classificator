@@ -12,8 +12,6 @@ import Model.Training as Training
 import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
     description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
@@ -160,6 +158,7 @@ if num_classes < 1 or num_classes > 200:
 if test == True:
     num_classes = 10
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def random_classes(given_class, num_classes=200, test=False):
     """
@@ -181,23 +180,44 @@ def random_classes(given_class, num_classes=200, test=False):
 
 
 def main(
-    architecture="resnet50",
-    c=0,
-    num_classes=200,
-    num_epochs=10,
-    eval_batch_size=100,
-    train_batch_size=100,
-    tolerance=5,
-    min_delta=0.5,
-    lr=0.001,
-    momentum=0.0,
-    weight_decay=0,
-    dropout_rate_bb=0.2,
-    dropout_rate_fc=0.5,
-    pretrained=False,
-    test=False,
-    increases_trainset=2,
+    architecture: str = "resnet50",
+    c: int = 0,
+    num_classes: int = 200,
+    num_epochs: int = 10,
+    eval_batch_size: int = 100,
+    train_batch_size: int = 100,
+    tolerance: int = 5,
+    min_delta: float = 0.5,
+    lr: float = 0.001,
+    momentum: float = 0.0,
+    weight_decay: float = 0,
+    dropout_rate_bb: float = 0.2,
+    dropout_rate_fc: float = 0.5,
+    pretrained: bool = False,
+    test: bool = False,
+    increases_trainset: int = 2,
 ):
+    """
+    Train the model on the dataset ot search best parameters for the model.
+
+    Args:
+        architecture (str, optional): Type of resnet architecture. Defaults to "resnet50".
+        c (int, optional): Class that you want include in the classes list to classify. Defaults to 0.
+        num_classes (int, optional): Number of class to classify. Defaults to 200.
+        num_epochs (int, optional): Number of epochs. Defaults to 10.
+        eval_batch_size (int, optional): Batch size of validation and test set. Defaults to 100.
+        train_batch_size (int, optional): Batch size of train set. Defaults to 100.
+        tolerance (int, optional): Early stop tolerance. Defaults to 5.
+        min_delta (float, optional): Early stop min delta. Defaults to 0.5.
+        lr (float, optional): Learning rate. Defaults to 0.001.
+        momentum (float, optional): Momentum of SGD optimizer. If 0.0 optimizer is used Adam optimizar. Defaults to 0.0.
+        weight_decay (float, optional): _description_. Defaults to 0.
+        dropout_rate_bb (float, optional): Dropout convolutional layers. Defaults to 0.2.
+        dropout_rate_fc (float, optional): Dropout fc layers. Defaults to 0.5.
+        pretrained (bool, optional): If true we load a pretrained model. Defaults to False.
+        test (bool, optional): If true we use 10 class careful selected. Defaults to False.
+        increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
+    """
     classes = random_classes(c, num_classes, test)
     dataset = TinyImageNetDataset.TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes, increment=increases_trainset
@@ -245,6 +265,50 @@ def main(
         )
     criterion = nn.CrossEntropyLoss()
 
+    trainig_model(
+        classes,
+        dataset,
+        model,
+        optimizer,
+        criterion,
+        num_classes,
+        train_batch_size,
+        eval_batch_size,
+        num_epochs,
+        tolerance,
+        min_delta,
+    )
+
+
+def trainig_model(
+    classes: list,
+    dataset: TinyImageNetDataset.TinyImageNetDataset,
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    criterion: torch.nn.Module,
+    num_classes: int,
+    train_batch_size: int,
+    eval_batch_size: int,
+    num_epochs: int,
+    tolerance: int,
+    min_delta: float,
+):
+    """
+    Train the model on the dataset.
+
+    Args:
+        classes (list): List of classes to train on.
+        dataset (TinyImageNetDataset): The dataset to train on.
+        model (torch.nn.Module): The model to train.
+        optimizer (torch.optim.Optimizer): The optimizer to use for training.
+        criterion (torch.nn.Module): The criterion to use for training.
+        num_classes (int): Number of classes in the dataset.
+        train_batch_size (int): Batch size for training.
+        eval_batch_size (int): Batch size for evaluation.
+        num_epochs (int): Number of epochs to train for.
+        tolerance (int): Early stopping tolerance.
+        min_delta (float): Minimum change in validation loss to be considered as an improvement.
+    """
     train_stats = Statistics.Statistics(
         classes,
         (len(dataset.train_dataloader) * train_batch_size) / num_classes,
