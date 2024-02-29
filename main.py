@@ -13,6 +13,168 @@ import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+architecture = "resnet50"
+c = 0
+num_classes = 10
+num_epochs = 20
+eval_batch_size = 1
+train_batch_size = 10
+tolerance = 3
+min_delta = 0.1
+lr = 0.001
+momentum = 0.0
+weight_decay = 0
+dropout_rate_bb = 0.2
+dropout_rate_fc = 0.5
+pretrained = False
+test = True
+increases_trainset = 2
+
+parser = argparse.ArgumentParser(
+    prog="ImageNet Training",
+    description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
+)
+parser.add_argument(
+    "--architecture",
+    help="Type of resNet architecture to use.",
+    required=True,
+    default="",
+    type=str,
+)
+parser.add_argument(
+    "--cls",
+    help="Specific class that we want in the set of classes. The rest of the classes will be random.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--num_classes",
+    help="Total number of classes to train on. Default is 200. If you want to train on a subset of classes, specify the number of classes here.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--num_epochs",
+    help="Number of epochs to train for.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--eval_batch_size",
+    help="Batch size for evaluation. Increase / decrease according to GPU memeory.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--train_batch_size",
+    help="Batch size for training. Increase / decrease according to GPU memeory.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--tolerance",
+    help="Early stopping tolerance. If the validation loss does not improve for this many epochs, the training will stop.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--min_delta",
+    help="Minimum change in validation loss to be considered as an improvement.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--lr",
+    help="Learning rate for the optimizer. Step size for the optimizer.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--momentum",
+    help="Momentum for the optimizer. Helps in faster convergence. If 0, optimizer is Adam. If non-zero, optimizer is SGD.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--weight_decay",
+    help="Weight decay for the optimizer. Regularization parameter.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--dropout_rate_bb",
+    help="Dropout rate for basicBlock of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--dropout_rate_fc",
+    help="Dropout rate for final layer of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--pretrained",
+    help="Use pre-trained model or not. If 1, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--test",
+    help="Test mode. If 1, the model is tested on a fixed set of classes.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
+    "--increases_trainset",
+    help="Increment the trainset by this factor. Default is 2. This is used to increase the number of training samples.",
+    required=True,
+    default="",
+    type=int,
+)
+args = parser.parse_args()
+
+architecture = args.architecture
+c = args.cls
+num_classes = args.num_classes
+num_epochs = args.num_epochs
+eval_batch_size = args.eval_batch_size
+train_batch_size = args.train_batch_size
+tolerance = args.tolerance
+min_delta = args.min_delta
+lr = args.lr
+momentum = args.momentum
+weight_decay = args.weight_decay
+dropout_rate_bb = args.dropout_rate_bb
+dropout_rate_fc = args.dropout_rate_fc
+pretrained = False
+if args.pretrained == 1:
+    pretrained = True
+test = False
+if args.test == 1:
+    test = True
+increases_trainset = args.increases_trainset
+
+if c < 0 or c > 199:
+    c = 0
+if num_classes < 1 or num_classes > 200:
+    num_classes = 200
+if test == True:
+    num_classes = 10
 
 
 def random_classes(given_class, num_classes=200, test=False):
@@ -32,50 +194,6 @@ def random_classes(given_class, num_classes=200, test=False):
     classes = random.sample(classes, size)
     classes.append(given_class)
     return classes
-
-
-def createCharts(train_stats: Statistics, val_stats: Statistics):
-    epochs = train_stats.epochs
-    CreateChart.createChart(
-        "Epochs",
-        "Losses",
-        epochs,
-        [train_stats.losses, val_stats.losses],
-        "./results/loss.pdf",
-        ["train_losses", "val_losses"],
-    )
-    CreateChart.createChart(
-        "Epochs",
-        "Accuracy",
-        epochs,
-        [train_stats.accuracy, val_stats.accuracy],
-        "./results/accuracy.pdf",
-        ["train_accuracy", "val_accuracy"],
-    )
-    CreateChart.createChart(
-        "Epochs",
-        "F-Measure",
-        epochs,
-        [train_stats.f_measure, val_stats.f_measure],
-        "./results/f_measure.pdf",
-        ["train_f_measure", "val_f_measure"],
-    )
-    CreateChart.createChart(
-        "Epochs",
-        "Recall",
-        epochs,
-        [train_stats.recall, val_stats.recall],
-        "./results/recall.pdf",
-        ["train_recall", "val_recall"],
-    )
-    CreateChart.createChart(
-        "Epochs",
-        "Precision",
-        epochs,
-        [train_stats.precision, val_stats.precision],
-        "./results/precision.pdf",
-        ["train_precision", "val_precision"],
-    )
 
 
 def main(
@@ -111,7 +229,7 @@ def main(
             f"Training not-pretrained {architecture} on {num_classes} classes: {classes}"
         )
     print(
-        f"Num pochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
+        f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
     print(
@@ -166,7 +284,7 @@ def main(
         val_stats,
     )
 
-    createCharts(train_stats, val_stats)
+    CreateChart.createCharts(train_stats, val_stats)
 
     test_stats = Statistics.Statistics(
         classes,
@@ -181,169 +299,21 @@ def main(
     test_stats.reset()
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        prog="ImageNet Training",
-        description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
-    )
-    parser.add_argument(
-        "--architecture",
-        help="Type of resNet architecture to use.",
-        required=True,
-        default="",
-        type=str,
-    )
-    parser.add_argument(
-        "--cls",
-        help="Specific class that we want in the set of classes. The rest of the classes will be random.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--num_classes",
-        help="Total number of classes to train on. Default is 200. If you want to train on a subset of classes, specify the number of classes here.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--num_epochs",
-        help="Number of epochs to train for.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--eval_batch_size",
-        help="Batch size for evaluation. Increase / decrease according to GPU memeory.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--train_batch_size",
-        help="Batch size for training. Increase / decrease according to GPU memeory.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--tolerance",
-        help="Early stopping tolerance. If the validation loss does not improve for this many epochs, the training will stop.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--min_delta",
-        help="Minimum change in validation loss to be considered as an improvement.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--lr",
-        help="Learning rate for the optimizer. Step size for the optimizer.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--momentum",
-        help="Momentum for the optimizer. Helps in faster convergence. If 0, optimizer is Adam. If non-zero, optimizer is SGD.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--weight_decay",
-        help="Weight decay for the optimizer. Regularization parameter.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--dropout_rate_bb",
-        help="Dropout rate for basicBlock of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--dropout_rate_fc",
-        help="Dropout rate for final layer of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
-        required=True,
-        default="",
-        type=float,
-    )
-    parser.add_argument(
-        "--pretrained",
-        help="Use pre-trained model or not. If 1, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--test",
-        help="Test mode. If 1, the model is tested on a fixed set of classes.",
-        required=True,
-        default="",
-        type=int,
-    )
-    parser.add_argument(
-        "--increases_trainset",
-        help="Increment the trainset by this factor. Default is 2. This is used to increase the number of training samples.",
-        required=True,
-        default="",
-        type=int,
-    )
-    args = parser.parse_args()
-
-    architecture = args.architecture
-    c = args.cls
-    num_classes = args.num_classes
-    num_epochs = args.num_epochs
-    eval_batch_size = args.eval_batch_size
-    train_batch_size = args.train_batch_size
-    tolerance = args.tolerance
-    min_delta = args.min_delta
-    lr = args.lr
-    momentum = args.momentum
-    weight_decay = args.weight_decay
-    dropout_rate_bb = args.dropout_rate_bb
-    dropout_rate_fc = args.dropout_rate_fc
-    pretrained = False
-    if args.pretrained == 1:
-        pretrained = True
-    test = False
-    if args.test == 1:
-        test = True
-    increases_trainset = args.increases_trainset
-
-    if c < 0 or c > 199:
-        print("Class should be between 0 and 199")
-        exit(1)
-    if num_classes < 1 or num_classes > 200:
-        print("Number of classes should be between 1 and 200")
-        exit(1)
-    if test == True:
-        num_classes = 10
-    main(
-        architecture,
-        c,
-        num_classes,
-        num_epochs,
-        eval_batch_size,
-        train_batch_size,
-        tolerance,
-        min_delta,
-        lr,
-        momentum,
-        weight_decay,
-        dropout_rate_bb,
-        dropout_rate_fc,
-        pretrained,
-        test,
-        increases_trainset,
-    )
+main(
+    architecture,
+    c,
+    num_classes,
+    num_epochs,
+    eval_batch_size,
+    train_batch_size,
+    tolerance,
+    min_delta,
+    lr,
+    momentum,
+    weight_decay,
+    dropout_rate_bb,
+    dropout_rate_fc,
+    pretrained,
+    test,
+    increases_trainset,
+)

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import Model.Statistics as Statistics
 
 
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
@@ -18,3 +19,47 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
         plt.legend()
     plt.savefig(path, format="pdf", bbox_inches="tight")
     plt.clf()
+
+
+def createCharts(train_stats: Statistics, val_stats: Statistics):
+    epochs = train_stats.epochs
+    createChart(
+        "Epochs",
+        "Losses",
+        epochs,
+        [train_stats.losses, val_stats.losses],
+        "./results/loss.pdf",
+        ["train_losses", "val_losses"],
+    )
+    createChart(
+        "Epochs",
+        "Accuracy",
+        epochs,
+        [train_stats.accuracy, val_stats.accuracy],
+        "./results/accuracy.pdf",
+        ["train_accuracy", "val_accuracy"],
+    )
+    createChart(
+        "Epochs",
+        "F-Measure",
+        epochs,
+        [train_stats.f_measure, val_stats.f_measure],
+        "./results/f_measure.pdf",
+        ["train_f_measure", "val_f_measure"],
+    )
+    createChart(
+        "Epochs",
+        "Recall",
+        epochs,
+        [train_stats.recall, val_stats.recall],
+        "./results/recall.pdf",
+        ["train_recall", "val_recall"],
+    )
+    createChart(
+        "Epochs",
+        "Precision",
+        epochs,
+        [train_stats.precision, val_stats.precision],
+        "./results/precision.pdf",
+        ["train_precision", "val_precision"],
+    )
