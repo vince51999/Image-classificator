@@ -1,6 +1,5 @@
 import argparse
 import torch
-import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 import random
