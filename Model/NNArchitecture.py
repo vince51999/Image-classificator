@@ -21,9 +21,11 @@ def get_nn_architecture(
         The model with the specified architecture.
     """
     if pretrained is False:
+        print(f"Architecture: not-pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.10.0", type)
         model.apply(__init_weights)
     else:
+        print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
 
     # get the number of input features

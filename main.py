@@ -221,13 +221,9 @@ def main(
         train_batch_size, eval_batch_size, classes=classes, increment=increases_trainset
     )
     if test:
-        print("Test mode")
+        print(f"Test mode on {num_classes} classes: {classes}")
     else:
-        print("Not test mode")
-    if pretrained:
-        print(f"Pretrained {architecture} on {num_classes} classes: {classes}")
-    else:
-        print(f"Not-pretrained {architecture} on {num_classes} classes: {classes}")
+        print(f"Not test mode on {num_classes} classes: {classes}")
     print(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
