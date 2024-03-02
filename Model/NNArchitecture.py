@@ -48,9 +48,10 @@ def __append_dropout(model, rate=0.2):
         if isinstance(module, nn.ReLU):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
-            # When we set implace=false we work on a copy of tensor (not give error but
+            # When we set implace=false we work on a copy of tensor (not give error but use more memory)
             # Dropout2d before relu: This order encourages the network to learn robust features while maintaining non-linearity.
             # Relu before Dropout2d: The idea is to apply dropout after the non-linearity to prevent overfitting on specific features.
+            # Another research paper suggests that dropout before or after the ReLU layer does not make a significant difference and proof that.
             new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
             setattr(model, name, new)
 
