@@ -22,6 +22,7 @@ def get_nn_architecture(
     """
     if pretrained is False:
         model = torch.hub.load("pytorch/vision:v0.10.0", type)
+        model.apply(__init_weights)
     else:
         model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
 
@@ -52,3 +53,31 @@ def __append_dropout(model, rate=0.2):
             # Relu before Dropout2d: The idea is to apply dropout after the non-linearity to prevent overfitting on specific features.
             new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
             setattr(model, name, new)
+
+
+def __init_weights(self):
+    for m in self.modules():
+        if isinstance(m, nn.Conv2d):
+            # Specifically designed for deep neural network with the ReLU activation
+            # that helps to reduce the vanishing gradient problem,
+            # allows the network to learn deeper representations.
+            nn.init.kaiming_normal_(m.weight, nonlinearity="relu")
+
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+
+        elif isinstance(m, nn.BatchNorm2d):
+            # Batch norm layers normalize the distribution of layer outputs during training,
+            # which reduces the dependency of the deep network on weight initialization strategies.
+            # The weights and biases of all batch normalization layers are usually initialized as 1s and 0s, respectively.
+            nn.init.constant_(m.weight, 1)
+            nn.init.constant_(m.bias, 0)
+
+        elif isinstance(m, nn.Linear):
+            # Specifically designed for deep neural network with the ReLU activation
+            # that helps to reduce the vanishing gradient problem,
+            # allows the network to learn deeper representations.
+            nn.init.kaiming_normal_(m.weight, nonlinearity="relu")
+
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
