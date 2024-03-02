@@ -158,6 +158,7 @@ if num_classes < 1 or num_classes > 200:
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def random_classes(given_class, num_classes=200, test=False):
     """
     Randomly select classes from the dataset.
@@ -227,12 +228,12 @@ def main(
     print(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
+    print(
+        f"Train size: {len(dataset.train_dataloader)*train_batch_size}, Val size: {len(dataset.val_dataloader)*eval_batch_size}, Test size: {len(dataset.test_dataloader)*eval_batch_size}"
+    )
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
     print(
         f"Dropout rate basicBlock: {dropout_rate_bb}, Dropout rate final layer: {dropout_rate_fc}"
-    )
-    print(
-        f"Train size: {len(dataset.train_dataloader)*train_batch_size}, Val size: {len(dataset.val_dataloader)*eval_batch_size}, Test size: {len(dataset.test_dataloader)*eval_batch_size}"
     )
 
     model = NNArchitecture.get_nn_architecture(
