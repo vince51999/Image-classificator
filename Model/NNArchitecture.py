@@ -20,6 +20,8 @@ def get_nn_architecture(
     Returns:
         The model with the specified architecture.
     """
+    if type != "resnet18" and type != "resnet50":
+        type = "resnet50"
     if pretrained is False:
         print(f"Architecture: not-pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.10.0", type)
