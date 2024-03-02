@@ -44,7 +44,7 @@ def get_nn_architecture(
 def __append_dropout(model, rate=0.2):
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
-            __append_dropout(module)
+            __append_dropout(module, type, rate=rate)
         if isinstance(module, nn.ReLU):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
