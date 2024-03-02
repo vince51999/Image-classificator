@@ -32,7 +32,7 @@ def get_nn_architecture(
 
     # get the number of input features
     if dropout_rate_bb > 0:
-        __append_dropout(model, rate=dropout_rate_bb)
+        __append_dropout(model, type, rate=dropout_rate_bb)
     in_features = model.fc.in_features
     # define a new head for the detector with required number of classes
     fc = nn.Linear(in_features, num_classes)
@@ -45,19 +45,52 @@ def get_nn_architecture(
     return model
 
 
-def __append_dropout(model, rate=0.2):
+def __append_dropout(model, type, rate=0.2):
+    dropout_before = ""
+    if type == "resnet50":
+        dropout_before = "conv3"
+        ## Where insert the dropout layer in the bottleneck block
+        # identity = x
+        # out = self.conv1(x)
+        # out = self.bn1(out)
+        # out = self.relu(out)
+        # out = self.conv2(out)
+        # out = self.bn2(out)
+        # out = self.relu(out)
+        ### Dropout2d
+        # out = self.conv3(out)
+        # out = self.bn3(out)
+        # if self.downsample is not None:
+        #     identity = self.downsample(x)
+        # out += identity
+        # out = self.relu(out)
+    if type == "resnet18":
+        dropout_before = "conv2"
+        ## Where insert the dropout layer in the basic block
+        # identity = x
+        # out = self.conv1(x)
+        # out = self.bn1(out)
+        # out = self.relu(out)
+        ### Dropout2d
+        # out = self.conv2(out)
+        # out = self.bn2(out)
+        # if self.downsample is not None:
+        #     identity = self.downsample(x)
+        # out += identity
+        # out = self.relu(out)
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
             __append_dropout(module, type, rate=rate)
-        if isinstance(module, nn.ReLU):
+        if isinstance(module, nn.Conv2d):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
             # When we set implace=false we work on a copy of tensor (not give error but use more memory)
             # Dropout2d before relu: This order encourages the network to learn robust features while maintaining non-linearity.
             # Relu before Dropout2d: The idea is to apply dropout after the non-linearity to prevent overfitting on specific features.
             # Another research paper suggests that dropout before or after the ReLU layer does not make a significant difference and proof that.
-            new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
-            setattr(model, name, new)
+            if dropout_before == name:
+                new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
+                setattr(model, name, new)
 
 
 def __init_weights(self):
