@@ -16,7 +16,7 @@ class TinyImageNetDataset(Dataset):
     """
 
     def __init__(self, train_batch_size, eval_batch_size, classes=None, increment=2):
-        mean, std = TinyImageNetDataset.__mean_std(classes)
+        mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -37,27 +37,28 @@ class TinyImageNetDataset(Dataset):
         )
         if classes is not None and len(classes) < 200:
             self.num_classes = len(classes)
-            train = TinyImageNetDataset.__split_classes(train, classes, 500)
-            test = TinyImageNetDataset.__split_classes(test, classes, 50)
-            train = TinyImageNetDataset.__update_labels(train, classes)
-            test = TinyImageNetDataset.__update_labels(test, classes)
+            train = self.__split_classes(train, classes, 500)
+            test = self.__split_classes(test, classes, 50)
+            train = self.__update_labels(train, classes)
+            test = self.__update_labels(test, classes)
         else:
             self.num_classes = 200
 
-        train, val = TinyImageNetDataset.__split_set(
-            train, self.num_classes, 500, split=0.2
-        )
-        val = TinyImageNetDataset.__apply_transforms(val, transform)
-        train = TinyImageNetDataset.__get_trainset(transform, increment, train)
+        train, val = self.__split_set(train, self.num_classes, 500, split=0.2)
+        self.test = test
+        self.val = self.__apply_transforms(val, transform)
+        self.train = self.__get_trainset(transform, increment, train)
         self.train_dataloader = DataLoader(
-            train, batch_size=train_batch_size, shuffle=True
+            self.train, batch_size=train_batch_size, shuffle=True
         )
-        self.val_dataloader = DataLoader(val, batch_size=eval_batch_size, shuffle=False)
+        self.val_dataloader = DataLoader(
+            self.val, batch_size=eval_batch_size, shuffle=False
+        )
         self.test_dataloader = DataLoader(
-            test, batch_size=eval_batch_size, shuffle=False
+            self.test, batch_size=eval_batch_size, shuffle=False
         )
 
-    def __mean_std(classes):
+    def __mean_std(self, classes):
         if classes is None or len(classes) > 30:
             return [0.480, 0.448, 0.398], [0.230, 0.226, 0.226]
         train = TinyImageNet(
@@ -66,12 +67,12 @@ class TinyImageNetDataset(Dataset):
             imagenet_idx=False,
             transform=None,
         )
-        train = TinyImageNetDataset.__split_classes(train, classes, 500)
-        return TinyImageNetDataset.__mean_std_rgb_channels(
+        train = self.__split_classes(train, classes, 500)
+        return self.__mean_std_rgb_channels(
             train, "mean"
-        ), TinyImageNetDataset.__mean_std_rgb_channels(train, "std")
+        ), self.__mean_std_rgb_channels(train, "std")
 
-    def __mean_std_rgb_channels(dataloader, type: str):
+    def __mean_std_rgb_channels(self, dataloader, type: str):
         """
         Calculate the mean of the RGB channels
         """
@@ -91,7 +92,7 @@ class TinyImageNetDataset(Dataset):
                 b += data[0][2].std()
         return [r / length, g / length, b / length]
 
-    def __split_classes(dataset, num_classes, itr_break=500):
+    def __split_classes(self, dataset, num_classes, itr_break=500):
         """
         Split the dataset into classes
         """
@@ -103,7 +104,7 @@ class TinyImageNetDataset(Dataset):
                 itr += 1
         return new_dataset
 
-    def __split_set(dataset, num_classes, num_el_per_class, split=0.1):
+    def __split_set(self, dataset, num_classes, num_el_per_class, split=0.1):
         """
         Split the dataset into 2 datasets
         """
@@ -119,7 +120,7 @@ class TinyImageNetDataset(Dataset):
                 itr += 1
         return oldset, newset
 
-    def __update_labels(dataset, classes):
+    def __update_labels(self, dataset, classes):
         """
         Update the labels of the dataset
         """
@@ -129,6 +130,7 @@ class TinyImageNetDataset(Dataset):
         return tmp
 
     def __get_trainset(
+        self,
         basic_trasform,
         increment: int = 0,
         train=None,
@@ -147,16 +149,16 @@ class TinyImageNetDataset(Dataset):
                 basic_trasform,
             ]
         )
-        new_train = TinyImageNetDataset.__apply_transforms(train, basic_trasform)
+        new_train = self.__apply_transforms(train, basic_trasform)
         if increment < 0:
             increment = 0
         if increment == 0 or train is None:
             return new_train
         for j in range(increment):
-            new_train += TinyImageNetDataset.__apply_transforms(train, transform)
+            new_train += self.__apply_transforms(train, transform)
         return new_train
 
-    def __apply_transforms(dataset, transform):
+    def __apply_transforms(self, dataset, transform):
         newset = []
         for i in range(len(dataset)):
             newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))
