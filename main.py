@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -258,6 +259,7 @@ def main(
         )
     criterion = nn.CrossEntropyLoss()
 
+    now = datetime.datetime.now()
     trainig_model(
         classes,
         dataset,
@@ -271,6 +273,17 @@ def main(
         tolerance,
         min_delta,
     )
+    later = datetime.datetime.now()
+    difference = (later - now).total_seconds()
+    seconds = difference
+    minutes = seconds / 60
+    hours = minutes / 60
+    if hours > 1:
+        print(f"Training time: {hours:.3f} hours")
+    elif minutes > 1:
+        print(f"Training time: {minutes:.3f} minutes")
+    else:
+        print(f"Training time: {difference:.3f} seconds")
 
 
 def trainig_model(
