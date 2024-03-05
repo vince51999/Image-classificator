@@ -12,6 +12,7 @@ import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
 from Model.TinyImageNetDataset import TinyImageNetDataset
+
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
     description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
@@ -59,6 +60,13 @@ parser.add_argument(
     type=int,
 )
 parser.add_argument(
+    "--gamma_train_batch_size",
+    help="Increase the train batch size by this factor. This is used to increase the number of training samples.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
     "--tolerance",
     help="Early stopping tolerance. If the validation loss does not improve for this many epochs, the training will stop.",
     required=True,
@@ -75,6 +83,13 @@ parser.add_argument(
 parser.add_argument(
     "--lr",
     help="Learning rate for the optimizer. Step size for the optimizer.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--gamma_lr",
+    help="Gamma for the learning rate scheduler. Learning rate is multiplied by this factor after every step.",
     required=True,
     default="",
     type=float,
@@ -128,6 +143,13 @@ parser.add_argument(
     default="",
     type=int,
 )
+parser.add_argument(
+    "--step",
+    help="Step size for the learning rate and batch size scheduler. Learning rate is multiplied by this factor after every step.",
+    required=True,
+    default="",
+    type=int,
+)
 args = parser.parse_args()
 
 architecture = args.architecture
@@ -136,9 +158,15 @@ num_classes = args.num_classes
 num_epochs = args.num_epochs
 eval_batch_size = args.eval_batch_size
 train_batch_size = args.train_batch_size
+gamma_train_batch_size = args.gamma_train_batch_size
+if gamma_train_batch_size <= 0:
+    gamma_train_batch_size = 1
 tolerance = args.tolerance
 min_delta = args.min_delta
 lr = args.lr
+gamma_lr = args.gamma_lr
+if gamma_lr <= 0:
+    gamma_lr = 1
 momentum = args.momentum
 weight_decay = args.weight_decay
 dropout_rate_bb = args.dropout_rate_bb
@@ -151,6 +179,9 @@ if args.test == 1:
     test = True
     num_classes = 10
 increases_trainset = args.increases_trainset
+step = args.step
+if step < 1:
+    step = 1
 
 if c < 0 or c > 199:
     c = 0
@@ -186,9 +217,11 @@ def main(
     num_epochs: int = 10,
     eval_batch_size: int = 100,
     train_batch_size: int = 100,
+    gamma_train_batch_size: int = 2,
     tolerance: int = 5,
     min_delta: float = 0.5,
     lr: float = 0.001,
+    gamma_lr: float = 0.3,
     momentum: float = 0.0,
     weight_decay: float = 0,
     dropout_rate_bb: float = 0.2,
@@ -196,6 +229,7 @@ def main(
     pretrained: bool = False,
     test: bool = False,
     increases_trainset: int = 2,
+    step: int = 1,
 ):
     """
     Train the model on the dataset ot search best parameters for the model.
@@ -262,6 +296,9 @@ def main(
         print(
             f"Optimizer: SGD, lr: {lr}, momentum: {momentum}, weight_decay: {weight_decay}"
         )
+    print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
+    print(f"Batch scheduler: step size: {step}, gamma: {gamma_train_batch_size}")
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step, gamma=gamma_lr)
     criterion = nn.CrossEntropyLoss()
 
     now = datetime.datetime.now()
@@ -277,6 +314,7 @@ def main(
         num_epochs,
         tolerance,
         min_delta,
+        scheduler,
     )
     later = datetime.datetime.now()
     difference = (later - now).total_seconds()
@@ -303,6 +341,7 @@ def trainig_model(
     num_epochs: int,
     tolerance: int,
     min_delta: float,
+    scheduler,
 ):
     """
     Train the model on the dataset.
@@ -340,6 +379,7 @@ def trainig_model(
         min_delta,
         train_stats,
         val_stats,
+        scheduler,
     )
 
     CreateChart.createCharts(train_stats, val_stats)
@@ -364,9 +404,11 @@ main(
     num_epochs,
     eval_batch_size,
     train_batch_size,
+    gamma_train_batch_size,
     tolerance,
     min_delta,
     lr,
+    gamma_lr,
     momentum,
     weight_decay,
     dropout_rate_bb,
@@ -374,4 +416,5 @@ main(
     pretrained,
     test,
     increases_trainset,
+    step,
 )
