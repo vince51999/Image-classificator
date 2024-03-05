@@ -325,8 +325,7 @@ def trainig_model(
     )
 
     Training.train_loop(
-        dataset.train_dataloader,
-        dataset.val_dataloader,
+        dataset,
         model,
         optimizer,
         criterion,

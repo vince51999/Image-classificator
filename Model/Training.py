@@ -3,8 +3,7 @@ import Model.EarlyStopping as EarlyStopping
 
 
 def train_loop(
-    trainset,
-    valset,
+    dataset: TinyImageNetDataset,
     model,
     optimizer,
     criterion,
@@ -21,11 +20,13 @@ def train_loop(
         print(f"\nEPOCH {epoch+1} of {epochs}")
 
         train_loss_list = __train(
-            trainset, model, optimizer, criterion, device, train_stats
+            dataset.train_dataloader, model, optimizer, criterion, device, train_stats
         )
-        val_loss_list = __val(valset, model, criterion, device, val_stats)
-        epoch_train_loss = sum(train_loss_list) / len(trainset)
-        epoch_val_loss = sum(val_loss_list) / len(valset)
+        val_loss_list = __val(
+            dataset.val_dataloader, model, criterion, device, val_stats
+        )
+        epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
+        epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
 
         print(f"\nEpoch #{epoch+1}")
         print(f"Train loss: {epoch_train_loss:.3f}")
