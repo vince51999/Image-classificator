@@ -220,7 +220,12 @@ def main(
     """
     classes = random_classes(c, num_classes, test)
     dataset = TinyImageNetDataset(
-        train_batch_size, eval_batch_size, classes=classes, increment=increases_trainset
+        train_batch_size,
+        eval_batch_size,
+        classes=classes,
+        increment=increases_trainset,
+        step_size=step,
+        gamma=gamma_train_batch_size,
     )
     if test:
         print(f"Test mode on {num_classes} classes: {classes}")

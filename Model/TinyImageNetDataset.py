@@ -15,7 +15,19 @@ class TinyImageNetDataset(Dataset):
     The format of each image is: (3, 64, 64).
     """
 
-    def __init__(self, train_batch_size, eval_batch_size, classes=None, increment=2):
+    def __init__(
+        self,
+        train_batch_size,
+        eval_batch_size,
+        classes=None,
+        increment=2,
+        step_size=2,
+        gamma=2,
+    ):
+        self.train_batch_size = train_batch_size
+        self.step_size = step_size
+        self.gamma = gamma
+        self.itr = 0
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
@@ -163,3 +175,13 @@ class TinyImageNetDataset(Dataset):
         for i in range(len(dataset)):
             newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))
         return newset
+
+    def step(self):
+        if self.step_size == 0 or self.gamma <= 1:
+            return
+        self.itr += 1
+        if self.itr % self.step_size == 0:
+            self.train_batch_size = self.train_batch_size * self.gamma
+            self.train_dataloader = DataLoader(
+                self.train, batch_size=self.train_batch_size, shuffle=True
+            )
