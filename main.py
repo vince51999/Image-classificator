@@ -5,13 +5,13 @@ import torch.nn as nn
 import torch.optim as optim
 import random
 
-import Model.TinyImageNetDataset as TinyImageNetDataset
 import Model.NNArchitecture as NNArchitecture
 import Model.Testing as Testing
 import Model.Training as Training
 import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
+from Model.TinyImageNetDataset import TinyImageNetDataset
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
     description="Train and test an image classification model based on ResNet and Tiny ImageNet dataset",
@@ -219,7 +219,7 @@ def main(
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
     """
     classes = random_classes(c, num_classes, test)
-    dataset = TinyImageNetDataset.TinyImageNetDataset(
+    dataset = TinyImageNetDataset(
         train_batch_size, eval_batch_size, classes=classes, increment=increases_trainset
     )
     if test:
@@ -288,7 +288,7 @@ def main(
 
 def trainig_model(
     classes: list,
-    dataset: TinyImageNetDataset.TinyImageNetDataset,
+    dataset: TinyImageNetDataset,
     model: torch.nn.Module,
     optimizer: torch.optim.Optimizer,
     criterion: torch.nn.Module,
