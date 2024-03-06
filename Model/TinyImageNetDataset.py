@@ -177,7 +177,7 @@ class TinyImageNetDataset(Dataset):
         return newset
 
     def step(self):
-        if self.step_size == 0 or self.gamma <= 1:
+        if self.step_size <= 0:
             return
         self.itr += 1
         if self.itr % self.step_size == 0:
