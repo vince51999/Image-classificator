@@ -64,7 +64,7 @@ parser.add_argument(
     help="Increase the train batch size by this factor. This is used to increase the number of training samples.",
     required=True,
     default="",
-    type=int,
+    type=float,
 )
 parser.add_argument(
     "--tolerance",
