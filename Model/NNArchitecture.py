@@ -15,8 +15,9 @@ def get_nn_architecture(
     Args:
         type (str, optional): Architecture type. Defaults to "resnet50".
         num_classes (int, optional): Number of output classes. Defaults to 200.
-        wieghts (_type_, optional): Set pretreined model or not. Defaults to None.
-
+        pretrained (bool, optional): Use pretrained model. Defaults to False.
+        dropout_rate_bb (float, optional): Dropout rate before the fully connected layer. Defaults to 0.2.
+        dropout_rate_fc (float, optional): Dropout rate before the fully connected layer. Defaults to 0.5.
     Returns:
         The model with the specified architecture.
     """
@@ -29,14 +30,14 @@ def get_nn_architecture(
     else:
         print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
-
-    # get the number of input features
+        
     if dropout_rate_bb > 0:
         __append_dropout(model, type, rate=dropout_rate_bb)
     # define a new head for the detector with required number of classes
     if dropout_rate_fc > 0:
         avgpool = model.avgpool
         model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
+    
     in_features = model.fc.in_features
     fc = nn.Linear(in_features, num_classes)
     if num_classes == 1:
