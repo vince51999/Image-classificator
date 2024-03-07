@@ -269,7 +269,7 @@ def main(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
     print(
-        f"Train size: {len(dataset.train_dataloader)*train_batch_size}, Val size: {len(dataset.val_dataloader)*eval_batch_size}, Test size: {len(dataset.test_dataloader)*eval_batch_size}"
+        f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}"
     )
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
     print(
