@@ -56,7 +56,7 @@ class TinyImageNetDataset(Dataset):
         else:
             self.num_classes = 200
 
-        train, val = self.__split_set(train, self.num_classes, 500, split=0.2)
+        train, val = self.__split_set(train, self.num_classes, 500, split=0.1)
         self.test = test
         self.val = self.__apply_transforms(val, transform)
         self.train = self.__get_trainset(transform, increment, train)
