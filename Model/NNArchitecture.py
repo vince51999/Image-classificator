@@ -29,15 +29,15 @@ def get_nn_architecture(
         model.apply(__init_weights)
     else:
         print(f"Architecture: pretrained {type}")
-        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
-        
+        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V2")
+
     if dropout_rate_bb > 0:
         __append_dropout(model, type, rate=dropout_rate_bb)
     # define a new head for the detector with required number of classes
     if dropout_rate_fc > 0:
         avgpool = model.avgpool
         model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
-    
+
     in_features = model.fc.in_features
     fc = nn.Linear(in_features, num_classes)
     if num_classes == 1:
