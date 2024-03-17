@@ -170,7 +170,7 @@ class TinyImageNetDataset(Dataset):
             newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))
         return newset
 
-    def step(self):
+    def step(self, verbose=False):
         if self.step_size <= 0:
             return
         self.itr += 1
@@ -183,3 +183,5 @@ class TinyImageNetDataset(Dataset):
             self.train_dataloader = DataLoader(
                 self.train, batch_size=self.train_batch_size, shuffle=True
             )
+        if verbose:
+            print("Batch size:", self.train_batch_size)
