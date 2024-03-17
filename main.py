@@ -314,7 +314,6 @@ def main(
         num_epochs,
         tolerance,
         min_delta,
-        scheduler,
     )
     later = datetime.datetime.now()
     difference = (later - now).total_seconds()
@@ -341,7 +340,6 @@ def trainig_model(
     num_epochs: int,
     tolerance: int,
     min_delta: float,
-    scheduler,
 ):
     """
     Train the model on the dataset.
@@ -379,7 +377,6 @@ def trainig_model(
         min_delta,
         train_stats,
         val_stats,
-        scheduler,
     )
 
     CreateChart.createCharts(train_stats, val_stats)

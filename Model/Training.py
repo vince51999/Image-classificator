@@ -1,12 +1,13 @@
 import torch
 import Model.EarlyStopping as EarlyStopping
+from Model.Optimizer import Optimizer
 from Model.TinyImageNetDataset import TinyImageNetDataset
 
 
 def train_loop(
     dataset: TinyImageNetDataset,
     model,
-    optimizer,
+    optimizer: Optimizer,
     criterion,
     device,
     epochs,
@@ -14,7 +15,6 @@ def train_loop(
     min_delta,
     train_stats,
     val_stats,
-    scheduler,
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
@@ -22,7 +22,12 @@ def train_loop(
         print(f"\nEPOCH {epoch+1} of {epochs}")
 
         train_loss_list = __train(
-            dataset.train_dataloader, model, optimizer, criterion, device, train_stats
+            dataset.train_dataloader,
+            model,
+            optimizer.optimizer,
+            criterion,
+            device,
+            train_stats,
         )
         val_loss_list = __val(
             dataset.val_dataloader, model, criterion, device, val_stats
@@ -39,12 +44,8 @@ def train_loop(
         val_stats.save_epoch(epoch + 1, epoch_val_loss)
         train_stats.reset()
         val_stats.reset()
-        # Update the StepLR scheduler
-        scheduler.step()
-        dataset.step()
-        print("Learning rate:", optimizer.param_groups[0]["lr"])
-        print("Batch size:", dataset.train_batch_size)
-
+        dataset.step(verbose=True)
+        optimizer.step(verbose=True)
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
