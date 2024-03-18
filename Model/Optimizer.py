@@ -8,7 +8,7 @@ class Optimizer:
         lr: float,
         step: int,
         gamma_lr: float,
-        weight_decay,
+        weight_decay: float,
         model,
     ):
         self.optimizer = None
@@ -30,7 +30,7 @@ class Optimizer:
             self.optimizer, step_size=step, gamma=gamma_lr
         )
 
-    def step(self, verbose=False):
+    def step(self, verbose: bool = False):
         if self.optimizer.param_groups[0]["lr"] > 0.000001:
             self.scheduler1.step()
         if self.optimizer.param_groups[0]["lr"] < 0.000001:

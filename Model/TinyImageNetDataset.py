@@ -17,11 +17,11 @@ class TinyImageNetDataset(Dataset):
 
     def __init__(
         self,
-        train_batch_size,
-        eval_batch_size,
+        train_batch_size: int,
+        eval_batch_size: int,
         classes=None,
-        increment=2,
-        step_size=2,
+        increment: int = 2,
+        step_size: int = 2,
         gamma=2,
     ):
         self.train_batch_size = train_batch_size
@@ -170,7 +170,7 @@ class TinyImageNetDataset(Dataset):
             newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))
         return newset
 
-    def step(self, verbose=False):
+    def step(self, verbose: bool = False):
         if self.step_size <= 0:
             return
         self.itr += 1
