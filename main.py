@@ -10,8 +10,9 @@ import Model.Training as Training
 import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
-from Model.TinyImageNetDataset import TinyImageNetDataset
+from Model.TinyImageNetDataset import TinyImageNetDataset as Tind
 from Model.Optimizer import Optimizer as Op
+
 
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
@@ -253,7 +254,7 @@ def main(
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
     """
     classes = random_classes(c, num_classes, test)
-    dataset = TinyImageNetDataset(
+    dataset = Tind(
         train_batch_size,
         eval_batch_size,
         classes=classes,
@@ -318,7 +319,7 @@ def main(
 
 def trainig_model(
     classes: list,
-    dataset: TinyImageNetDataset,
+    dataset: Tind,
     model: torch.nn.Module,
     optimizer: torch.optim.Optimizer,
     criterion: torch.nn.Module,
