@@ -2,7 +2,6 @@ import argparse
 import datetime
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import random
 
 import Model.NNArchitecture as NNArchitecture
@@ -12,6 +11,7 @@ import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
 
 from Model.TinyImageNetDataset import TinyImageNetDataset
+from Model.Optimizer import Optimizer as Op
 
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
@@ -285,20 +285,8 @@ def main(
     )
     model = model.to(DEVICE)
     # Check what optimizer better convergence (adam or SGD)
-    optimizer = None
-    if momentum == 0.0:
-        optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-        print(f"Optimizer: Adam, lr: {lr}, weight_decay: {weight_decay}")
+    optimizer = Op(momentum=momentum, lr=lr, step=step, gamma_lr=gamma_lr, weight_decay=weight_decay, model=model)
     else:
-        optimizer = optim.SGD(
-            model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay
-        )
-        print(
-            f"Optimizer: SGD, lr: {lr}, momentum: {momentum}, weight_decay: {weight_decay}"
-        )
-    print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
-    print(f"Batch scheduler: step size: {step}, gamma: {gamma_train_batch_size}")
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step, gamma=gamma_lr)
     criterion = nn.CrossEntropyLoss()
 
     now = datetime.datetime.now()
