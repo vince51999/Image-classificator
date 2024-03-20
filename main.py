@@ -286,7 +286,14 @@ def main(
     )
     model = model.to(DEVICE)
     # Check what optimizer better convergence (adam or SGD)
-    optimizer = Op(momentum=momentum, lr=lr, step=step, gamma_lr=gamma_lr, weight_decay=weight_decay, model=model)
+    optimizer = Op(
+        momentum=momentum,
+        lr=lr,
+        step=step,
+        gamma_lr=gamma_lr,
+        weight_decay=weight_decay,
+        model=model,
+    )
     else:
     criterion = nn.CrossEntropyLoss()
 
