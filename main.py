@@ -192,7 +192,7 @@ if num_classes < 1 or num_classes > 200:
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def random_classes(given_class, num_classes=200, test=False):
+def classes_list(given_class, num_classes=200, test=False):
     """
     Randomly select classes from the dataset.
     Args:
@@ -253,7 +253,7 @@ def main(
         test (bool, optional): If true we use 10 class careful selected. Defaults to False.
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
     """
-    classes = random_classes(c, num_classes, test)
+    classes = classes_list(c, num_classes, test)
     dataset = Tind(
         train_batch_size,
         eval_batch_size,
