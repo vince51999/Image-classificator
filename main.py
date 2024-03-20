@@ -206,7 +206,7 @@ def classes_list(given_class, num_classes=200, test=False):
         return classes
     classes.remove(given_class)
     size = num_classes - 1
-    classes = random.sample(classes, size)
+    classes = [x for i, x in enumerate(classes) if i < size]
     classes.append(given_class)
     return classes
 
