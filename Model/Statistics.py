@@ -63,3 +63,6 @@ class Statistics:
 
     def get_confusion_matrix(self):
         return self.conf_matrix
+
+    def get_clesse(self):
+        return self.classes
