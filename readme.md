@@ -46,6 +46,14 @@ Install matplotlib
 ```
 pip install matplotlib
 ```
+Install pandas
+```
+pip install pandas
+```
+Install seaborn
+```
+pip install seaborn
+```
 
 ## Run application
 
