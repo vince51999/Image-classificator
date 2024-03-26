@@ -31,6 +31,10 @@ class TinyImageNetDataset(Dataset):
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
+                transforms.Resize(
+                    [224, 224], interpolation=transforms.InterpolationMode.BICUBIC
+                ),
+                transforms.GaussianBlur(kernel_size=(7, 7), sigma=(0.1)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=mean, std=std),
             ]
