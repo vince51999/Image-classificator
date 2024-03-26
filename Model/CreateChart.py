@@ -1,5 +1,18 @@
 import matplotlib.pyplot as plt
 import Model.Statistics as Statistics
+import seaborn as sn
+import pandas as pd
+
+
+def createConfusionMatrix(stat: Statistics, path):
+    df_cm = pd.DataFrame(
+        stat.get_confusion_matrix(), index=stat.get_clesse(), columns=stat.get_clesse()
+    )
+    plt.figure(figsize=(15, 12))
+    sn.heatmap(df_cm, annot=True, cmap="Blues")
+    plt.title("Confusion Matrix")
+    plt.savefig(path, format="pdf", bbox_inches="tight")
+    plt.clf()
 
 
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
