@@ -29,7 +29,7 @@ def get_nn_architecture(
         model.apply(__init_weights)
     else:
         print(f"Architecture: pretrained {type}")
-        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V2")
+        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
 
     if dropout_rate_bb > 0:
         __append_dropout(model, type, rate=dropout_rate_bb)
