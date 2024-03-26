@@ -20,6 +20,8 @@ def train_loop(
 
     for epoch in range(epochs):
         print(f"\nEPOCH {epoch+1} of {epochs}")
+        train_stats.reset()
+        val_stats.reset()
 
         train_loss_list = __train(
             dataset.train_dataloader,
@@ -42,8 +44,6 @@ def train_loop(
         val_stats.print("Validation")
         train_stats.save_epoch(epoch + 1, epoch_train_loss)
         val_stats.save_epoch(epoch + 1, epoch_val_loss)
-        train_stats.reset()
-        val_stats.reset()
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         # early stopping
