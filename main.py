@@ -377,6 +377,9 @@ def trainig_model(
 
     CreateChart.createCharts(train_stats, val_stats)
 
+    CreateChart.createConfusionMatrix(train_stats, "./results/train_conf_matrix.pdf")
+    CreateChart.createConfusionMatrix(val_stats, "./results/val_conf_matrix.pdf")
+
     test_stats = Statistics.Statistics(
         classes,
         (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
@@ -387,6 +390,7 @@ def trainig_model(
 
     print(f"Test loss: {sum(test_losses) / len(dataset.test_dataloader):.3f}")
     test_stats.print("Test")
+    CreateChart.createConfusionMatrix(test_stats, "./results/test_conf_matrix.pdf")
     test_stats.reset()
 
 
