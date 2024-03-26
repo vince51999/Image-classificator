@@ -285,7 +285,7 @@ def main(
         dropout_rate_fc=dropout_rate_fc,
     )
     model = model.to(DEVICE)
-    # Check what optimizer better convergence (adam or SGD)
+
     optimizer = Op(
         momentum=momentum,
         lr=lr,
