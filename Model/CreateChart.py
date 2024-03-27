@@ -6,7 +6,9 @@ import pandas as pd
 
 def createConfusionMatrix(stat: Statistics, path):
     df_cm = pd.DataFrame(
-        stat.get_confusion_matrix(), index=stat.get_clesse(), columns=stat.get_clesse()
+        stat.get_confusion_matrix(),
+        index=stat.get_classes(),
+        columns=stat.get_classes(),
     )
     plt.figure(figsize=(15, 12))
     sn.heatmap(df_cm, annot=True, cmap="Blues")
