@@ -4,7 +4,17 @@ import seaborn as sn
 import pandas as pd
 
 
-def createConfusionMatrix(stat: Statistics, path):
+def createConfusionMatrix(stat: Statistics, path: str):
+    """
+    Creates a confusion matrix using the provided statistics and saves it to the provided path.
+
+    Args:
+        stat (Statistics): An instance of the Statistics class containing the necessary data for creating the confusion matrix.
+        path (str): The file path where the confusion matrix will be saved.
+
+    Returns:
+        None
+    """
     df_cm = pd.DataFrame(
         stat.get_confusion_matrix(),
         index=stat.get_classes(),
@@ -18,6 +28,17 @@ def createConfusionMatrix(stat: Statistics, path):
 
 
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
+    """
+    Creates a chart using the provided data and saves it to the provided path.
+
+    Args:
+        xlabel (str): The label for the x-axis.
+        ylabel (str): The label for the y-axis.
+        xdata (list): The data for the x-axis.
+        ydata (list): The data for the y-axis.
+        path (str): The path where the chart will be saved.
+        dataNames (list, optional): The names of the data series. Defaults to ["chart"].
+    """
     plt.xlabel(xlabel, fontsize=10)
     plt.ylabel(ylabel, fontsize=10)
 
