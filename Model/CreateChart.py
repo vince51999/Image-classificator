@@ -4,7 +4,7 @@ import seaborn as sn
 import pandas as pd
 
 
-def createConfusionMatrix(stat: Statistics, path: str):
+def createConfusionMatrix(stat: Statistics, path: str) -> None:
     """
     Creates a confusion matrix using the provided statistics and saves it to the provided path.
 
@@ -30,6 +30,7 @@ def createConfusionMatrix(stat: Statistics, path: str):
 
 
 def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
+) -> None:
     """
     Creates a chart using the provided data and saves it to the provided path.
 
@@ -40,6 +41,9 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
         ydata (list): The data for the y-axis.
         path (str): The path where the chart will be saved.
         dataNames (list, optional): The names of the data series. Defaults to ["chart"].
+
+    Returns:
+        None
     """
     plt.xlabel(xlabel, fontsize=10)
     plt.ylabel(ylabel, fontsize=10)
@@ -59,13 +63,16 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
     plt.clf()
 
 
-def createCharts(train_stats: Statistics, val_stats: Statistics):
+def createCharts(train_stats: Statistics, val_stats: Statistics) -> None:
     """
     Creates charts for various statistics using the provided training and validation statistics.
 
     Args:
         train_stats (Statistics): Training statistics object containing the data for each epoch.
         val_stats (Statistics): Validation statistics object containing the data for each epoch.
+
+    Returns:
+        None
     """
     epochs = train_stats.epochs
     createChart(
