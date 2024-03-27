@@ -20,7 +20,9 @@ def createConfusionMatrix(stat: Statistics, path: str):
         index=stat.get_classes(),
         columns=stat.get_classes(),
     )
-    plt.figure(figsize=(15, 12))
+    size_x = 15 + 0.7 * len(df_cm.columns)
+    size_y = 12 + 0.7 * len(df_cm.index)
+    plt.figure(figsize=(size_x, size_y))
     sn.heatmap(df_cm, annot=True, cmap="Blues")
     plt.title("Confusion Matrix")
     plt.savefig(path, format="pdf", bbox_inches="tight")
