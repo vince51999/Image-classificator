@@ -29,7 +29,13 @@ def createConfusionMatrix(stat: Statistics, path: str) -> None:
     plt.clf()
 
 
-def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
+def createChart(
+    xlabel: str,
+    ylabel: str,
+    xdata: list,
+    ydata: list,
+    path: str,
+    dataNames: list = ["chart"],
 ) -> None:
     """
     Creates a chart using the provided data and saves it to the provided path.
