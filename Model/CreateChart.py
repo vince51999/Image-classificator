@@ -35,6 +35,13 @@ def createChart(xlabel, ylabel, xdata, ydata, path, dataNames=["chart"]):
 
 
 def createCharts(train_stats: Statistics, val_stats: Statistics):
+    """
+    Creates charts for various statistics using the provided training and validation statistics.
+
+    Args:
+        train_stats (Statistics): Training statistics object containing the data for each epoch.
+        val_stats (Statistics): Validation statistics object containing the data for each epoch.
+    """
     epochs = train_stats.epochs
     createChart(
         "Epochs",
