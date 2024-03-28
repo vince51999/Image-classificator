@@ -1,6 +1,7 @@
 import torch
 import Model.EarlyStopping as EarlyStopping
 from Model.Optimizer import Optimizer
+from Model.Criterion import Criterion
 from Model.TinyImageNetDataset import TinyImageNetDataset
 
 
@@ -8,7 +9,7 @@ def train_loop(
     dataset: TinyImageNetDataset,
     model,
     optimizer: Optimizer,
-    criterion,
+    criterion: Criterion,
     device,
     epochs,
     tolerance,
@@ -27,16 +28,15 @@ def train_loop(
             dataset.train_dataloader,
             model,
             optimizer.optimizer,
-            criterion,
+            criterion.criterion,
             device,
             train_stats,
         )
         val_loss_list = __val(
-            dataset.val_dataloader, model, criterion, device, val_stats
+            dataset.val_dataloader, model, criterion.criterion, device, val_stats
         )
         epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
         epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
-
         print(f"\nEpoch #{epoch+1}")
         print(f"Train loss: {epoch_train_loss:.3f}")
         train_stats.print("Training")
@@ -46,6 +46,7 @@ def train_loop(
         val_stats.save_epoch(epoch + 1, epoch_val_loss)
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
+        criterion.step(val_stats.get_confusion_matrix())
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:

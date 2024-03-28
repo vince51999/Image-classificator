@@ -12,6 +12,7 @@ import Model.CreateChart as CreateChart
 
 from Model.TinyImageNetDataset import TinyImageNetDataset as Tind
 from Model.Optimizer import Optimizer as Op
+from Model.Criterion import Criterion as Crit
 
 
 parser = argparse.ArgumentParser(
@@ -294,9 +295,8 @@ def main(
         weight_decay=weight_decay,
         model=model,
     )
-    else:
-    criterion = nn.CrossEntropyLoss()
-
+    print(f"BR scheduler: stepBR, step size: {step}, gamma: {gamma_train_batch_size}")
+    criterion = Crit(num_classes, DEVICE)
     now = datetime.datetime.now()
     trainig_model(
         classes,
@@ -385,7 +385,7 @@ def trainig_model(
         (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
     )
     test_losses = Testing.test(
-        dataset.test_dataloader, model, criterion, DEVICE, test_stats
+        dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
 
     print(f"Test loss: {sum(test_losses) / len(dataset.test_dataloader):.3f}")
