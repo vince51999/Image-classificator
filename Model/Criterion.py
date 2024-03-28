@@ -23,7 +23,7 @@ class Criterion:
             self.criterion = nn.CrossEntropyLoss(weight=class_weights.to(self.DEVICE))
             print(f"Criterion: CrossEntropyLoss")
 
-    def update_classes_weights(self, conf_matrix: np.ndarray) -> None:
+    def step(self, conf_matrix: np.ndarray) -> None:
         """
         Update the classes weights based on the confusion matrix.
 
