@@ -26,7 +26,7 @@ class Criterion:
     def step(self, conf_matrix: np.ndarray) -> None:
         """
         Update the classes weights based on the confusion matrix.
-
+        If the number of classes is 1, the function returns without doing anything.
         Args:
             conf_matrix (np.ndarray): The confusion matrix representing the classification results.
 
