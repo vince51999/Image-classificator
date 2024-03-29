@@ -384,7 +384,7 @@ def trainig_model(
         classes,
         (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
     )
-    test_losses = Testing.test(
+    test_losses = Training.val(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
 
