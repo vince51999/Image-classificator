@@ -1,11 +1,8 @@
 import argparse
 import datetime
 import torch
-import torch.nn as nn
-import random
 
 import Model.NNArchitecture as NNArchitecture
-import Model.Testing as Testing
 import Model.Training as Training
 import Model.Statistics as Statistics
 import Model.CreateChart as CreateChart
