@@ -32,7 +32,7 @@ def train_loop(
             device,
             train_stats,
         )
-        val_loss_list = __val(
+        val_loss_list = val(
             dataset.val_dataloader, model, criterion.criterion, device, val_stats
         )
         epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
