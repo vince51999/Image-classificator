@@ -81,7 +81,7 @@ def __train(trainset, model, optimizer, criterion, device, train_stats):
 
 # Validation function
 @torch.no_grad()
-def __val(valset, model, criterion, device, val_stats):
+def val(valset, model, criterion, device, val_stats):
     model.eval()
     val_loss_list = []
 
