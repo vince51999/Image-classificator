@@ -20,7 +20,7 @@ def train_loop(
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
     for epoch in range(epochs):
-        print(f"\nEPOCH {epoch+1} of {epochs}")
+        print(f"\nEPOCH {epoch+1} of {epochs}\n")
         train_stats.reset()
         val_stats.reset()
 
