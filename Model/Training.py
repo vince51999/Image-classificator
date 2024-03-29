@@ -37,7 +37,6 @@ def train_loop(
         )
         epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
         epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
-        print(f"\nEpoch #{epoch+1}")
         print(f"Train loss: {epoch_train_loss:.3f}")
         train_stats.print("Training")
         print(f"Val loss: {epoch_val_loss:.3f}")
@@ -57,7 +56,6 @@ def train_loop(
 # Training function
 def __train(trainset, model, optimizer, criterion, device, train_stats):
     model.train()
-    print("Training")
     train_loss_list = []
 
     for i, data in enumerate(trainset):
@@ -78,7 +76,6 @@ def __train(trainset, model, optimizer, criterion, device, train_stats):
         loss.backward()
         optimizer.step()
 
-    print("Finished training")
     return train_loss_list
 
 
@@ -86,7 +83,6 @@ def __train(trainset, model, optimizer, criterion, device, train_stats):
 @torch.no_grad()
 def __val(valset, model, criterion, device, val_stats):
     model.eval()
-    print("Validating")
     val_loss_list = []
 
     for i, data in enumerate(valset):
@@ -102,5 +98,4 @@ def __val(valset, model, criterion, device, val_stats):
         val_loss_list.append(loss_value)
         val_stats.update(outputs, labels)
 
-    print("Finished validating")
     return val_loss_list
