@@ -6,6 +6,14 @@ import torch.nn as nn
 class Criterion:
     """
     The criterion class that is used to calculate the loss based on the number of classes in the dataset.
+    
+    Attributes:
+        criterion (nn.Module): The criterion to calculate the loss.
+        num_classes (int): The number of classes in the dataset.
+        DEVICE (_type_): The device where the model is trained.
+        
+    Methods:
+        step(conf_matrix): Update the classes weights based on the confusion matrix.
     """
 
     def __init__(self, num_classes: int, DEVICE):

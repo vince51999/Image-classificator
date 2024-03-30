@@ -1,6 +1,17 @@
 class EarlyStopping:
     """
     Early stopping to stop the training when the loss does not improve after a certain number of epochs.
+
+    Attributes:
+        apply (bool): A flag to apply early stopping.
+        tolerance (int): The number of epochs to wait for improvement before stopping.
+        min_delta (float): The minimum change in the monitored quantity to qualify as an improvement.
+        counter (int): The counter to check the number of epochs without improvement.
+        early_stop (bool): A flag to stop the training.
+
+    Methods:
+        __init__(tolerance, min_delta): Initialize the EarlyStopping class.
+        __call__(train_loss, validation_loss): Check if the training should stop.
     """
 
     def __init__(self, tolerance: int = 5, min_delta: float = 0) -> None:

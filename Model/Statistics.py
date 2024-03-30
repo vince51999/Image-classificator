@@ -3,6 +3,35 @@ from typing import List
 
 
 class Statistics:
+    """
+    A class to calculate and store statistics for a classification model.
+
+    Attributes:
+        classes (List[int]): The list of class labels.
+        sample_class (int): The class label of the sample.
+        epochs (List[int]): The list of epochs.
+        losses (List[float]): The list of loss values.
+        accuracy (List[float]): The list of accuracy values.
+        f_measure (List[float]): The list of F-measure values.
+        recall (List[float]): The list of recall values.
+        precision (List[float]): The list of precision values.
+        conf_matrix (torch.Tensor): The confusion matrix.
+
+    Methods:
+        update(preds, labels): Updates the confusion matrix based on the predicted and true labels.
+        save_epoch(epoch, loss): Saves the epoch and loss values.
+        print(str): Prints the statistics.
+        reset(): Resets the confusion matrix.
+        get_accuracy(): Calculates the accuracy.
+        get_classes_recall(): Calculates the recall for each class.
+        get_classes_precision(): Calculates the precision for each class.
+        get_recall(): Calculates the macro-averaged recall.
+        get_precision(): Calculates the macro-averaged precision.
+        get_f_measure(): Calculates the F-measure.
+        get_confusion_matrix(): Returns the confusion matrix.
+        get_classes(): Returns the list of class labels.
+    """
+
     def __init__(self, classes: List[int], sample_class: int):
         self.classes = classes
         self.sample_class = sample_class
