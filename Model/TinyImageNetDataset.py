@@ -45,7 +45,7 @@ class TinyImageNetDataset(Dataset):
             imagenet_idx=False,
             transform=transforms.RandomHorizontalFlip(p=0),
         )
-        test = TinyImageNet(
+        val = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"),
             split="val",
             imagenet_idx=False,
@@ -54,25 +54,25 @@ class TinyImageNetDataset(Dataset):
         if classes is not None and len(classes) < 200:
             self.num_classes = len(classes)
             train = self.__split_classes(train, classes, 500)
-            test = self.__split_classes(test, classes, 50)
+            val = self.__split_classes(val, classes, 50)
             train = self.__update_labels(train, classes)
-            test = self.__update_labels(test, classes)
+            val = self.__update_labels(val, classes)
         else:
             self.num_classes = 200
 
-        train, val = self.__split_set(train, self.num_classes, 500, split=0.1)
-        self.test = test
-        self.val = self.__apply_transforms(val, transform)
+        # pointer to same memory
+        self.val = val
+        self.test = val
+
         self.train = self.__get_trainset(transform, increment, train)
+
         self.train_dataloader = DataLoader(
             self.train, batch_size=train_batch_size, shuffle=True
         )
         self.val_dataloader = DataLoader(
             self.val, batch_size=eval_batch_size, shuffle=False
         )
-        self.test_dataloader = DataLoader(
-            self.test, batch_size=eval_batch_size, shuffle=False
-        )
+        self.test_dataloader = self.val_dataloader
 
     def __mean_std(self, classes):
         if classes is None or len(classes) > 30:
