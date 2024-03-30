@@ -4,6 +4,10 @@ import torch.nn as nn
 
 
 class Criterion:
+    """
+    The criterion class that is used to calculate the loss based on the number of classes in the dataset.
+    """
+
     def __init__(self, num_classes: int, DEVICE):
         """
         Initialize the criterion based on the number of classes.
