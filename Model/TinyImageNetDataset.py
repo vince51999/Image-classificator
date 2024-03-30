@@ -34,7 +34,7 @@ class TinyImageNetDataset(Dataset):
                 transforms.Resize(
                     [224, 224], interpolation=transforms.InterpolationMode.BICUBIC
                 ),
-                transforms.GaussianBlur(kernel_size=(7, 7), sigma=(0.1)),
+                transforms.GaussianBlur(kernel_size=(3, 3), sigma=(1)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=mean, std=std),
             ]
