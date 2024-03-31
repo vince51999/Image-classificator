@@ -25,11 +25,11 @@ def get_nn_architecture(
         type = "resnet50"
     if pretrained is False:
         print(f"Architecture: not-pretrained {type}")
-        model = torch.hub.load("pytorch/vision:v0.10.0", type)
+        model = torch.hub.load("pytorch/vision:v0.17.0", type)
         model.apply(__init_weights)
     else:
         print(f"Architecture: pretrained {type}")
-        model = torch.hub.load("pytorch/vision:v0.10.0", type, weights="IMAGENET1K_V1")
+        model = torch.hub.load("pytorch/vision:v0.17.0", type, weights="IMAGENET1K_V1")
 
     if dropout_rate_bb > 0:
         __append_dropout(model, type, rate=dropout_rate_bb)
