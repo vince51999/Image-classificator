@@ -127,8 +127,16 @@ parser.add_argument(
     type=float,
 )
 parser.add_argument(
-    "--pretrained",
-    help="Use pre-trained model or not. If 1, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
+    "--fine_tune",
+    help="Fine tune the model or not. If 1, the model is fine-tuned. If False, the model is trained from scratch.",
+    required=True,
+    default="",
+    type=int,
+)
+
+parser.add_argument(
+    "--transfer_learning",
+    help="Use transfer learning or not. If 1, the model is pre-trained on ImageNet. If False, the model is trained from scratch.",
     required=True,
     default="",
     type=int,
@@ -175,9 +183,12 @@ momentum = args.momentum
 weight_decay = args.weight_decay
 dropout_rate_bb = args.dropout_rate_bb
 dropout_rate_fc = args.dropout_rate_fc
-pretrained = False
-if args.pretrained == 1:
-    pretrained = True
+fine_tune = False
+if args.fine_tune == 1:
+    fine_tune = True
+transfer_learning = False
+if args.transfer_learning == 1 and fine_tune == False:
+    transfer_learning = True
 test = False
 if args.test == 1:
     test = True
@@ -230,7 +241,8 @@ def main(
     weight_decay: float = 0,
     dropout_rate_bb: float = 0.2,
     dropout_rate_fc: float = 0.5,
-    pretrained: bool = False,
+    fine_tune: bool = False,
+    transfer_learning: bool = False,
     test: bool = False,
     increases_trainset: int = 2,
     step: int = 1,
@@ -252,7 +264,8 @@ def main(
         weight_decay (float, optional): _description_. Defaults to 0.
         dropout_rate_bb (float, optional): Dropout convolutional layers. Defaults to 0.2.
         dropout_rate_fc (float, optional): Dropout fc layers. Defaults to 0.5.
-        pretrained (bool, optional): If true we load a pretrained model. Defaults to False.
+        fine_tune (bool, optional): If true we use pre-trained model. Defaults to False.
+        transfer_learning (bool, optional): If true we use transfer learning. Defaults to False.
         test (bool, optional): If true we use 10 class careful selected. Defaults to False.
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
     """
@@ -283,7 +296,8 @@ def main(
     model = NNArchitecture.get_nn_architecture(
         type=architecture,
         num_classes=num_classes,
-        pretrained=pretrained,
+        fine_tune=fine_tune,
+        transfer_learning=transfer_learning,
         dropout_rate_bb=dropout_rate_bb,
         dropout_rate_fc=dropout_rate_fc,
     )
@@ -409,7 +423,8 @@ main(
     weight_decay,
     dropout_rate_bb,
     dropout_rate_fc,
-    pretrained,
+    fine_tune,
+    transfer_learning,
     test,
     increases_trainset,
     step,

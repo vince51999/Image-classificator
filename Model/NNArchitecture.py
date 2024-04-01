@@ -5,7 +5,8 @@ import torch.nn as nn
 def get_nn_architecture(
     type="resnet50",
     num_classes=200,
-    pretrained=False,
+    fine_tune=False,
+    transfer_learning=False,
     dropout_rate_bb=0.2,
     dropout_rate_fc=0.5,
 ):
@@ -15,7 +16,8 @@ def get_nn_architecture(
     Args:
         type (str, optional): Architecture type. Defaults to "resnet50".
         num_classes (int, optional): Number of output classes. Defaults to 200.
-        pretrained (bool, optional): Use pretrained model. Defaults to False.
+        fine_tune (bool, optional): Fine-tune the model. Defaults to False.
+        transfer_learning (bool, optional): Transfer learning. Defaults to False.
         dropout_rate_bb (float, optional): Dropout rate before the fully connected layer. Defaults to 0.2.
         dropout_rate_fc (float, optional): Dropout rate before the fully connected layer. Defaults to 0.5.
     Returns:
@@ -23,20 +25,25 @@ def get_nn_architecture(
     """
     if type != "resnet18" and type != "resnet50":
         type = "resnet50"
-    if pretrained is False:
+    if fine_tune is False and transfer_learning is False:
         print(f"Architecture: not-pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type)
         model.apply(__init_weights)
-    else:
+    elif fine_tune is True or transfer_learning is True:
         print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type, weights="IMAGENET1K_V1")
 
-    if dropout_rate_bb > 0:
-        __append_dropout(model, type, rate=dropout_rate_bb)
-    # define a new head for the detector with required number of classes
-    if dropout_rate_fc > 0:
-        avgpool = model.avgpool
-        model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
+    if transfer_learning is True:
+        print("Transfer learning")
+        for param in model.parameters():
+            param.requires_grad = False
+    else:
+        if dropout_rate_bb > 0:
+            __append_dropout(model, type, rate=dropout_rate_bb)
+        # define a new head for the detector with required number of classes
+        if dropout_rate_fc > 0:
+            avgpool = model.avgpool
+            model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
 
     in_features = model.fc.in_features
     fc = nn.Linear(in_features, num_classes)
