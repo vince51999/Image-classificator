@@ -326,7 +326,7 @@ def main(
         model=model,
     )
     print(f"BR scheduler: stepBR, step size: {step}, gamma: {gamma_train_batch_size}")
-    criterion = Crit(num_classes, DEVICE, step_size=step)
+    criterion = Crit(num_classes)
     now = datetime.datetime.now()
     trainig_model(
         classes,

@@ -45,7 +45,6 @@ def train_loop(
         val_stats.save_epoch(epoch + 1, epoch_val_loss)
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
-        criterion.step(val_stats.get_confusion_matrix())
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
