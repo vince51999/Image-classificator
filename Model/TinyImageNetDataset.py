@@ -21,6 +21,7 @@ class TinyImageNetDataset(Dataset):
         eval_batch_size: int,
         classes=None,
         increment: int = 2,
+        image_size: int = 64,
         step_size: int = 2,
         gamma=2,
     ):
@@ -31,14 +32,22 @@ class TinyImageNetDataset(Dataset):
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
-                transforms.Resize(
-                    [128, 128], interpolation=transforms.InterpolationMode.BICUBIC
-                ),
-                transforms.GaussianBlur(kernel_size=(3, 3), sigma=(1)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=mean, std=std),
             ]
         )
+        if image_size > 64:
+            transform = transforms.Compose(
+                [
+                    transforms.Resize(
+                        [image_size, image_size],
+                        interpolation=transforms.InterpolationMode.BICUBIC,
+                    ),
+                    transforms.GaussianBlur(kernel_size=(3, 3), sigma=(1)),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=mean, std=std),
+                ]
+            )
         train = TinyImageNet(
             Path("~/.torchvision/tinyimagenet/"),
             split="train",

@@ -156,6 +156,13 @@ parser.add_argument(
     type=int,
 )
 parser.add_argument(
+    "--image_size",
+    help="Image size to use for training. Default is 64.",
+    required=True,
+    default="",
+    type=int,
+)
+parser.add_argument(
     "--step",
     help="Step size for the learning rate and batch size scheduler. Learning rate is multiplied by this factor after every step.",
     required=True,
@@ -194,6 +201,9 @@ if args.test == 1:
     test = True
     num_classes = 10
 increases_trainset = args.increases_trainset
+image_size = 64
+if args.image_size > 64:
+    image_size = args.image_size
 step = args.step
 if step < 1:
     step = 1
@@ -245,6 +255,7 @@ def main(
     transfer_learning: bool = False,
     test: bool = False,
     increases_trainset: int = 2,
+    image_size: int = 64,
     step: int = 1,
 ):
     """
@@ -268,6 +279,8 @@ def main(
         transfer_learning (bool, optional): If true we use transfer learning. Defaults to False.
         test (bool, optional): If true we use 10 class careful selected. Defaults to False.
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
+        image_size (int, optional): Image size. Defaults to 64.
+        step (int, optional): Step size for the learning rate scheduler. Defaults to 1.
     """
     classes = classes_list(c, num_classes, test)
     dataset = Tind(
@@ -275,6 +288,7 @@ def main(
         eval_batch_size,
         classes=classes,
         increment=increases_trainset,
+        image_size=image_size,
         step_size=step,
         gamma=gamma_train_batch_size,
     )
@@ -286,7 +300,7 @@ def main(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
     print(
-        f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}"
+        f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
     )
     print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
     print(
@@ -427,5 +441,6 @@ main(
     transfer_learning,
     test,
     increases_trainset,
+    image_size,
     step,
 )
