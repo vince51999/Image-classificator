@@ -10,9 +10,7 @@ class Criterion:
     Attributes:
         criterion (nn.Module): The criterion to calculate the loss.
         num_classes (int): The number of classes in the dataset.
-        DEVICE (_type_): The device where the model is trained.
-        delta (float): The delta value to adjust the classes weights.
-
+        
     Methods:
         step(conf_matrix, verbose): Update the classes weights based on the confusion matrix.
     """
