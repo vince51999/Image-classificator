@@ -15,7 +15,12 @@ from Model.Criterion import Criterion as Crit
 directory = "./results"
 if not os.path.exists(directory):
     os.makedirs(directory)
-
+directory = "./results/logs"
+if not os.path.exists(directory):
+    os.makedirs(directory)
+else:
+    for file in os.listdir(directory):
+        os.remove(os.path.join(directory, file))
 
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
