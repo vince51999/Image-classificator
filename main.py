@@ -390,11 +390,11 @@ def trainig_model(
     """
     train_stats = Statistics.Statistics(
         classes,
-        (len(dataset.train_dataloader) * train_batch_size) / num_classes,
+        len(dataset.train) / num_classes,
     )
     val_stats = Statistics.Statistics(
         classes,
-        (len(dataset.val_dataloader) * eval_batch_size) / num_classes,
+        len(dataset.val) / num_classes,
     )
 
     Training.train_loop(
@@ -414,7 +414,7 @@ def trainig_model(
 
     test_stats = Statistics.Statistics(
         classes,
-        (len(dataset.test_dataloader) * eval_batch_size) / num_classes,
+        len(dataset.test) / num_classes,
     )
     test_losses = Training.val(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
