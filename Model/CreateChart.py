@@ -10,7 +10,9 @@ from Model.Statistics import Statistics
 from torch.utils.tensorboard import SummaryWriter
 
 
-def createConfusionMatrix(stat: Statistics, name: str, writer: SummaryWriter):
+def createConfusionMatrix(
+    stat: Statistics, name: str, writer: SummaryWriter, epoch: int = 0
+) -> None:
     """
     Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
 
@@ -35,7 +37,7 @@ def createConfusionMatrix(stat: Statistics, name: str, writer: SummaryWriter):
 
     # Convert the plot to a NumPy array
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format="png")
     buf.seek(0)
     cm_image_bytes = buf.getvalue()
     buf.close()
@@ -48,7 +50,7 @@ def createConfusionMatrix(stat: Statistics, name: str, writer: SummaryWriter):
     tensor_image = torch.tensor(np_array)
 
     # Write the image to TensorBoard
-    writer.add_image(name, tensor_image, dataformats='HWC')
+    writer.add_image(name, tensor_image, dataformats="HWC", global_step=epoch)
 
 
 def createChart(
