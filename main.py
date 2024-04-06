@@ -389,14 +389,9 @@ def trainig_model(
         tolerance (int): Early stopping tolerance.
         min_delta (float): Minimum change in validation loss to be considered as an improvement.
     """
-    train_stats = Statistics.Statistics(
-        classes,
-        len(dataset.train) / num_classes,
-    )
-    val_stats = Statistics.Statistics(
-        classes,
-        len(dataset.val) / num_classes,
-    )
+
+    train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes)
+    val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes)
 
     Training.train_loop(
         dataset,
@@ -415,10 +410,7 @@ def trainig_model(
 
     CreateChart.createCharts(train_stats, val_stats, writer)
 
-    test_stats = Statistics.Statistics(
-        classes,
-        len(dataset.test) / num_classes,
-    )
+    test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes)
     test_losses = Training.val(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
