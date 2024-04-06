@@ -393,6 +393,8 @@ def trainig_model(
     train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes)
     val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes)
 
+    writer = SummaryWriter("./results/logs")
+
     Training.train_loop(
         dataset,
         model,
@@ -404,9 +406,9 @@ def trainig_model(
         min_delta,
         train_stats,
         val_stats,
+        writer,
     )
 
-    writer = SummaryWriter("./results/logs")
 
     CreateChart.createCharts(train_stats, val_stats, writer)
 
