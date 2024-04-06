@@ -1,16 +1,22 @@
-import matplotlib.pyplot as plt
-import Model.Statistics as Statistics
-import seaborn as sn
 import pandas as pd
+import seaborn as sn
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+from PIL import Image
+from Model.Statistics import Statistics
+
+from torch.utils.tensorboard import SummaryWriter
 
 
-def createConfusionMatrix(stat: Statistics, path: str) -> None:
+def createConfusionMatrix(stat: Statistics, name: str, writer: SummaryWriter):
     """
-    Creates a confusion matrix using the provided statistics and saves it to the provided path.
+    Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
 
     Args:
         stat (Statistics): An instance of the Statistics class containing the necessary data for creating the confusion matrix.
-        path (str): The file path where the confusion matrix will be saved.
+        writer (SummaryWriter): TensorBoard SummaryWriter object.
 
     Returns:
         None
@@ -20,56 +26,62 @@ def createConfusionMatrix(stat: Statistics, path: str) -> None:
         index=stat.get_classes(),
         columns=stat.get_classes(),
     )
-    size_x = 15 + 0.7 * len(df_cm.columns)
-    size_y = 12 + 0.7 * len(df_cm.index)
-    plt.figure(figsize=(size_x, size_y))
+
+    # Plot the confusion matrix
+    plt.figure(figsize=(15 + 0.7 * len(df_cm.columns), 12 + 0.7 * len(df_cm.index)))
     sn.heatmap(df_cm, annot=True, cmap="Blues")
     plt.title("Confusion Matrix")
-    plt.savefig(path, format="pdf", bbox_inches="tight")
-    plt.clf()
+    plt.tight_layout()
+
+    # Convert the plot to a NumPy array
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    cm_image_bytes = buf.getvalue()
+    buf.close()
+
+    # Convert the byte buffer to a NumPy array
+    img = Image.open(io.BytesIO(cm_image_bytes))
+    np_array = np.array(img)
+
+    # Convert the NumPy array to a tensor
+    tensor_image = torch.tensor(np_array)
+
+    # Write the image to TensorBoard
+    writer.add_image(name, tensor_image, dataformats='HWC')
 
 
 def createChart(
-    xlabel: str,
     ylabel: str,
     xdata: list,
     ydata: list,
-    path: str,
+    writer: SummaryWriter,
     dataNames: list = ["chart"],
-) -> None:
+):
     """
-    Creates a chart using the provided data and saves it to the provided path.
+    Creates a chart using the provided data and saves it to TensorBoard.
 
     Args:
         xlabel (str): The label for the x-axis.
         ylabel (str): The label for the y-axis.
         xdata (list): The data for the x-axis.
         ydata (list): The data for the y-axis.
-        path (str): The path where the chart will be saved.
+        writer (SummaryWriter): TensorBoard SummaryWriter object to write the chart.
         dataNames (list, optional): The names of the data series. Defaults to ["chart"].
 
     Returns:
         None
     """
-    plt.xlabel(xlabel, fontsize=10)
-    plt.ylabel(ylabel, fontsize=10)
-
     for index, name in enumerate(dataNames):
-        plt.plot(
-            xdata,
-            ydata[index],
-            linestyle="solid",
-            linewidth=2,
-            label=name,
-        )
-    plt.title(f"Training results", fontsize=12)
-    if dataNames[0] != "chart":
-        plt.legend()
-    plt.savefig(path, format="pdf", bbox_inches="tight")
-    plt.clf()
+        for x, y in zip(xdata, ydata[index]):
+            writer.add_scalar(f"{ylabel}/{name}", y, x)
 
 
-def createCharts(train_stats: Statistics, val_stats: Statistics) -> None:
+def createCharts(
+    train_stats: Statistics,
+    val_stats: Statistics,
+    writer: SummaryWriter,
+) -> None:
     """
     Creates charts for various statistics using the provided training and validation statistics.
 
@@ -82,42 +94,38 @@ def createCharts(train_stats: Statistics, val_stats: Statistics) -> None:
     """
     epochs = train_stats.epochs
     createChart(
-        "Epochs",
         "Losses",
         epochs,
         [train_stats.losses, val_stats.losses],
-        "./results/loss.pdf",
+        writer,
         ["train_losses", "val_losses"],
     )
     createChart(
-        "Epochs",
         "Accuracy",
         epochs,
         [train_stats.accuracy, val_stats.accuracy],
-        "./results/accuracy.pdf",
+        writer,
         ["train_accuracy", "val_accuracy"],
     )
-    createChart(
-        "Epochs",
-        "F-Measure",
-        epochs,
-        [train_stats.f_measure, val_stats.f_measure],
-        "./results/f_measure.pdf",
-        ["train_f_measure", "val_f_measure"],
-    )
-    createChart(
-        "Epochs",
-        "Recall",
-        epochs,
-        [train_stats.recall, val_stats.recall],
-        "./results/recall.pdf",
-        ["train_recall", "val_recall"],
-    )
-    createChart(
-        "Epochs",
-        "Precision",
-        epochs,
-        [train_stats.precision, val_stats.precision],
-        "./results/precision.pdf",
-        ["train_precision", "val_precision"],
-    )
+    if len(train_stats.classes) > 1:
+        createChart(
+            "F-Measure",
+            epochs,
+            [train_stats.f_measure, val_stats.f_measure],
+            writer,
+            ["train_f_measure", "val_f_measure"],
+        )
+        createChart(
+            "Recall",
+            epochs,
+            [train_stats.recall, val_stats.recall],
+            writer,
+            ["train_recall", "val_recall"],
+        )
+        createChart(
+            "Precision",
+            epochs,
+            [train_stats.precision, val_stats.precision],
+            writer,
+            ["train_precision", "val_precision"],
+        )
