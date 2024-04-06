@@ -44,29 +44,46 @@ class Statistics:
         self.conf_matrix = torch.zeros(len(classes), len(classes))
 
     def update(self, preds, labels):
-        _, preds = torch.max(preds, 1)
-        for t, p in zip(labels.view(-1), preds.view(-1)):
-            self.conf_matrix[t.long(), p.long()] += 1
+        if len(self.classes) == 1:
+            preds = (preds > 0.5).float()
+            self.conf_matrix[0, 0] += torch.sum(preds == True).item()
+        else:
+            _, preds = torch.max(preds, 1)
+            for t, p in zip(labels.view(-1), preds.view(-1)):
+                self.conf_matrix[t.long(), p.long()] += 1
 
-    def save_epoch(self, epoch: int, loss: float):
+    def step(self, epoch: int, loss: float, name: str, verbose: bool = False):
         self.epochs.append(epoch)
         self.losses.append(loss)
-        self.accuracy.append(self.get_accuracy())
-        self.f_measure.append(self.get_f_measure())
-        self.recall.append(self.get_recall())
-        self.precision.append(self.get_precision())
+        accuracy = self.get_accuracy()
+        self.accuracy.append(accuracy)
+        if len(self.classes) > 1:
+            f_measure = self.get_f_measure()
+            self.f_measure.append(f_measure)
+            recall = self.get_recall()
+            self.recall.append(recall)
+            precision = self.get_precision()
+            self.precision.append(precision)
+        if verbose:
+            self.print(name)
 
-    def print(self, str: str):
-        print(f"------- {str} -------")
-        print(f"------- Accuracy: {self.get_accuracy():.3f}")
-        print(f"------- F-Measure: {self.get_f_measure():.3f}")
-        print(f"------- Recall: {self.get_recall():.3f}")
-        print(f"------- Precision: {self.get_precision():.3f}\n")
+    def print(self, name: str):
+        l = len(self.epochs) - 1
+        print(f"{name}")
+        print(f"Loss: {self.losses[l]:.3f}")
+        print(f"Accuracy: {self.accuracy[l]:.3f}")
+        if len(self.classes) > 1:
+            print(f"F-Measure: {self.f_measure[l]:.3f}")
+            print(f"Recall: {self.recall[l]:.3f}")
+            print(f"Precision: {self.precision[l]:.3f}\n")
 
     def reset(self):
         self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))
 
     def get_accuracy(self):
+        if len(self.classes) == 1:
+            print(self.conf_matrix[0, 0], self.sample_class)
+            return self.conf_matrix[0, 0] / self.sample_class
         # accuracy = (TP + TN) / (TP + TN + FP + FN)
         return self.conf_matrix.diag().sum() / self.conf_matrix.sum()
 
