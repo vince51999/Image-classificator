@@ -11,6 +11,7 @@ import Model.CreateChart as CreateChart
 from Model.TinyImageNetDataset import TinyImageNetDataset as Tind
 from Model.Optimizer import Optimizer as Op
 from Model.Criterion import Criterion as Crit
+from torch.utils.tensorboard import SummaryWriter
 
 directory = "./results"
 if not os.path.exists(directory):
@@ -410,7 +411,9 @@ def trainig_model(
         val_stats,
     )
 
-    CreateChart.createCharts(train_stats, val_stats)
+    writer = SummaryWriter("./results/logs")
+
+    CreateChart.createCharts(train_stats, val_stats, writer)
 
     test_stats = Statistics.Statistics(
         classes,
@@ -420,9 +423,11 @@ def trainig_model(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
 
-    print(f"Test loss: {sum(test_losses) / len(dataset.test_dataloader):.3f}")
-    test_stats.print("Test")
-    CreateChart.createConfusionMatrix(test_stats, "./results/test_conf_matrix.pdf")
+    loss = sum(test_losses) / len(dataset.test_dataloader)
+    test_stats.step(0, loss, "Test", verbose=True)
+    CreateChart.createConfusionMatrix(test_stats, "Test conf matrix", writer)
+
+    writer.close()
     test_stats.reset()
 
 
