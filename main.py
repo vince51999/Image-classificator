@@ -341,8 +341,6 @@ def main(
         optimizer,
         criterion,
         num_classes,
-        train_batch_size,
-        eval_batch_size,
         num_epochs,
         tolerance,
         min_delta,
@@ -367,8 +365,6 @@ def trainig_model(
     optimizer: torch.optim.Optimizer,
     criterion: torch.nn.Module,
     num_classes: int,
-    train_batch_size: int,
-    eval_batch_size: int,
     num_epochs: int,
     tolerance: int,
     min_delta: float,
@@ -383,8 +379,6 @@ def trainig_model(
         optimizer (torch.optim.Optimizer): The optimizer to use for training.
         criterion (torch.nn.Module): The criterion to use for training.
         num_classes (int): Number of classes in the dataset.
-        train_batch_size (int): Batch size for training.
-        eval_batch_size (int): Batch size for evaluation.
         num_epochs (int): Number of epochs to train for.
         tolerance (int): Early stopping tolerance.
         min_delta (float): Minimum change in validation loss to be considered as an improvement.
@@ -408,7 +402,6 @@ def trainig_model(
         val_stats,
         writer,
     )
-
 
     CreateChart.createCharts(train_stats, val_stats, writer)
 
