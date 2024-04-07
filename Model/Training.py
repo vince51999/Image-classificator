@@ -1,11 +1,11 @@
 import torch
 import Model.EarlyStopping as EarlyStopping
+import Model.Statistics as Statistics
+
 from Model.Optimizer import Optimizer
 from Model.Criterion import Criterion
 from Model.Results import Results as Res
-
 from Model.TinyImageNetDataset import TinyImageNetDataset
-
 
 
 def train_loop(
@@ -17,14 +17,14 @@ def train_loop(
     epochs,
     tolerance,
     min_delta,
-    train_stats,
-    val_stats,
+    train_stats: Statistics,
+    val_stats: Statistics,
     res: Res,
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
     for epoch in range(epochs):
-        print(f"\nEPOCH {epoch+1} of {epochs}\n")
+        res.print(f"\nEPOCH {epoch+1} of {epochs}\n")
         train_stats.reset()
         val_stats.reset()
 
@@ -41,18 +41,21 @@ def train_loop(
         )
         epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
         epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
-        train_stats.step(epoch + 1, epoch_train_loss, "Train", verbose=True)
-        val_stats.step(epoch + 1, epoch_val_loss, "Val", verbose=True)
+        train_stats.step(epoch + 1, epoch_train_loss, "Train")
+        val_stats.step(epoch + 1, epoch_val_loss, "Val")
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         if len(train_stats.get_classes()) > 1:
             res.createConfusionMatrix(
-                val_stats, "Val conf matrix", epoch + 1
+                val_stats.get_confusion_matrix(),
+                val_stats.get_classes(),
+                "Val conf matrix",
+                epoch + 1,
             )
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
-            print("Early stop at epoch:", epoch + 1)
+            res.print("Early stop at epoch:", epoch + 1)
             return
 
 

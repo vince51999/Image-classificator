@@ -1,8 +1,11 @@
 import torch
 import torch.nn as nn
 
+from Model.Results import Results as Res
+
 
 def get_nn_architecture(
+    res: Res,
     type="resnet50",
     num_classes=200,
     fine_tune=False,
@@ -23,18 +26,19 @@ def get_nn_architecture(
     Returns:
         The model with the specified architecture.
     """
-    if type != "resnet18" and type != "resnet50":
+    res = res
+    if type != "resnet18" and type != "resnet50" and type != "resnet101":
         type = "resnet50"
     if fine_tune is False and transfer_learning is False:
-        print(f"Architecture: not-pretrained {type}")
+        res.print(f"Architecture: not-pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type)
         model.apply(__init_weights)
     elif fine_tune is True or transfer_learning is True:
-        print(f"Architecture: pretrained {type}")
+        res.print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type, weights="IMAGENET1K_V1")
 
     if transfer_learning is True:
-        print("Transfer learning")
+        res.print("Transfer learning")
         for param in model.parameters():
             param.requires_grad = False
     else:

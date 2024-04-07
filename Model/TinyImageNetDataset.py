@@ -1,8 +1,10 @@
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
+
 from tinyimagenet import TinyImageNet
 from pathlib import Path
+from Model.Results import Results as Res
 
 
 class TinyImageNetDataset(Dataset):
@@ -17,6 +19,7 @@ class TinyImageNetDataset(Dataset):
 
     def __init__(
         self,
+        res: Res,
         train_batch_size: int,
         eval_batch_size: int,
         classes=None,
@@ -29,6 +32,7 @@ class TinyImageNetDataset(Dataset):
         self.step_size = step_size
         self.gamma = gamma
         self.itr = 0
+        self.res = res
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
@@ -197,4 +201,4 @@ class TinyImageNetDataset(Dataset):
                 self.train, batch_size=self.train_batch_size, shuffle=True
             )
         if verbose:
-            print("Batch size:", self.train_batch_size)
+            self.res.print(f"Batch size: {self.train_batch_size}")

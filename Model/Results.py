@@ -1,3 +1,5 @@
+import datetime
+from typing import List
 import pandas as pd
 import seaborn as sn
 import torch
@@ -6,7 +8,6 @@ import matplotlib.pyplot as plt
 import io
 import os
 from PIL import Image
-from Model.Statistics import Statistics
 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -17,28 +18,35 @@ class Results:
         directory = "./results"
         if not os.path.exists(directory):
             os.makedirs(directory)
-        else:
-            for file in os.listdir(directory):
-                if os.path.isfile(file):
-                    os.remove(os.path.join(directory, file))
+        now = datetime.datetime.now()
+        directory = "./results/res_" + str(now.strftime("%d_%m_%Y__%H_%M_%S"))
 
-        file = "./results/output.txt"
-        with open(file, "w") as file:
-            file.write("")
-
-        directory = "./results/logs"
         if not os.path.exists(directory):
             os.makedirs(directory)
-        else:
-            for file in os.listdir(directory):
-                os.remove(os.path.join(directory, file))
-        self.writer = SummaryWriter("./results/logs")
+
+        output_file = directory + "/output.txt"
+        with open(output_file, "w") as file:
+            file.write("")
+        self.output = output_file
+
+        logs_directory = directory + "/logs"
+        if not os.path.exists(logs_directory):
+            os.makedirs(logs_directory)
+        self.logs = logs_directory
+
+    def open(self) -> None:
+        self.writer = SummaryWriter(self.logs)
 
     def close(self) -> None:
         self.writer.close()
 
+    def print(self, content):
+        print(content)
+        with open(self.output, "a") as file:
+            file.write(content + "\n")
+
     def createConfusionMatrix(
-        self, stat: Statistics, name: str, epoch: int = 0
+        self, cm: torch.Tensor, classes: List[int], name: str, epoch: int = 0
     ) -> None:
         """
         Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
@@ -51,9 +59,9 @@ class Results:
             None
         """
         df_cm = pd.DataFrame(
-            stat.get_confusion_matrix(),
-            index=stat.get_classes(),
-            columns=stat.get_classes(),
+            cm,
+            index=classes,
+            columns=classes,
         )
 
         # Plot the confusion matrix
@@ -79,75 +87,10 @@ class Results:
         # Write the image to TensorBoard
         self.writer.add_image(name, tensor_image, dataformats="HWC", global_step=epoch)
 
-    def createChart(
+    def addScalar(
         self,
-        ylabel: str,
-        xdata: list,
-        ydata: list,
-        dataNames: list = ["chart"],
+        name: str,
+        value: list,
+        step: list,
     ):
-        """
-        Creates a chart using the provided data and saves it to TensorBoard.
-
-        Args:
-            xlabel (str): The label for the x-axis.
-            ylabel (str): The label for the y-axis.
-            xdata (list): The data for the x-axis.
-            ydata (list): The data for the y-axis.
-            writer (SummaryWriter): TensorBoard SummaryWriter object to write the chart.
-            dataNames (list, optional): The names of the data series. Defaults to ["chart"].
-
-        Returns:
-            None
-        """
-        for index, name in enumerate(dataNames):
-            for x, y in zip(xdata, ydata[index]):
-                self.writer.add_scalar(f"{ylabel}/{name}", y, x)
-
-    def createCharts(
-        self,
-        train_stats: Statistics,
-        val_stats: Statistics,
-    ) -> None:
-        """
-        Creates charts for various statistics using the provided training and validation statistics.
-
-        Args:
-            train_stats (Statistics): Training statistics object containing the data for each epoch.
-            val_stats (Statistics): Validation statistics object containing the data for each epoch.
-
-        Returns:
-            None
-        """
-        epochs = train_stats.epochs
-        self.createChart(
-            "Losses",
-            epochs,
-            [train_stats.losses, val_stats.losses],
-            ["train_losses", "val_losses"],
-        )
-        self.createChart(
-            "Accuracy",
-            epochs,
-            [train_stats.accuracy, val_stats.accuracy],
-            ["train_accuracy", "val_accuracy"],
-        )
-        if len(train_stats.classes) > 1:
-            self.createChart(
-                "F-Measure",
-                epochs,
-                [train_stats.f_measure, val_stats.f_measure],
-                ["train_f_measure", "val_f_measure"],
-            )
-            self.createChart(
-                "Recall",
-                epochs,
-                [train_stats.recall, val_stats.recall],
-                ["train_recall", "val_recall"],
-            )
-            self.createChart(
-                "Precision",
-                epochs,
-                [train_stats.precision, val_stats.precision],
-                ["train_precision", "val_precision"],
-            )
+        self.writer.add_scalar(name, value, step)

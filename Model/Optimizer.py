@@ -1,5 +1,6 @@
 import torch
 import torch.optim as optim
+from Model.Results import Results as Res
 
 
 class Optimizer:
@@ -15,6 +16,7 @@ class Optimizer:
         gamma_lr: float,
         weight_decay: float,
         model: torch.nn.Module,
+        res: Res,
     ):
         """
         Initialize the optimizer and the learning rate scheduler.
@@ -26,20 +28,21 @@ class Optimizer:
             weight_decay (float): Weight decay for the optimizer.
             model (torch.nn.Module): The model to optimize.
         """
+        self.res = res
         self.optimizer = None
         if momentum == 0.0:
             self.optimizer = optim.Adam(
                 model.parameters(), lr=lr, weight_decay=weight_decay
             )
-            print(f"Optimizer: Adam, lr: {lr}, weight_decay: {weight_decay}")
+            self.res.print(f"Optimizer: Adam, lr: {lr}, weight_decay: {weight_decay}")
         else:
             self.optimizer = optim.SGD(
                 model.parameters(), lr=lr, momentum=momentum, weight_decay=weight_decay
             )
-            print(
+            self.res.print(
                 f"Optimizer: SGD, lr: {lr}, momentum: {momentum}, weight_decay: {weight_decay}"
             )
-        print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
+        self.res.print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
 
         self.scheduler1 = optim.lr_scheduler.StepLR(
             self.optimizer, step_size=step, gamma=gamma_lr
@@ -60,4 +63,5 @@ class Optimizer:
         if self.optimizer.param_groups[0]["lr"] < 0.000001:
             self.optimizer.param_groups[0]["lr"] = 0.000001
         if verbose:
-            print("Learning rate:", self.optimizer.param_groups[0]["lr"])
+            lr = self.optimizer.param_groups[0]["lr"]
+            self.res.print(f"Learning rate: {lr}")

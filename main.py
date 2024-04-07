@@ -277,8 +277,13 @@ def main(
         image_size (int, optional): Image size. Defaults to 64.
         step (int, optional): Step size for the learning rate scheduler. Defaults to 1.
     """
+
+    res = Res()
+    res.open()
+
     classes = classes_list(c, num_classes, test)
     dataset = Tind(
+        res,
         train_batch_size,
         eval_batch_size,
         classes=classes,
@@ -288,21 +293,22 @@ def main(
         gamma=gamma_train_batch_size,
     )
     if test:
-        print(f"Test mode on {num_classes} classes: {classes}")
+        res.print(f"Test mode on {num_classes} classes: {classes}")
     else:
-        print(f"Not test mode on {num_classes} classes: {classes}")
-    print(
+        res.print(f"Not test mode on {num_classes} classes: {classes}")
+    res.print(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
-    print(
+    res.print(
         f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
     )
-    print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
-    print(
+    res.print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
+    res.print(
         f"Dropout rate basicBlock: {dropout_rate_bb}, Dropout rate final layer: {dropout_rate_fc}"
     )
 
     model = NNArchitecture.get_nn_architecture(
+        res,
         type=architecture,
         num_classes=num_classes,
         fine_tune=fine_tune,
@@ -319,9 +325,12 @@ def main(
         gamma_lr=gamma_lr,
         weight_decay=weight_decay,
         model=model,
+        res=res,
     )
-    print(f"BR scheduler: stepBR, step size: {step}, gamma: {gamma_train_batch_size}")
-    criterion = Crit(num_classes)
+    res.print(
+        f"BR scheduler: stepBR, step size: {step}, gamma: {gamma_train_batch_size}"
+    )
+    criterion = Crit(num_classes, res)
     now = datetime.datetime.now()
     trainig_model(
         classes,
@@ -333,6 +342,7 @@ def main(
         num_epochs,
         tolerance,
         min_delta,
+        res,
     )
     later = datetime.datetime.now()
     difference = (later - now).total_seconds()
@@ -374,8 +384,8 @@ def trainig_model(
         min_delta (float): Minimum change in validation loss to be considered as an improvement.
     """
 
-    train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes)
-    val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes)
+    train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes, res)
+    val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes, res)
 
     inputs, labels = next(iter(dataset.train_dataloader))
     grid = torchvision.utils.make_grid(inputs)
@@ -396,16 +406,16 @@ def trainig_model(
         res,
     )
 
-    res.createCharts(train_stats, val_stats)
-
-    test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes)
+    test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes, res)
     test_losses = Training.val(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
 
     loss = sum(test_losses) / len(dataset.test_dataloader)
-    test_stats.step(0, loss, "Test", verbose=True)
-    res.createConfusionMatrix(test_stats, "Test conf matrix")
+    test_stats.step(0, loss, "Test", log=False)
+    res.createConfusionMatrix(
+        test_stats.get_confusion_matrix(), test_stats.get_classes(), "Test conf matrix"
+    )
     test_stats.reset()
     res.close()
 
