@@ -2,10 +2,11 @@ import torch
 import Model.EarlyStopping as EarlyStopping
 from Model.Optimizer import Optimizer
 from Model.Criterion import Criterion
-import Model.CreateChart as CreateChart
+from Model.Results import Results as Res
 
 from Model.TinyImageNetDataset import TinyImageNetDataset
-from torch.utils.tensorboard import SummaryWriter
+
+
 
 def train_loop(
     dataset: TinyImageNetDataset,
@@ -18,7 +19,7 @@ def train_loop(
     min_delta,
     train_stats,
     val_stats,
-    writer: SummaryWriter,
+    res: Res,
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
@@ -45,7 +46,9 @@ def train_loop(
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         if len(train_stats.get_classes()) > 1:
-            CreateChart.createConfusionMatrix(val_stats, "Val conf matrix", writer, epoch + 1)
+            res.createConfusionMatrix(
+                val_stats, "Val conf matrix", epoch + 1
+            )
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
