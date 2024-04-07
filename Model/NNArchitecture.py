@@ -10,8 +10,10 @@ def get_nn_architecture(
     num_classes=200,
     fine_tune=False,
     transfer_learning=False,
-    dropout_rate_bb=0.2,
+    dropout_rate_rb=0.2,
     dropout_rate_fc=0.5,
+    dropout_pos_rb=0,
+    dropout_pos_fc=0,
 ):
     """
     Classification architecture is like a Resnet.
@@ -42,8 +44,16 @@ def get_nn_architecture(
         for param in model.parameters():
             param.requires_grad = False
     else:
-        if dropout_rate_bb > 0:
-            __append_dropout(model, type, rate=dropout_rate_bb)
+        if dropout_rate_rb > 0:
+            if dropout_pos_rb == 1:
+                __append_dropout_before_each_relu(model, rate=dropout_rate_rb)
+                res.print("Dropout before each ReLU")
+            elif dropout_pos_rb == 2:
+                __append_dropout_after_each_relu(model, rate=dropout_rate_rb)
+                res.print("Dropout after each ReLU")
+            else:
+                __append_dropout(model, type, rate=dropout_rate_rb)
+                res.print("Dropout before the last convolutional layer")
         # define a new head for the detector with required number of classes
         if dropout_rate_fc > 0:
             avgpool = model.avgpool
@@ -103,6 +113,24 @@ def __append_dropout(model, type, rate=0.2):
             if dropout_before == name:
                 new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
                 setattr(model, name, new)
+
+
+def __append_dropout_before_each_relu(model, rate=0.2):
+    for name, module in model.named_children():
+        if len(list(module.children())) > 0:
+            __append_dropout_before_each_relu(module, rate=rate)
+        if isinstance(module, nn.ReLU):
+            new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
+            setattr(model, name, new)
+
+
+def __append_dropout_after_each_relu(model, rate=0.2):
+    for name, module in model.named_children():
+        if len(list(module.children())) > 0:
+            __append_dropout_after_each_relu(module, rate=rate)
+        if isinstance(module, nn.ReLU):
+            new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
+            setattr(model, name, new)
 
 
 def __init_weights(self):

@@ -108,7 +108,7 @@ parser.add_argument(
     type=float,
 )
 parser.add_argument(
-    "--dropout_rate_bb",
+    "--dropout_rate_rb",
     help="Dropout rate for basicBlock of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
     required=True,
     default="",
@@ -117,6 +117,20 @@ parser.add_argument(
 parser.add_argument(
     "--dropout_rate_fc",
     help="Dropout rate for final layer of resNet model. If 0, no dropout. If non-zero, dropout is added after every ReLU layer.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--dropout_pos_rb",
+    help="Dropout position for basicBlock of resNet model. If 0, after each residual block, If 1 before ReLU, If 2 after ReLU.",
+    required=True,
+    default="",
+    type=float,
+)
+parser.add_argument(
+    "--dropout_pos_fc",
+    help="Dropout position in the head of resNet model. If 0, before avgpool, If 1 after avgpool.",
     required=True,
     default="",
     type=float,
@@ -183,7 +197,7 @@ if gamma_lr <= 0:
     gamma_lr = 1
 momentum = args.momentum
 weight_decay = args.weight_decay
-dropout_rate_bb = args.dropout_rate_bb
+dropout_rate_rb = args.dropout_rate_rb
 dropout_rate_fc = args.dropout_rate_fc
 fine_tune = False
 if args.fine_tune == 1:
@@ -202,6 +216,12 @@ if args.image_size > 64:
 step = args.step
 if step < 1:
     step = 1
+dropout_pos_rb = args.dropout_pos_rb
+dropout_pos_fc = args.dropout_pos_fc
+if dropout_pos_rb < 0 or dropout_pos_rb > 2:
+    dropout_pos_rb = 0
+if dropout_pos_fc < 0 or dropout_pos_fc > 1:
+    dropout_pos_fc = 0
 
 if c < 0 or c > 199:
     c = 0
@@ -252,6 +272,8 @@ def main(
     increases_trainset: int = 2,
     image_size: int = 64,
     step: int = 1,
+    dropout_pos_rb: int = 0,
+    dropout_pos_fc: int = 0,
 ):
     """
     Train the model on the dataset ot search best parameters for the model.
@@ -276,6 +298,8 @@ def main(
         increases_trainset (int, optional): Number of times that we increse trainig set with data augmentation. Defaults to 2.
         image_size (int, optional): Image size. Defaults to 64.
         step (int, optional): Step size for the learning rate scheduler. Defaults to 1.
+        dropout_pos_rb (int, optional): Position of dropout in basic block. Defaults to 0.
+        dropout_pos_fc (int, optional): Position of dropout in the head. Defaults to 0.
     """
 
     res = Res()
@@ -313,8 +337,10 @@ def main(
         num_classes=num_classes,
         fine_tune=fine_tune,
         transfer_learning=transfer_learning,
-        dropout_rate_bb=dropout_rate_bb,
+        dropout_rate_rb=dropout_rate_rb,
         dropout_rate_fc=dropout_rate_fc,
+        dropout_pos_rb=dropout_pos_rb,
+        dropout_pos_fc=dropout_pos_fc,
     )
     model = model.to(DEVICE)
 
@@ -434,7 +460,7 @@ main(
     gamma_lr,
     momentum,
     weight_decay,
-    dropout_rate_bb,
+    dropout_rate_rb,
     dropout_rate_fc,
     fine_tune,
     transfer_learning,
@@ -442,4 +468,6 @@ main(
     increases_trainset,
     image_size,
     step,
+    dropout_pos_rb,
+    dropout_pos_fc,
 )
