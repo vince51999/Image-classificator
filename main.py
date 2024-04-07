@@ -1,27 +1,16 @@
 import argparse
 import datetime
 import torch
-import os
+import torchvision
 
 import Model.NNArchitecture as NNArchitecture
 import Model.Training as Training
 import Model.Statistics as Statistics
-import Model.CreateChart as CreateChart
 
 from Model.TinyImageNetDataset import TinyImageNetDataset as Tind
 from Model.Optimizer import Optimizer as Op
 from Model.Criterion import Criterion as Crit
-from torch.utils.tensorboard import SummaryWriter
-
-directory = "./results"
-if not os.path.exists(directory):
-    os.makedirs(directory)
-directory = "./results/logs"
-if not os.path.exists(directory):
-    os.makedirs(directory)
-else:
-    for file in os.listdir(directory):
-        os.remove(os.path.join(directory, file))
+from Model.Results import Results as Res
 
 parser = argparse.ArgumentParser(
     prog="ImageNet Training",
@@ -368,6 +357,7 @@ def trainig_model(
     num_epochs: int,
     tolerance: int,
     min_delta: float,
+    res: Res,
 ):
     """
     Train the model on the dataset.
@@ -387,7 +377,10 @@ def trainig_model(
     train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes)
     val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes)
 
-    writer = SummaryWriter("./results/logs")
+    inputs, labels = next(iter(dataset.train_dataloader))
+    grid = torchvision.utils.make_grid(inputs)
+    res.writer.add_image("images", grid, 0)
+    res.writer.add_graph(model.to(DEVICE), inputs.to(DEVICE))
 
     Training.train_loop(
         dataset,
@@ -400,10 +393,10 @@ def trainig_model(
         min_delta,
         train_stats,
         val_stats,
-        writer,
+        res,
     )
 
-    CreateChart.createCharts(train_stats, val_stats, writer)
+    res.createCharts(train_stats, val_stats)
 
     test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes)
     test_losses = Training.val(
@@ -412,10 +405,9 @@ def trainig_model(
 
     loss = sum(test_losses) / len(dataset.test_dataloader)
     test_stats.step(0, loss, "Test", verbose=True)
-    CreateChart.createConfusionMatrix(test_stats, "Test conf matrix", writer)
-
-    writer.close()
+    res.createConfusionMatrix(test_stats, "Test conf matrix")
     test_stats.reset()
+    res.close()
 
 
 main(
