@@ -372,15 +372,16 @@ def main(
     )
     later = datetime.datetime.now()
     difference = (later - now).total_seconds()
-    seconds = difference
-    minutes = seconds / 60
-    hours = minutes / 60
-    if hours > 1:
-        print(f"Training time: {hours:.3f} hours")
-    elif minutes > 1:
-        print(f"Training time: {minutes:.3f} minutes")
+    hours = int(difference // 3600)
+    minutes = int((difference % 3600) // 60)
+    seconds = int(difference % 60)
+
+    if hours > 0:
+        res.print(f"Training time: {hours} hours, {minutes} minutes, {seconds} seconds")
+    elif minutes > 0:
+        res.print(f"Training time: {minutes} minutes, {seconds} seconds")
     else:
-        print(f"Training time: {difference:.3f} seconds")
+        res.print(f"Training time: {seconds} seconds")
 
 
 def trainig_model(
