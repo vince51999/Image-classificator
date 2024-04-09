@@ -70,12 +70,12 @@ class Statistics:
             precision = self.get_precision()
             self.precision.append(precision)
         if verbose:
-            self.print(name, epoch)
+            self.print(name)
         if log:
             self.log(name, epoch)
 
-    def print(self, name: str, epoch: int):
-        l = epoch - 1
+    def print(self, name: str):
+        l = len(self.epochs) - 1
         self.res.print(f"{name}")
         self.res.print(f"Loss: {self.losses[l]:.3f}")
         self.res.print(f"Accuracy: {self.accuracy[l]:.3f}")
@@ -85,7 +85,7 @@ class Statistics:
             self.res.print(f"Precision: {self.precision[l]:.3f}\n")
 
     def log(self, name: str, epoch: int):
-        l = epoch - 1
+        l = len(self.epochs) - 1
         self.res.addScalar(f"Loss/{name}", self.losses[l], epoch)
         self.res.addScalar(f"Accuracy/{name}", self.accuracy[l], epoch)
         if len(self.classes) > 1:
