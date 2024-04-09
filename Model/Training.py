@@ -1,6 +1,7 @@
 import torch
 import Model.EarlyStopping as EarlyStopping
 import Model.Statistics as Statistics
+import Model.NNArchitecture as NNArchitecture
 
 from Model.Optimizer import Optimizer
 from Model.Criterion import Criterion
@@ -14,6 +15,7 @@ def train_loop(
     optimizer: Optimizer,
     criterion: Criterion,
     device,
+    start_epoch,
     epochs,
     tolerance,
     min_delta,
@@ -23,7 +25,7 @@ def train_loop(
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
-    for epoch in range(epochs):
+    for epoch in range(start_epoch, epochs):
         res.print(f"\nEPOCH {epoch+1} of {epochs}\n")
         train_stats.reset()
         val_stats.reset()
@@ -52,11 +54,23 @@ def train_loop(
                 "Val conf matrix",
                 epoch + 1,
             )
+        if epoch % 2 == 0:
+            NNArchitecture.save_checkpoint(
+                res.directory,
+                epoch,
+                model,
+                optimizer,
+                criterion,
+            )
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
             res.print("Early stop at epoch:", epoch + 1)
+            NNArchitecture.save_checkpoint(
+                res.directory, epoch, model, optimizer, criterion
+            )
             return
+    NNArchitecture.save_checkpoint(res.directory, epoch, model, optimizer, criterion)
 
 
 # Training function
@@ -74,6 +88,10 @@ def __train(trainset, model, optimizer, criterion, device, train_stats):
         inputs, labels = inputs.to(device), labels.to(device)
 
         outputs = model(inputs)
+        if len(train_stats.get_classes()) == 1:
+            outputs = outputs.view(-1)
+            labels = torch.tensor([1.0 for l in labels]).to(device)
+
         loss = criterion(outputs, labels)
         loss_value = loss.item()
         train_loss_list.append(loss_value)
@@ -98,6 +116,11 @@ def val(valset, model, criterion, device, val_stats):
         # put data to device
         inputs, labels = inputs.to(device), labels.to(device)
         outputs = model(inputs)
+
+        if len(val_stats.get_classes()) == 1:
+            outputs = outputs.view(-1)
+            labels = torch.tensor([1.0 for l in labels]).to(device)
+
         loss = criterion(outputs, labels)
 
         loss_value = loss.item()

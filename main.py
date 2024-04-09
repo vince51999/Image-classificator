@@ -178,9 +178,18 @@ parser.add_argument(
     default="",
     type=int,
 )
+parser.add_argument(
+    "--checkpoint",
+    help="Path to the checkpoint to load the model from. If is 'none', the model is trained from scratch.",
+    required=True,
+    default="",
+    type=str,
+)
+
 args = parser.parse_args()
 
 architecture = args.architecture
+checkpoint = args.checkpoint
 c = args.cls
 num_classes = args.num_classes
 num_epochs = args.num_epochs
@@ -252,6 +261,7 @@ def classes_list(given_class, num_classes=200, test=False):
 
 def main(
     architecture: str = "resnet50",
+    checkpoint: str = "none",
     c: int = 0,
     num_classes: int = 200,
     num_epochs: int = 10,
@@ -328,6 +338,7 @@ def main(
     )
     res.print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
 
+    start_epoch = 0
     model = NNArchitecture.get_nn_architecture(
         res,
         type=architecture,
@@ -350,6 +361,12 @@ def main(
         model=model,
         res=res,
     )
+    if checkpoint != "none":
+        print(f"Loading checkpoint: {checkpoint}")
+        start_epoch, model, optimizer, criterion = NNArchitecture.load_checkpoint(
+            checkpoint, model, optimizer, criterion
+        )
+
     inputs, labels = next(iter(dataset.train_dataloader))
     grid = torchvision.utils.make_grid(inputs)
     res.writer.add_image("images", grid, 0)
@@ -363,6 +380,7 @@ def main(
         optimizer,
         criterion,
         num_classes,
+        start_epoch,
         num_epochs,
         tolerance,
         min_delta,
@@ -389,6 +407,7 @@ def trainig_model(
     optimizer: torch.optim.Optimizer,
     criterion: torch.nn.Module,
     num_classes: int,
+    start_epoch: int,
     num_epochs: int,
     tolerance: int,
     min_delta: float,
