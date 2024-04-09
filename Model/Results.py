@@ -13,7 +13,6 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Results:
-
     def __init__(self) -> None:
         directory = "./results"
         if not os.path.exists(directory):
@@ -23,7 +22,7 @@ class Results:
 
         if not os.path.exists(directory):
             os.makedirs(directory)
-
+        self.directory = directory
         output_file = directory + "/output.txt"
         with open(output_file, "w") as file:
             file.write("")
