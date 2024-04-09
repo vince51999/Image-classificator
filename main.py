@@ -264,7 +264,7 @@ def main(
     gamma_lr: float = 0.3,
     momentum: float = 0.0,
     weight_decay: float = 0,
-    dropout_rate_bb: float = 0.2,
+    dropout_rate_rb: float = 0.2,
     dropout_rate_fc: float = 0.5,
     fine_tune: bool = False,
     transfer_learning: bool = False,
@@ -290,7 +290,7 @@ def main(
         lr (float, optional): Learning rate. Defaults to 0.001.
         momentum (float, optional): Momentum of SGD optimizer. If 0.0 optimizer is used Adam optimizar. Defaults to 0.0.
         weight_decay (float, optional): _description_. Defaults to 0.
-        dropout_rate_bb (float, optional): Dropout convolutional layers. Defaults to 0.2.
+        dropout_rate_rb (float, optional): Dropout convolutional layers. Defaults to 0.2.
         dropout_rate_fc (float, optional): Dropout fc layers. Defaults to 0.5.
         fine_tune (bool, optional): If true we use pre-trained model. Defaults to False.
         transfer_learning (bool, optional): If true we use transfer learning. Defaults to False.
@@ -306,16 +306,6 @@ def main(
     res.open()
 
     classes = classes_list(c, num_classes, test)
-    dataset = Tind(
-        res,
-        train_batch_size,
-        eval_batch_size,
-        classes=classes,
-        increment=increases_trainset,
-        image_size=image_size,
-        step_size=step,
-        gamma=gamma_train_batch_size,
-    )
     if test:
         res.print(f"Test mode on {num_classes} classes: {classes}")
     else:
@@ -323,13 +313,20 @@ def main(
     res.print(
         f"Num epochs: {num_epochs}, Train batch size: {train_batch_size}, Eval batch size: {eval_batch_size}"
     )
+    dataset = Tind(
+        res=res,
+        train_batch_size=train_batch_size,
+        eval_batch_size=eval_batch_size,
+        classes=classes,
+        increment=increases_trainset,
+        image_size=image_size,
+        step_size=step,
+        gamma=gamma_train_batch_size,
+    )
     res.print(
         f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
     )
     res.print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
-    res.print(
-        f"Dropout rate basicBlock: {dropout_rate_bb}, Dropout rate final layer: {dropout_rate_fc}"
-    )
 
     model = NNArchitecture.get_nn_architecture(
         res,
@@ -343,7 +340,7 @@ def main(
         dropout_pos_fc=dropout_pos_fc,
     )
     model = model.to(DEVICE)
-
+    criterion = Crit(num_classes, res)
     optimizer = Op(
         momentum=momentum,
         lr=lr,
@@ -353,10 +350,11 @@ def main(
         model=model,
         res=res,
     )
-    res.print(
-        f"BR scheduler: stepBR, step size: {step}, gamma: {gamma_train_batch_size}"
-    )
-    criterion = Crit(num_classes, res)
+    inputs, labels = next(iter(dataset.train_dataloader))
+    grid = torchvision.utils.make_grid(inputs)
+    res.writer.add_image("images", grid, 0)
+    res.writer.add_graph(model.to(DEVICE), inputs.to(DEVICE))
+
     now = datetime.datetime.now()
     trainig_model(
         classes,
@@ -414,23 +412,19 @@ def trainig_model(
     train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes, res)
     val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes, res)
 
-    inputs, labels = next(iter(dataset.train_dataloader))
-    grid = torchvision.utils.make_grid(inputs)
-    res.writer.add_image("images", grid, 0)
-    res.writer.add_graph(model.to(DEVICE), inputs.to(DEVICE))
-
     Training.train_loop(
-        dataset,
-        model,
-        optimizer,
-        criterion,
-        DEVICE,
-        num_epochs,
-        tolerance,
-        min_delta,
-        train_stats,
-        val_stats,
-        res,
+        dataset=dataset,
+        model=model,
+        optimizer=optimizer,
+        criterion=criterion,
+        device=DEVICE,
+        tolerance=tolerance,
+        min_delta=min_delta,
+        train_stats=train_stats,
+        val_stats=val_stats,
+        res=res,
+        start_epoch=start_epoch,
+        epochs=num_epochs,
     )
 
     test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes, res)
@@ -448,27 +442,28 @@ def trainig_model(
 
 
 main(
-    architecture,
-    c,
-    num_classes,
-    num_epochs,
-    eval_batch_size,
-    train_batch_size,
-    gamma_train_batch_size,
-    tolerance,
-    min_delta,
-    lr,
-    gamma_lr,
-    momentum,
-    weight_decay,
-    dropout_rate_rb,
-    dropout_rate_fc,
-    fine_tune,
-    transfer_learning,
-    test,
-    increases_trainset,
-    image_size,
-    step,
-    dropout_pos_rb,
-    dropout_pos_fc,
+    architecture=architecture,
+    checkpoint=checkpoint,
+    c=c,
+    num_classes=num_classes,
+    num_epochs=num_epochs,
+    eval_batch_size=eval_batch_size,
+    train_batch_size=train_batch_size,
+    gamma_train_batch_size=gamma_train_batch_size,
+    tolerance=tolerance,
+    min_delta=min_delta,
+    lr=lr,
+    gamma_lr=gamma_lr,
+    momentum=momentum,
+    weight_decay=weight_decay,
+    dropout_rate_rb=dropout_rate_rb,
+    dropout_rate_fc=dropout_rate_fc,
+    fine_tune=fine_tune,
+    transfer_learning=transfer_learning,
+    test=test,
+    increases_trainset=increases_trainset,
+    image_size=image_size,
+    step=step,
+    dropout_pos_rb=dropout_pos_rb,
+    dropout_pos_fc=dropout_pos_fc,
 )
