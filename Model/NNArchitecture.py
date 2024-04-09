@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+from Model.Optimizer import Optimizer as Op
+from Model.Criterion import Criterion as Crit
 from Model.Results import Results as Res
 
 
@@ -164,3 +166,36 @@ def __init_weights(self):
 
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
+
+
+def save_checkpoint(
+    path: str, epoch: int, model: torch.nn.Module, optimizer: Op, criterion: Crit
+):
+    """
+    Function to save the trained model till current epoch, or whenver called
+    """
+    epoch = epoch + 1
+    path = path + "/resNet_epoch" + str(epoch) + ".pth"
+    opti, stepLR = optimizer.state_dict()
+    torch.save(
+        {
+            "epoch": epoch,
+            "model": model.state_dict(),
+            "optimizer": opti,
+            "stepLR": stepLR,
+            "criterion": criterion.state_dict(),
+        },
+        path,
+    )
+
+
+def load_checkpoint(path: str, model: torch.nn.Module, optimizer: Op, criterion: Crit):
+    """
+    Function to load the trained model
+    """
+    checkpoint = torch.load(path)
+    epoch = checkpoint["epoch"]
+    model.load_state_dict(checkpoint["model"])
+    optimizer.load_state_dict(checkpoint["optimizer"], checkpoint["stepLR"])
+    criterion.load_state_dict(checkpoint["criterion"])
+    return epoch, model, optimizer, criterion
