@@ -57,7 +57,12 @@ def get_nn_architecture(
         # define a new head for the detector with required number of classes
         if dropout_rate_fc > 0:
             avgpool = model.avgpool
-            model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
+            if dropout_pos_fc == 1:
+                model.avgpool = nn.Sequential(avgpool, nn.Dropout(dropout_rate_fc))
+                res.print("Dropout after the average pooling layer")
+            else:
+                model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
+                res.print("Dropout before the average pooling layer")
 
     in_features = model.fc.in_features
     fc = nn.Linear(in_features, num_classes)
