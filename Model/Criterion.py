@@ -30,3 +30,9 @@ class Criterion:
         else:
             self.criterion = nn.CrossEntropyLoss()
             res.print(f"Criterion: CrossEntropyLoss")
+
+    def state_dict(self):
+        return self.criterion.state_dict()
+
+    def load_state_dict(self, state_dict):
+        self.criterion.load_state_dict(state_dict)

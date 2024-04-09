@@ -44,9 +44,16 @@ class Optimizer:
             )
         self.res.print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
 
-        self.scheduler1 = optim.lr_scheduler.StepLR(
+        self.stepLR = optim.lr_scheduler.StepLR(
             self.optimizer, step_size=step, gamma=gamma_lr
         )
+
+    def state_dict(self):
+        return self.optimizer.state_dict(), self.stepLR.state_dict()
+
+    def load_state_dict(self, optimizer_state_dict, scheduler_state_dict):
+        self.optimizer.load_state_dict(optimizer_state_dict)
+        self.stepLR.load_state_dict(scheduler_state_dict)
 
     def step(self, verbose: bool = False) -> None:
         """
@@ -59,7 +66,7 @@ class Optimizer:
             None
         """
         if self.optimizer.param_groups[0]["lr"] > 0.000001:
-            self.scheduler1.step()
+            self.stepLR.step()
         if self.optimizer.param_groups[0]["lr"] < 0.000001:
             self.optimizer.param_groups[0]["lr"] = 0.000001
         if verbose:
