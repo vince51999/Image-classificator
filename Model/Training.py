@@ -60,6 +60,7 @@ def train_loop(
                 epoch,
                 model,
                 optimizer,
+                dataset,
                 criterion,
             )
         # early stopping
@@ -67,10 +68,12 @@ def train_loop(
         if early_stopping.early_stop:
             res.print("Early stop at epoch:", epoch + 1)
             NNArchitecture.save_checkpoint(
-                res.directory, epoch, model, optimizer, criterion
+                res.directory, epoch, model, optimizer, dataset, criterion
             )
             return
-    NNArchitecture.save_checkpoint(res.directory, epoch, model, optimizer, criterion)
+    NNArchitecture.save_checkpoint(
+        res.directory, epoch, model, optimizer, dataset, criterion
+    )
 
 
 # Training function

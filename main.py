@@ -363,8 +363,10 @@ def main(
     )
     if checkpoint != "none":
         print(f"Loading checkpoint: {checkpoint}")
-        start_epoch, model, optimizer, criterion = NNArchitecture.load_checkpoint(
-            checkpoint, model, optimizer, criterion
+        start_epoch, model, optimizer, dataset, criterion = (
+            NNArchitecture.load_checkpoint(
+                checkpoint, model, optimizer, dataset, criterion
+            )
         )
 
     inputs, labels = next(iter(dataset.train_dataloader))

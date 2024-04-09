@@ -1,3 +1,4 @@
+from typing import List
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
@@ -33,9 +34,7 @@ class TinyImageNetDataset(Dataset):
         self.gamma = gamma
         self.itr = 0
         self.res = res
-        res.print(
-            f"BR scheduler: stepBR, step size: {step_size}, gamma: {gamma}"
-        )
+        res.print(f"BR scheduler: stepBR, step size: {step_size}, gamma: {gamma}")
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
@@ -205,3 +204,10 @@ class TinyImageNetDataset(Dataset):
             )
         if verbose:
             self.res.print(f"Batch size: {self.train_batch_size}")
+
+    def state_dict(self):
+        return [self.itr, self.train_batch_size]
+
+    def load_state_dict(self, state_dict: List[int]):
+        self.itr = state_dict[0]
+        self.train_batch_size = state_dict[1]

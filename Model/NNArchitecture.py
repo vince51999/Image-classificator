@@ -4,6 +4,7 @@ import torch.nn as nn
 from Model.Optimizer import Optimizer as Op
 from Model.Criterion import Criterion as Crit
 from Model.Results import Results as Res
+from Model.TinyImageNetDataset import TinyImageNetDataset as Tind
 
 
 def get_nn_architecture(
@@ -172,7 +173,12 @@ def __init_weights(self):
 
 
 def save_checkpoint(
-    path: str, epoch: int, model: torch.nn.Module, optimizer: Op, criterion: Crit
+    path: str,
+    epoch: int,
+    model: torch.nn.Module,
+    optimizer: Op,
+    dataset: Tind,
+    criterion: Crit,
 ):
     """
     Function to save the trained model till current epoch, or whenver called
@@ -186,13 +192,16 @@ def save_checkpoint(
             "model": model.state_dict(),
             "optimizer": opti,
             "stepLR": stepLR,
+            "stepBS": dataset.state_dict(),
             "criterion": criterion.state_dict(),
         },
         path,
     )
 
 
-def load_checkpoint(path: str, model: torch.nn.Module, optimizer: Op, criterion: Crit):
+def load_checkpoint(
+    path: str, model: torch.nn.Module, optimizer: Op, dataset: Tind, criterion: Crit
+):
     """
     Function to load the trained model
     """
@@ -200,5 +209,6 @@ def load_checkpoint(path: str, model: torch.nn.Module, optimizer: Op, criterion:
     epoch = checkpoint["epoch"]
     model.load_state_dict(checkpoint["model"])
     optimizer.load_state_dict(checkpoint["optimizer"], checkpoint["stepLR"])
+    dataset.load_state_dict(checkpoint["stepBS"])
     criterion.load_state_dict(checkpoint["criterion"])
-    return epoch, model, optimizer, criterion
+    return epoch, model, optimizer, dataset, criterion
