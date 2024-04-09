@@ -33,6 +33,9 @@ class TinyImageNetDataset(Dataset):
         self.gamma = gamma
         self.itr = 0
         self.res = res
+        res.print(
+            f"BR scheduler: stepBR, step size: {step_size}, gamma: {gamma}"
+        )
         mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [

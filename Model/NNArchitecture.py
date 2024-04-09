@@ -46,6 +46,9 @@ def get_nn_architecture(
         for param in model.parameters():
             param.requires_grad = False
     else:
+        res.print(
+            f"Dropout rate basicBlock: {dropout_rate_rb}, Dropout rate final layer: {dropout_rate_fc}"
+        )
         if dropout_rate_rb > 0:
             if dropout_pos_rb == 1:
                 __append_dropout_before_each_relu(model, rate=dropout_rate_rb)
