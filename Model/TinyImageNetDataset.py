@@ -148,8 +148,8 @@ class TinyImageNetDataset(Dataset):
         self.itr += 1
         if self.itr % self.step_size == 0:
             self.train_batch_size = int(self.train_batch_size * self.gamma)
-            if self.train_batch_size > 512:
-                self.train_batch_size = 512
+            if self.train_batch_size > 256:
+                self.train_batch_size = 256
             if self.train_batch_size < 4:
                 self.train_batch_size = 4
             self.train_dataloader = DataLoader(
