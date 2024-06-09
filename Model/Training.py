@@ -72,7 +72,7 @@ def train_loop(
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
         if early_stopping.early_stop:
-            res.print("Early stop at epoch:", epoch + 1)
+            res.print(f"Early stopping at epoch {epoch+1}")
             NNArchitecture.save_checkpoint(
                 res.directory, epoch, model, optimizer, dataset, criterion
             )
