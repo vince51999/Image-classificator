@@ -185,7 +185,13 @@ parser.add_argument(
     default="",
     type=str,
 )
-
+parser.add_argument(
+    "--lr_scheduler",
+    help="Learning rate scheduler to use. Default is StepLR. Options are StepLR, CosineAnnealingWarmRestarts.",
+    required=True,
+    default="",
+    type=str,
+)
 args = parser.parse_args()
 
 architecture = args.architecture
@@ -231,7 +237,7 @@ if dropout_pos_rb < 0 or dropout_pos_rb > 2:
     dropout_pos_rb = 0
 if dropout_pos_fc < 0 or dropout_pos_fc > 1:
     dropout_pos_fc = 0
-
+lr_scheduler = args.lr_scheduler
 if c < 0 or c > 199:
     c = 0
 if num_classes < 1 or num_classes > 200:
@@ -284,6 +290,7 @@ def main(
     step: int = 1,
     dropout_pos_rb: int = 0,
     dropout_pos_fc: int = 0,
+    lr_scheduler: str = "StepLR",
 ):
     """
     Train the model on the dataset ot search best parameters for the model.
@@ -310,6 +317,7 @@ def main(
         step (int, optional): Step size for the learning rate scheduler. Defaults to 1.
         dropout_pos_rb (int, optional): Position of dropout in basic block. Defaults to 0.
         dropout_pos_fc (int, optional): Position of dropout in the head. Defaults to 0.
+        lr_scheduler (str, optional): Learning rate scheduler. Defaults to "StepLR".
     """
 
     res = Res()
@@ -360,6 +368,7 @@ def main(
         weight_decay=weight_decay,
         model=model,
         res=res,
+        scheduler=lr_scheduler,
     )
     if checkpoint != "none":
         print(f"Loading checkpoint: {checkpoint}")
@@ -487,4 +496,5 @@ main(
     step=step,
     dropout_pos_rb=dropout_pos_rb,
     dropout_pos_fc=dropout_pos_fc,
+    lr_scheduler=lr_scheduler,
 )
