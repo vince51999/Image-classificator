@@ -22,6 +22,7 @@ def train_loop(
     train_stats: Statistics,
     val_stats: Statistics,
     res: Res,
+    aug_online=False,
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
 
@@ -45,6 +46,8 @@ def train_loop(
         epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
         train_stats.step(epoch + 1, epoch_train_loss, "Train")
         val_stats.step(epoch + 1, epoch_val_loss, "Val")
+        if aug_online:
+            dataset.augumentation(verbose=True)
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         if len(train_stats.get_classes()) > 1:
