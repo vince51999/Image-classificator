@@ -67,6 +67,7 @@ lr_scheduler="CosineAnnealingWarmRestarts"
 # Parameters for data augmentation, the minimum size of the image is 64x64
 increases_trainset=0
 image_size=64
+aug_online=0
 
 # Load the model from the checkpoint
 # checkpoint is the path to the checkpoint
@@ -77,6 +78,6 @@ module load miniconda3
 source "$CONDA_PREFIX/etc/profile.d/conda.sh"
 conda activate myenv
 
-python ./main.py --architecture "$architecture" --cls "$cls" --num_classes "$num_classes" --num_epochs "$num_epochs" --eval_batch_size "$eval_batch_size" --train_batch_size "$train_batch_size" --gamma_train_batch_size "$gamma_train_batch_size" --tolerance "$tolerance" --min_delta "$min_delta" --lr "$lr" --gamma_lr "$gamma_lr" --momentum "$momentum" --weight_decay "$weight_decay" --dropout_rate_rb "$dropout_rate_rb" --dropout_rate_fc "$dropout_rate_fc" --fine_tune "$fine_tune" --transfer_learning "$transfer_learning" --test "$is_test" --increases_trainset "$increases_trainset" --image_size "$image_size" --step "$step" --dropout_pos_rb "$dropout_pos_rb" --dropout_pos_fc "$dropout_pos_fc" --checkpoint "$checkpoint" --lr_scheduler "$lr_scheduler"
+python ./main.py --architecture "$architecture" --cls "$cls" --num_classes "$num_classes" --num_epochs "$num_epochs" --eval_batch_size "$eval_batch_size" --train_batch_size "$train_batch_size" --gamma_train_batch_size "$gamma_train_batch_size" --tolerance "$tolerance" --min_delta "$min_delta" --lr "$lr" --gamma_lr "$gamma_lr" --momentum "$momentum" --weight_decay "$weight_decay" --dropout_rate_rb "$dropout_rate_rb" --dropout_rate_fc "$dropout_rate_fc" --fine_tune "$fine_tune" --transfer_learning "$transfer_learning" --test "$is_test" --increases_trainset "$increases_trainset" --image_size "$image_size" --step "$step" --dropout_pos_rb "$dropout_pos_rb" --dropout_pos_fc "$dropout_pos_fc" --checkpoint "$checkpoint" --lr_scheduler "$lr_scheduler" --aug_online "$aug_online"
 
 conda deactivate

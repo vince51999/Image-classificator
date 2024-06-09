@@ -51,6 +51,8 @@ SET lr_scheduler="CosineAnnealingWarmRestarts"
 REM parameters for data augmentation, the minimum size of the image is 64x64
 SET increases_trainset=0
 SET image_size=64
+REM if aug_online=1, the data augmentation is applied online
+SET aug_online=1
 
 REM load the model from the checkpoint
 REM checkpoint is the path to the checkpoint
@@ -58,4 +60,4 @@ REM none: train the model from scratch
 SET checkpoint="none"
 
 
-python "%CD%\main.py" "--architecture" "%architecture%" "--cls" "%cls%" "--num_classes" "%num_classes%" "--num_epochs" "%num_epochs%" "--eval_batch_size" "%eval_batch_size%" "--train_batch_size" "%train_batch_size%" "--gamma_train_batch_size" "%gamma_train_batch_size%" "--tolerance" "%tolerance%" "--min_delta" "%min_delta%" "--lr" "%lr%" "--gamma_lr" "%gamma_lr%" "--momentum" "%momentum%" "--weight_decay" "%weight_decay%" "--dropout_rate_rb" "%dropout_rate_rb%" "--dropout_rate_fc" "%dropout_rate_fc%" "--fine_tune" "%fine_tune%" "--transfer_learning" "%transfer_learning%" "--test" "%is_test%" "--increases_trainset" "%increases_trainset%" "--image_size" "%image_size%" "--step" "%step%" "--dropout_pos_rb" "%dropout_pos_rb%" "--dropout_pos_fc" "%dropout_pos_fc%" "--checkpoint" "%checkpoint%" "--lr_scheduler" "%lr_scheduler%"
+python "%CD%\main.py" "--architecture" "%architecture%" "--cls" "%cls%" "--num_classes" "%num_classes%" "--num_epochs" "%num_epochs%" "--eval_batch_size" "%eval_batch_size%" "--train_batch_size" "%train_batch_size%" "--gamma_train_batch_size" "%gamma_train_batch_size%" "--tolerance" "%tolerance%" "--min_delta" "%min_delta%" "--lr" "%lr%" "--gamma_lr" "%gamma_lr%" "--momentum" "%momentum%" "--weight_decay" "%weight_decay%" "--dropout_rate_rb" "%dropout_rate_rb%" "--dropout_rate_fc" "%dropout_rate_fc%" "--fine_tune" "%fine_tune%" "--transfer_learning" "%transfer_learning%" "--test" "%is_test%" "--increases_trainset" "%increases_trainset%" "--image_size" "%image_size%" "--step" "%step%" "--dropout_pos_rb" "%dropout_pos_rb%" "--dropout_pos_fc" "%dropout_pos_fc%" "--checkpoint" "%checkpoint%" "--lr_scheduler" "%lr_scheduler%" "--aug_online" "%aug_online%"
