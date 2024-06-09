@@ -17,6 +17,7 @@ class Optimizer:
         weight_decay: float,
         model: torch.nn.Module,
         res: Res,
+        scheduler: str = "StepLR",
     ):
         """
         Initialize the optimizer and the learning rate scheduler.
@@ -44,16 +45,24 @@ class Optimizer:
             )
         self.res.print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
 
-        self.stepLR = optim.lr_scheduler.StepLR(
+        self.scheduler = optim.lr_scheduler.StepLR(
             self.optimizer, step_size=step, gamma=gamma_lr
         )
 
+        if scheduler == "CosineAnnealingWarmRestarts":
+            self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
+                self.optimizer, T_0=step, T_mult=1, eta_min=0.00001
+            )
+            self.res.print(
+                f"LR scheduler: CosineAnnealingWarmRestarts, T_max: {step}, eta_min: 0.00001"
+            )
+
     def state_dict(self):
-        return self.optimizer.state_dict(), self.stepLR.state_dict()
+        return self.optimizer.state_dict(), self.scheduler.state_dict()
 
     def load_state_dict(self, optimizer_state_dict, scheduler_state_dict):
         self.optimizer.load_state_dict(optimizer_state_dict)
-        self.stepLR.load_state_dict(scheduler_state_dict)
+        self.scheduler.load_state_dict(scheduler_state_dict)
 
     def step(self, verbose: bool = False) -> None:
         """
@@ -65,10 +74,10 @@ class Optimizer:
         Returns:
             None
         """
-        if self.optimizer.param_groups[0]["lr"] > 0.000001:
-            self.stepLR.step()
-        if self.optimizer.param_groups[0]["lr"] < 0.000001:
-            self.optimizer.param_groups[0]["lr"] = 0.000001
+        if self.optimizer.param_groups[0]["lr"] > 0.00001:
+            self.scheduler.step()
+        if self.optimizer.param_groups[0]["lr"] < 0.00001:
+            self.optimizer.param_groups[0]["lr"] = 0.00001
         if verbose:
             lr = self.optimizer.param_groups[0]["lr"]
             self.res.print(f"Learning rate: {lr}")
