@@ -391,8 +391,8 @@ def main(
 
     inputs, labels = next(iter(dataset.train_dataloader))
     grid = torchvision.utils.make_grid(inputs)
-    res.writer.add_image("images", grid, 0)
-    res.writer.add_graph(model.to(DEVICE), inputs.to(DEVICE))
+    res.trainWriter.add_image("images", grid, 0)
+    res.trainWriter.add_graph(model.to(DEVICE), inputs.to(DEVICE))
 
     now = datetime.datetime.now()
     trainig_model(

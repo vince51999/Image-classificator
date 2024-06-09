@@ -86,12 +86,12 @@ class Statistics:
 
     def log(self, name: str, epoch: int):
         l = len(self.epochs) - 1
-        self.res.addScalar(f"Loss/{name}", self.losses[l], epoch)
-        self.res.addScalar(f"Accuracy/{name}", self.accuracy[l], epoch)
+        self.res.addScalar(f"Loss", name, self.losses[l], epoch)
+        self.res.addScalar(f"Accuracy", name, self.accuracy[l], epoch)
         if len(self.classes) > 1:
-            self.res.addScalar(f"F-Measure/{name}", self.f_measure[l], epoch)
-            self.res.addScalar(f"Recall/{name}", self.recall[l], epoch)
-            self.res.addScalar(f"Precision/{name}", self.precision[l], epoch)
+            self.res.addScalar(f"F-Measure", name, self.f_measure[l], epoch)
+            self.res.addScalar(f"Recall", name, self.recall[l], epoch)
+            self.res.addScalar(f"Precision", name, self.precision[l], epoch)
 
     def reset(self):
         self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))

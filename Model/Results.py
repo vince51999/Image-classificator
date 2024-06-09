@@ -29,15 +29,17 @@ class Results:
         self.output = output_file
 
         logs_directory = directory + "/logs"
-        if not os.path.exists(logs_directory):
-            os.makedirs(logs_directory)
         self.logs = logs_directory
 
     def open(self) -> None:
-        self.writer = SummaryWriter(self.logs)
+        log_dir = self.logs + "Train"
+        self.trainWriter = SummaryWriter(log_dir)
+        log_dir = self.logs + "Val"
+        self.valWriter = SummaryWriter(log_dir)
 
     def close(self) -> None:
-        self.writer.close()
+        self.trainWriter.close()
+        self.valWriter.close()
 
     def print(self, content):
         print(content)
@@ -84,12 +86,19 @@ class Results:
         tensor_image = torch.tensor(np_array)
 
         # Write the image to TensorBoard
-        self.writer.add_image(name, tensor_image, dataformats="HWC", global_step=epoch)
+        self.valWriter.add_image(
+            name, tensor_image, dataformats="HWC", global_step=epoch
+        )
 
     def addScalar(
         self,
+        label: str,
         name: str,
         value: list,
         step: list,
     ):
-        self.writer.add_scalar(name, value, step)
+        name = name.lower()
+        if "train" in name:
+            self.trainWriter.add_scalar(label, value, step)
+        else:
+            self.valWriter.add_scalar(label, value, step)
