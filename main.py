@@ -193,8 +193,8 @@ parser.add_argument(
     type=str,
 )
 parser.add_argument(
-    "--aug_online",
-    help="Apply online data augmentation. If 1, online data augmentation is applied. If 0, no online data augmentation is applied.",
+    "--online_aug_step_size",
+    help="Step size for online data augmentation. Default is 0. If non-zero, online data augmentation is used.",
     required=True,
     default="",
     type=int,
@@ -235,9 +235,7 @@ increases_trainset = args.increases_trainset
 image_size = 64
 if args.image_size > 64:
     image_size = args.image_size
-aug_online = False
-if args.aug_online == 1:
-    aug_online = True
+online_aug_step_size = args.online_aug_step_size
 step = args.step
 if step < 1:
     step = 1
@@ -301,7 +299,7 @@ def main(
     dropout_pos_rb: int = 0,
     dropout_pos_fc: int = 0,
     lr_scheduler: str = "StepLR",
-    aug_online: bool = False,
+    online_aug_step_size: int = 0
 ):
     """
     Train the model on the dataset ot search best parameters for the model.
@@ -329,7 +327,7 @@ def main(
         dropout_pos_rb (int, optional): Position of dropout in basic block. Defaults to 0.
         dropout_pos_fc (int, optional): Position of dropout in the head. Defaults to 0.
         lr_scheduler (str, optional): Learning rate scheduler. Defaults to "StepLR".
-        aug_online (bool, optional): If true we use online data augmentation. Defaults to False.
+        online_aug_step_size (int, optional): Step size for online data augmentation. Defaults to 0.
     """
 
     res = Res()
@@ -352,6 +350,7 @@ def main(
         image_size=image_size,
         step_size=step,
         gamma=gamma_train_batch_size,
+        online_aug_step_size = online_aug_step_size
     )
     res.print(
         f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
@@ -408,7 +407,6 @@ def main(
         tolerance,
         min_delta,
         res,
-        aug_online,
     )
     later = datetime.datetime.now()
     difference = (later - now).total_seconds()
@@ -436,7 +434,6 @@ def trainig_model(
     tolerance: int,
     min_delta: float,
     res: Res,
-    aug_online,
 ):
     """
     Train the model on the dataset.
@@ -452,7 +449,6 @@ def trainig_model(
         tolerance (int): Early stopping tolerance.
         min_delta (float): Minimum change in validation loss to be considered as an improvement.
         res (Res): The results object to log the training.
-        aug_online (bool): If true, online data augmentation is applied.
     """
 
     train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes, res)
@@ -471,7 +467,6 @@ def trainig_model(
         res=res,
         start_epoch=start_epoch,
         epochs=num_epochs,
-        aug_online=aug_online,
     )
 
     test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes, res)
@@ -514,5 +509,5 @@ main(
     dropout_pos_rb=dropout_pos_rb,
     dropout_pos_fc=dropout_pos_fc,
     lr_scheduler=lr_scheduler,
-    aug_online=aug_online,
+    online_aug_step_size=online_aug_step_size,
 )

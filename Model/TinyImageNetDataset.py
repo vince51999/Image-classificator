@@ -27,14 +27,17 @@ class TinyImageNetDataset(Dataset):
         increment: int = 2,
         image_size: int = 64,
         step_size: int = 2,
+        online_aug_step_size: int = 2,
         gamma=2,
     ):
         self.image_size = image_size
         self.increment = increment
         self.train_batch_size = train_batch_size
         self.step_size = step_size
+        self.online_aug_step_size = online_aug_step_size
         self.gamma = gamma
         self.itr = 0
+        self.online_aug_itr = 0
         self.res = res
         res.print(f"BR scheduler: stepBR, step size: {step_size}, gamma: {gamma}")
         transform = transforms.Compose(
@@ -161,7 +164,10 @@ class TinyImageNetDataset(Dataset):
             self.res.print(f"Batch size: {self.train_batch_size}")
 
     def augumentation(self, verbose: bool = False):
-        if self.itr % self.step_size == 0:
+        if self.online_aug_step_size <= 0:
+            return
+        self.online_aug_itr += 1
+        if self.online_aug_itr % self.online_aug_step_size == 0:
             transform = transforms.Compose(
                 [
                     transforms.ToTensor(),
