@@ -25,6 +25,7 @@ def train_loop(
     aug_online=False,
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
+    best_epoch_val_loss = float("inf")
 
     for epoch in range(start_epoch, epochs):
         res.print(f"\nEPOCH {epoch+1} of {epochs}\n")
@@ -57,7 +58,7 @@ def train_loop(
                 "Val conf matrix",
                 epoch + 1,
             )
-        if epoch % 2 == 0:
+        if epoch_val_loss < best_epoch_val_loss:
             NNArchitecture.save_checkpoint(
                 res.directory,
                 epoch,
@@ -65,6 +66,10 @@ def train_loop(
                 optimizer,
                 dataset,
                 criterion,
+            )
+            best_epoch_val_loss = epoch_val_loss
+            res.print(
+                f"Best model saved at epoch {epoch+1} with loss {best_epoch_val_loss}"
             )
         # early stopping
         early_stopping(epoch_train_loss, epoch_val_loss)
