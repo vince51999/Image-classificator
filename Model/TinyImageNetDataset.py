@@ -29,6 +29,8 @@ class TinyImageNetDataset(Dataset):
         step_size: int = 2,
         gamma=2,
     ):
+        self.image_size = image_size
+        self.increment = increment
         self.train_batch_size = train_batch_size
         self.step_size = step_size
         self.gamma = gamma
@@ -82,10 +84,11 @@ class TinyImageNetDataset(Dataset):
         self.val = val
         self.test = val
 
-        self.train = self.__get_trainset(transform, increment, train)
+        self.train = train
+        self.aug_train = self.__get_trainset(transform, self.train)
 
         self.train_dataloader = DataLoader(
-            self.train, batch_size=train_batch_size, shuffle=True
+            self.aug_train, batch_size=train_batch_size, shuffle=True
         )
         self.val_dataloader = DataLoader(
             self.val, batch_size=eval_batch_size, shuffle=False
@@ -116,7 +119,6 @@ class TinyImageNetDataset(Dataset):
     def __get_trainset(
         self,
         basic_trasform,
-        increment: int = 0,
         train=None,
     ):
         policy = transforms.AutoAugmentPolicy.IMAGENET
@@ -128,11 +130,11 @@ class TinyImageNetDataset(Dataset):
             ]
         )
         new_train = self.__apply_transforms(train, transform)
-        if increment < 0:
-            increment = 0
-        if increment == 0 or train is None:
+        if self.increment < 0:
+            self.increment = 0
+        if self.increment == 0 or train is None:
             return new_train
-        for j in range(increment):
+        for j in range(self.increment):
             new_train += self.__apply_transforms(train, transform)
         return new_train
 
@@ -153,10 +155,42 @@ class TinyImageNetDataset(Dataset):
             if self.train_batch_size < 4:
                 self.train_batch_size = 4
             self.train_dataloader = DataLoader(
-                self.train, batch_size=self.train_batch_size, shuffle=True
+                self.aug_train, batch_size=self.train_batch_size, shuffle=True
             )
         if verbose:
             self.res.print(f"Batch size: {self.train_batch_size}")
+
+    def augumentation(self, verbose: bool = False):
+        if self.itr % self.step_size == 0:
+            transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.480, 0.448, 0.398], std=[0.230, 0.226, 0.226]
+                    ),
+                ]
+            )
+            if self.image_size > 64:
+                transform = transforms.Compose(
+                    [
+                        transforms.Resize(
+                            [self.image_size, self.image_size],
+                            interpolation=transforms.InterpolationMode.BICUBIC,
+                        ),
+                        transforms.GaussianBlur(kernel_size=(3, 3), sigma=(1)),
+                        transforms.ToTensor(),
+                        transforms.Normalize(
+                            mean=[0.480, 0.448, 0.398], std=[0.230, 0.226, 0.226]
+                        ),
+                    ]
+                )
+            self.aug_train = self.__get_trainset(transform, self.train)
+
+            self.train_dataloader = DataLoader(
+                self.aug_train, batch_size=self.train_batch_size, shuffle=True
+            )
+            if verbose:
+                self.res.print(f"Train set augmented.")
 
     def state_dict(self):
         return [self.itr, self.train_batch_size]
