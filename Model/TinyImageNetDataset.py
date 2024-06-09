@@ -35,11 +35,12 @@ class TinyImageNetDataset(Dataset):
         self.itr = 0
         self.res = res
         res.print(f"BR scheduler: stepBR, step size: {step_size}, gamma: {gamma}")
-        mean, std = self.__mean_std(classes)
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize(mean=mean, std=std),
+                transforms.Normalize(
+                    mean=[0.480, 0.448, 0.398], std=[0.230, 0.226, 0.226]
+                ),
             ]
         )
         if image_size > 64:
@@ -51,7 +52,9 @@ class TinyImageNetDataset(Dataset):
                     ),
                     transforms.GaussianBlur(kernel_size=(3, 3), sigma=(1)),
                     transforms.ToTensor(),
-                    transforms.Normalize(mean=mean, std=std),
+                    transforms.Normalize(
+                        mean=[0.480, 0.448, 0.398], std=[0.230, 0.226, 0.226]
+                    ),
                 ]
             )
         train = TinyImageNet(
@@ -89,40 +92,6 @@ class TinyImageNetDataset(Dataset):
         )
         self.test_dataloader = self.val_dataloader
 
-    def __mean_std(self, classes):
-        if classes is None or len(classes) > 30:
-            return [0.480, 0.448, 0.398], [0.230, 0.226, 0.226]
-        train = TinyImageNet(
-            Path("~/.torchvision/tinyimagenet/"),
-            split="train",
-            imagenet_idx=False,
-            transform=None,
-        )
-        train = self.__split_classes(train, classes, 500)
-        return self.__mean_std_rgb_channels(
-            train, "mean"
-        ), self.__mean_std_rgb_channels(train, "std")
-
-    def __mean_std_rgb_channels(self, dataloader, type: str):
-        """
-        Calculate the mean of the RGB channels
-        """
-        r = 0
-        g = 0
-        b = 0
-        length = len(dataloader)
-        for i, data in enumerate(dataloader):
-            # get the inputs; data is a list of [inputs, labels]
-            if type == "mean":
-                r += data[0][0].mean()
-                g += data[0][1].mean()
-                b += data[0][2].mean()
-            elif type == "std":
-                r += data[0][0].std()
-                g += data[0][1].std()
-                b += data[0][2].std()
-        return [r / length, g / length, b / length]
-
     def __split_classes(self, dataset, num_classes, itr_break=500):
         """
         Split the dataset into classes
@@ -134,22 +103,6 @@ class TinyImageNetDataset(Dataset):
                 new_dataset.append(dataset[i])
                 itr += 1
         return new_dataset
-
-    def __split_set(self, dataset, num_classes, num_el_per_class, split=0.1):
-        """
-        Split the dataset into 2 datasets
-        """
-        newset = []
-        oldset = []
-        for c in range(num_classes):
-            itr = 0
-            for i in range(c * num_el_per_class, (c + 1) * num_el_per_class):
-                if itr < split * num_el_per_class:
-                    newset.append(dataset[i])
-                else:
-                    oldset.append(dataset[i])
-                itr += 1
-        return oldset, newset
 
     def __update_labels(self, dataset, classes):
         """
@@ -174,7 +127,7 @@ class TinyImageNetDataset(Dataset):
                 basic_trasform,
             ]
         )
-        new_train = self.__apply_transforms(train, basic_trasform)
+        new_train = self.__apply_transforms(train, transform)
         if increment < 0:
             increment = 0
         if increment == 0 or train is None:
