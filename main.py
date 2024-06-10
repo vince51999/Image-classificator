@@ -299,7 +299,7 @@ def main(
     dropout_pos_rb: int = 0,
     dropout_pos_fc: int = 0,
     lr_scheduler: str = "StepLR",
-    online_aug_step_size: int = 0
+    online_aug_step_size: int = 0,
 ):
     """
     Train the model on the dataset ot search best parameters for the model.
@@ -351,7 +351,7 @@ def main(
         image_size=image_size,
         step_size=step,
         gamma=gamma_train_batch_size,
-        online_aug_step_size = online_aug_step_size
+        online_aug_step_size=online_aug_step_size,
     )
     res.print(
         f"Train size: {len(dataset.aug_train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
