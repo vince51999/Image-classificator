@@ -354,7 +354,7 @@ def main(
         online_aug_step_size = online_aug_step_size
     )
     res.print(
-        f"Train size: {len(dataset.train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
+        f"Train size: {len(dataset.aug_train)}, Val size: {len(dataset.val)}, Test size: {len(dataset.test)}, Image size: {image_size}"
     )
     res.print(f"EarlyStopping tolerance:{tolerance} min delta:{min_delta}")
 
