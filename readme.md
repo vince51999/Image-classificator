@@ -54,6 +54,14 @@ Install seaborn
 ```
 pip install seaborn
 ```
+Install tensorboard
+```
+pip install tensorboard
+```
+Go out from your enviroment
+```
+source deactivate
+```
 
 ## Run application
 
