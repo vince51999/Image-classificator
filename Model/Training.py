@@ -25,9 +25,10 @@ def train_loop(
 ):
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
     best_epoch_val_loss = float("inf")
+    last_epoch = start_epoch + epochs
 
-    for epoch in range(start_epoch, epochs):
-        res.print(f"\nEPOCH {epoch+1} of {epochs}\n")
+    for epoch in range(start_epoch, last_epoch):
+        res.print(f"\nEPOCH {epoch+1} of {last_epoch}\n")
         train_stats.reset()
         val_stats.reset()
 
@@ -77,8 +78,9 @@ def train_loop(
                 res.directory, epoch, model, optimizer, dataset, criterion
             )
             return
+    end_epoch = last_epoch - 1
     NNArchitecture.save_checkpoint(
-        res.directory, epoch, model, optimizer, dataset, criterion
+        res.directory, end_epoch, model, optimizer, dataset, criterion
     )
 
 
