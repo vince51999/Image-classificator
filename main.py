@@ -306,6 +306,7 @@ def main(
 
     Args:
         architecture (str, optional): Type of resnet architecture. Defaults to "resnet50".
+        checkpoint (str, optional): Path to the checkpoint to load the model from. Defaults to "none".
         c (int, optional): Class that you want include in the classes list to classify. Defaults to 0.
         num_classes (int, optional): Number of class to classify. Defaults to 200.
         num_epochs (int, optional): Number of epochs. Defaults to 10.
