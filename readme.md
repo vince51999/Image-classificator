@@ -28,7 +28,7 @@ conda create -n myenv python=3.9
 
 Go on your enviroment
 ```
-source activate myenv
+conda activate myenv
 ```
 Update pip before installing packages using
 ```
@@ -50,6 +50,10 @@ Install pandas
 ```
 pip install pandas
 ```
+Install numpy
+```
+pip install numpy
+```
 Install seaborn
 ```
 pip install seaborn
@@ -58,9 +62,13 @@ Install tensorboard
 ```
 pip install tensorboard
 ```
+Install tensorflow
+```
+pip install tensorflow
+```
 Go out from your enviroment
 ```
-source deactivate
+conda deactivate
 ```
 
 ## Run application
