@@ -43,11 +43,14 @@ class Optimizer:
             self.res.print(
                 f"Optimizer: SGD, lr: {lr}, momentum: {momentum}, weight_decay: {weight_decay}"
             )
-        self.res.print(f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}")
 
-        self.scheduler = optim.lr_scheduler.StepLR(
-            self.optimizer, step_size=step, gamma=gamma_lr
-        )
+        if scheduler == "StepLR":
+            self.scheduler = optim.lr_scheduler.StepLR(
+                self.optimizer, step_size=step, gamma=gamma_lr
+            )
+            self.res.print(
+                f"LR scheduler: StepLR, step size: {step}, gamma: {gamma_lr}"
+            )
 
         if scheduler == "CosineAnnealingWarmRestarts":
             self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
