@@ -200,7 +200,14 @@ def save_checkpoint(
 
 
 def load_checkpoint(
-    path: str, model: torch.nn.Module, optimizer: Op, dataset: Tind, criterion: Crit
+    path: str,
+    model: torch.nn.Module,
+    optimizer: Op,
+    typeLRScheduler: str,
+    dataset: Tind,
+    gamma_lr: float,
+    step: float,
+    criterion: Crit,
 ):
     """
     Function to load the trained model
@@ -208,7 +215,13 @@ def load_checkpoint(
     checkpoint = torch.load(path)
     epoch = checkpoint["epoch"]
     model.load_state_dict(checkpoint["model"])
-    optimizer.load_state_dict(checkpoint["optimizer"], checkpoint["stepLR"])
+    stepBR = checkpoint["stepLR"]
+
+    if typeLRScheduler == "StepLR":
+        stepBR['step_size'] = step
+        stepBR['gamma'] = gamma_lr
+    optimizer.load_state_dict(checkpoint["optimizer"], stepBR)
+
     dataset.load_state_dict(checkpoint["stepBS"])
     criterion.load_state_dict(checkpoint["criterion"])
     return epoch, model, optimizer, dataset, criterion

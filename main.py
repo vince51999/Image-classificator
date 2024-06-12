@@ -386,7 +386,14 @@ def main(
         print(f"Loading checkpoint: {checkpoint}")
         start_epoch, model, optimizer, dataset, criterion = (
             NNArchitecture.load_checkpoint(
-                checkpoint, model, optimizer, dataset, criterion
+                checkpoint,
+                model,
+                optimizer,
+                lr_scheduler,
+                dataset,
+                gamma_lr,
+                step,
+                criterion,
             )
         )
 
