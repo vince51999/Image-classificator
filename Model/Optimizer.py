@@ -55,7 +55,7 @@ class Optimizer:
         if scheduler == "CosineAnnealingWarmRestarts":
             eta_min = 0.0001
             self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
-                self.optimizer, T_0=step, T_mult=1, eta_min=0.00001
+                self.optimizer, T_0=step, T_mult=1, eta_min=0.0001
             )
             self.res.print(
                 f"LR scheduler: CosineAnnealingWarmRestarts, T_max: {step}, eta_min: {eta_min}"
@@ -78,10 +78,10 @@ class Optimizer:
         Returns:
             None
         """
-        if self.optimizer.param_groups[0]["lr"] > 0.00001:
+        if self.optimizer.param_groups[0]["lr"] > 0.0001:
             self.scheduler.step()
-        if self.optimizer.param_groups[0]["lr"] < 0.00001:
-            self.optimizer.param_groups[0]["lr"] = 0.00001
+        if self.optimizer.param_groups[0]["lr"] < 0.0001:
+            self.optimizer.param_groups[0]["lr"] = 0.0001
         if verbose:
             lr = self.optimizer.param_groups[0]["lr"]
             self.res.print(f"Learning rate: {lr}")
