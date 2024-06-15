@@ -80,7 +80,7 @@ def get_nn_architecture(
 
 def __append_dropout(model, type, rate=0.2):
     dropout_before = ""
-    if type == "resnet50":
+    if type == "resnet50" or type == "resnet101":
         dropout_before = "conv3"
         ## Where insert the dropout layer in the bottleneck block
         # identity = x
