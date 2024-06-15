@@ -218,8 +218,8 @@ def load_checkpoint(
     stepBR = checkpoint["stepLR"]
 
     if typeLRScheduler == "StepLR":
-        stepBR['step_size'] = step
-        stepBR['gamma'] = gamma_lr
+        stepBR["step_size"] = step
+        stepBR["gamma"] = gamma_lr
     optimizer.load_state_dict(checkpoint["optimizer"], stepBR)
 
     dataset.load_state_dict(checkpoint["stepBS"])
