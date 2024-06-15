@@ -42,33 +42,35 @@ def get_nn_architecture(
         res.print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type, weights="IMAGENET1K_V1")
 
-    if transfer_learning is True:
+    if fine_tune is True:
+        res.print("Fine-tune")
+    elif transfer_learning is True and fine_tune is False:
         res.print("Transfer learning")
         for param in model.parameters():
             param.requires_grad = False
-    else:
-        res.print(
-            f"Dropout rate basicBlock: {dropout_rate_rb}, Dropout rate final layer: {dropout_rate_fc}"
-        )
-        if dropout_rate_rb > 0:
-            if dropout_pos_rb == 1:
-                __append_dropout_before_each_relu(model, rate=dropout_rate_rb)
-                res.print("Dropout before each ReLU")
-            elif dropout_pos_rb == 2:
-                __append_dropout_after_each_relu(model, rate=dropout_rate_rb)
-                res.print("Dropout after each ReLU")
-            else:
-                __append_dropout(model, type, rate=dropout_rate_rb)
-                res.print("Dropout before the last convolutional layer")
-        # define a new head for the detector with required number of classes
-        if dropout_rate_fc > 0:
-            avgpool = model.avgpool
-            if dropout_pos_fc == 1:
-                model.avgpool = nn.Sequential(avgpool, nn.Dropout(dropout_rate_fc))
-                res.print("Dropout after the average pooling layer")
-            else:
-                model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
-                res.print("Dropout before the average pooling layer")
+
+    res.print(
+        f"Dropout rate basicBlock: {dropout_rate_rb}, Dropout rate final layer: {dropout_rate_fc}"
+    )
+    if dropout_rate_rb > 0:
+        if dropout_pos_rb == 1:
+            __append_dropout_before_each_relu(model, rate=dropout_rate_rb)
+            res.print("Dropout before each ReLU")
+        elif dropout_pos_rb == 2:
+            __append_dropout_after_each_relu(model, rate=dropout_rate_rb)
+            res.print("Dropout after each ReLU")
+        else:
+            __append_dropout(model, type, rate=dropout_rate_rb)
+            res.print("Dropout before the last convolutional layer")
+    # define a new head for the detector with required number of classes
+    if dropout_rate_fc > 0:
+        avgpool = model.avgpool
+        if dropout_pos_fc == 1:
+            model.avgpool = nn.Sequential(avgpool, nn.Dropout(dropout_rate_fc))
+            res.print("Dropout after the average pooling layer")
+        else:
+            model.avgpool = nn.Sequential(nn.Dropout(dropout_rate_fc), avgpool)
+            res.print("Dropout before the average pooling layer")
 
     in_features = model.fc.in_features
     fc = nn.Linear(in_features, num_classes)
