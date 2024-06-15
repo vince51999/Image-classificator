@@ -53,11 +53,12 @@ class Optimizer:
             )
 
         if scheduler == "CosineAnnealingWarmRestarts":
+            eta_min = 0.0001
             self.scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(
                 self.optimizer, T_0=step, T_mult=1, eta_min=0.00001
             )
             self.res.print(
-                f"LR scheduler: CosineAnnealingWarmRestarts, T_max: {step}, eta_min: 0.00001"
+                f"LR scheduler: CosineAnnealingWarmRestarts, T_max: {step}, eta_min: {eta_min}"
             )
 
     def state_dict(self):
