@@ -205,6 +205,7 @@ def load_checkpoint(
     path: str,
     model: torch.nn.Module,
     optimizer: Op,
+    weight_decay: float,
     typeLRScheduler: str,
     dataset: Tind,
     gamma_lr: float,
@@ -222,7 +223,11 @@ def load_checkpoint(
     if typeLRScheduler == "StepLR":
         stepBR["step_size"] = step
         stepBR["gamma"] = gamma_lr
-    optimizer.load_state_dict(checkpoint["optimizer"], stepBR)
+
+    opti = checkpoint["optimizer"]
+    optimizer.load_state_dict(opti, stepBR)
+    for param_group in optimizer.optimizer.param_groups:
+        param_group["weight_decay"] = weight_decay
 
     dataset.load_state_dict(checkpoint["stepBS"])
     criterion.load_state_dict(checkpoint["criterion"])
