@@ -389,6 +389,7 @@ def main(
                 checkpoint,
                 model,
                 optimizer,
+                weight_decay,
                 lr_scheduler,
                 dataset,
                 gamma_lr,
