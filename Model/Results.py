@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 import pandas as pd
 import seaborn as sn
 import torch
@@ -7,7 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 import os
+
+from typing import List
 from PIL import Image
+
+Image.MAX_IMAGE_PIXELS = None
 
 from torch.utils.tensorboard import SummaryWriter
 
