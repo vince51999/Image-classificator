@@ -50,13 +50,13 @@ def train_loop(
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         dataset.augumentation(verbose=True)
-        if len(train_stats.get_classes()) > 1:
-            res.createConfusionMatrix(
-                val_stats.get_confusion_matrix(),
-                val_stats.get_classes(),
-                "Val conf matrix",
-                epoch + 1,
-            )
+
+        res.createConfusionMatrix(
+            val_stats.get_confusion_matrix(),
+            val_stats.get_classes(),
+            "Val conf matrix",
+            epoch + 1,
+        )
         if epoch_val_loss < best_epoch_val_loss:
             NNArchitecture.save_checkpoint(
                 res.directory,

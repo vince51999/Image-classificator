@@ -62,13 +62,12 @@ class Statistics:
         self.losses.append(loss)
         accuracy = self.get_accuracy()
         self.accuracy.append(accuracy)
-        if len(self.classes) > 1:
-            f_measure = self.get_f_measure()
-            self.f_measure.append(f_measure)
-            recall = self.get_recall()
-            self.recall.append(recall)
-            precision = self.get_precision()
-            self.precision.append(precision)
+        f_measure = self.get_f_measure()
+        self.f_measure.append(f_measure)
+        recall = self.get_recall()
+        self.recall.append(recall)
+        precision = self.get_precision()
+        self.precision.append(precision)
         if verbose:
             self.print(name)
         if log:
@@ -79,27 +78,22 @@ class Statistics:
         self.res.print(f"{name}")
         self.res.print(f"Loss: {self.losses[l]:.3f}")
         self.res.print(f"Accuracy: {self.accuracy[l]:.3f}")
-        if len(self.classes) > 1:
-            self.res.print(f"F-Measure: {self.f_measure[l]:.3f}")
-            self.res.print(f"Recall: {self.recall[l]:.3f}")
-            self.res.print(f"Precision: {self.precision[l]:.3f}\n")
+        self.res.print(f"F-Measure: {self.f_measure[l]:.3f}")
+        self.res.print(f"Recall: {self.recall[l]:.3f}")
+        self.res.print(f"Precision: {self.precision[l]:.3f}\n")
 
     def log(self, name: str, epoch: int):
         l = len(self.epochs) - 1
         self.res.addScalar(f"Loss", name, self.losses[l], epoch)
         self.res.addScalar(f"Accuracy", name, self.accuracy[l], epoch)
-        if len(self.classes) > 1:
-            self.res.addScalar(f"F-Measure", name, self.f_measure[l], epoch)
-            self.res.addScalar(f"Recall", name, self.recall[l], epoch)
-            self.res.addScalar(f"Precision", name, self.precision[l], epoch)
+        self.res.addScalar(f"F-Measure", name, self.f_measure[l], epoch)
+        self.res.addScalar(f"Recall", name, self.recall[l], epoch)
+        self.res.addScalar(f"Precision", name, self.precision[l], epoch)
 
     def reset(self):
         self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))
 
     def get_accuracy(self):
-        if len(self.classes) == 1:
-            self.res.print(self.conf_matrix[0, 0], self.sample_class)
-            return self.conf_matrix[0, 0] / self.sample_class
         # accuracy = (TP + TN) / (TP + TN + FP + FN)
         return self.conf_matrix.diag().sum() / self.conf_matrix.sum()
 

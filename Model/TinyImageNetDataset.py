@@ -1,3 +1,4 @@
+import random
 from typing import List
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
@@ -77,9 +78,9 @@ class TinyImageNetDataset(Dataset):
         if classes is not None and len(classes) < 200:
             self.num_classes = len(classes)
             train = self.__split_classes(train, classes, 500)
-            val = self.__split_classes(val, classes, 50)
+            val = self.__split_classes(val, classes, 50, isVal=True)
             train = self.__update_labels(train, classes)
-            val = self.__update_labels(val, classes)
+            val = self.__update_labels(val, classes, isVal=True)
         else:
             self.num_classes = 200
 
@@ -98,23 +99,44 @@ class TinyImageNetDataset(Dataset):
         )
         self.test_dataloader = self.val_dataloader
 
-    def __split_classes(self, dataset, num_classes, itr_break=500):
+    def __split_classes(self, dataset, num_classes, itr_break=500, isVal=False):
         """
         Split the dataset into classes
         """
         new_dataset = []
         for c in num_classes:
-            itr = 0
             for i in range(c * itr_break, (c + 1) * itr_break):
                 new_dataset.append(dataset[i])
-                itr += 1
+
+        # Check if is one class classifier and we are splitting the validation set
+        if self.num_classes == 1 and isVal:
+            val_classes = [i for i in range(200)]
+            val_classes.remove(num_classes[0])
+            size = itr_break
+            # select random classes
+            val_classes = random.sample(val_classes, size)
+
+            for c in val_classes:
+                index = c * itr_break + random.randint(1, itr_break - 1)
+                new_dataset.append(dataset[index])
+            return new_dataset
+
         return new_dataset
 
-    def __update_labels(self, dataset, classes):
+    def __update_labels(self, dataset, classes, isVal=False):
         """
         Update the labels of the dataset
         """
         tmp = []
+        # Check if is one class classifier and we are updating the validation set
+        if self.num_classes == 1 and isVal:
+            for i in range(len(dataset)):
+                if dataset[i][1] == classes[0]:
+                    tmp.append(tuple([dataset[i][0], 1]))
+                else:
+                    tmp.append(tuple([dataset[i][0], 0]))
+            return tmp
+
         for i in range(len(dataset)):
             tmp.append(tuple([dataset[i][0], classes.index(dataset[i][1])]))
         return tmp
