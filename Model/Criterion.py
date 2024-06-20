@@ -10,6 +10,10 @@ class Criterion:
     Attributes:
         criterion (nn.Module): The criterion to calculate the loss.
         num_classes (int): The number of classes in the dataset.
+        
+    Methods:
+        state_dict(): Returns the state dictionary of the criterion.
+        load_state_dict(state_dict): Load the state dictionary of the criterion.
     """
 
     def __init__(self, num_classes: int, res: Res):
@@ -18,8 +22,7 @@ class Criterion:
 
         Args:
             num_classes (int): The number of classes in the dataset.
-            DEVICE (_type_): The device where the model is trained.
-            step_size (int): The step size to update the classes weights.
+            res (Res): The results class to print the criterion details.
         """
         res = res
         self.criterion = None
@@ -32,7 +35,13 @@ class Criterion:
             res.print(f"Criterion: CrossEntropyLoss")
 
     def state_dict(self):
+        """
+        Returns the state dictionary of the criterion.
+        """
         return self.criterion.state_dict()
 
     def load_state_dict(self, state_dict):
+        """
+        Load the state dictionary of the criterion.
+        """
         self.criterion.load_state_dict(state_dict)

@@ -6,6 +6,16 @@ from Model.Results import Results as Res
 class Optimizer:
     """
     Optimizer class to initialize the optimizer and the learning rate scheduler.
+    
+    Attributes:
+        res (Res): The results class to print the optimizer and scheduler details.
+        optimizer (optim.Optimizer): The optimizer to optimize the model.
+        scheduler (optim.lr_scheduler): The learning rate scheduler to update the learning rate.
+        
+    Methods:
+        state_dict(): Return the state dictionary of the optimizer and the scheduler.
+        load_state_dict(optimizer_state_dict, scheduler_state_dict): Load the state dictionary of the optimizer and the scheduler.
+        step(verbose): Update the learning rate of the optimizer.
     """
 
     def __init__(
@@ -28,6 +38,8 @@ class Optimizer:
             gamma_lr (float): Multiplicative factor of learning rate decay.
             weight_decay (float): Weight decay for the optimizer.
             model (torch.nn.Module): The model to optimize.
+            res (Res): The results class to print the optimizer and scheduler details.
+            scheduler (str, optional): The type of learning rate scheduler. Defaults to "StepLR".
         """
         self.res = res
         self.optimizer = None
@@ -62,9 +74,15 @@ class Optimizer:
             )
 
     def state_dict(self):
+        """
+        Return the state dictionary of the optimizer and the scheduler.
+        """
         return self.optimizer.state_dict(), self.scheduler.state_dict()
 
     def load_state_dict(self, optimizer_state_dict, scheduler_state_dict):
+        """
+        Load the state dictionary of the optimizer and the scheduler.
+        """
         self.optimizer.load_state_dict(optimizer_state_dict)
         self.scheduler.load_state_dict(scheduler_state_dict)
 

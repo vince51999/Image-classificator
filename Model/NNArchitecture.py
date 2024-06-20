@@ -22,12 +22,15 @@ def get_nn_architecture(
     Classification architecture is like a Resnet.
 
     Args:
+        res (Res): Results object.
         type (str, optional): Architecture type. Defaults to "resnet50".
         num_classes (int, optional): Number of output classes. Defaults to 200.
         fine_tune (bool, optional): Fine-tune the model. Defaults to False.
         transfer_learning (bool, optional): Transfer learning. Defaults to False.
-        dropout_rate_bb (float, optional): Dropout rate before the fully connected layer. Defaults to 0.2.
-        dropout_rate_fc (float, optional): Dropout rate before the fully connected layer. Defaults to 0.5.
+        dropout_rate_rb (float, optional): Dropout rate in the residual block. Defaults to 0.2.
+        dropout_rate_fc (float, optional): Dropout rate in the fully connected layer. Defaults to 0.5.
+        dropout_pos_rb (int, optional): Dropout position in the residual block. Defaults to 0.
+        dropout_pos_fc (int, optional): Dropout position in the fully connected layer. Defaults to 0.
     Returns:
         The model with the specified architecture.
     """
@@ -184,6 +187,17 @@ def save_checkpoint(
 ):
     """
     Function to save the trained model till current epoch, or whenver called
+
+    Args:
+        path (str): The path to save the model.
+        epoch (int): The current epoch.
+        model (torch.nn.Module): The model to save.
+        optimizer (Op): The optimizer to save.
+        dataset (Tind): The dataset to save.
+        criterion (Crit): The criterion to save.
+
+    Returns:
+        None
     """
     epoch = epoch + 1
     path = path + "/resNet_epoch" + str(epoch) + ".pth"
@@ -214,6 +228,24 @@ def load_checkpoint(
 ):
     """
     Function to load the trained model
+    
+    Args:
+        path (str): The path to load the model.
+        model (torch.nn.Module): The model to load.
+        optimizer (Op): The optimizer to load.
+        weight_decay (float): Weight decay for the optimizer.
+        typeLRScheduler (str): The type of learning rate scheduler.
+        dataset (Tind): The dataset to load.
+        gamma_lr (float): Multiplicative factor of learning rate decay.
+        step (float): Step size for the learning rate scheduler.
+        criterion (Crit): The criterion to load.
+    
+    Returns:
+        int: The epoch.
+        torch.nn.Module: The model.
+        Op: The optimizer.
+        Tind: The dataset.
+        Crit: The criterion.
     """
     checkpoint = torch.load(path)
     epoch = checkpoint["epoch"]
