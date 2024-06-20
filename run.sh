@@ -21,9 +21,9 @@ dropout_pos_fc=0
 # Dropout rate of dropout layer in the head, 0.0 means no dropout
 dropout_rate_fc=0.7
 
-# cls is the class that we want in the classification task
+# cls is the classes that we want in the classification task
 # test is the flag to test the model on a predefined classes (10 classes from Tiny ImageNet dataset)
-cls=0
+cls=(0)
 num_classes=2
 is_test=0
 
@@ -59,4 +59,4 @@ online_aug_step_size=0
 # none: train the model from scratch
 checkpoint="none"
 
-python ./main.py --architecture "$architecture" --cls "$cls" --num_classes "$num_classes" --num_epochs "$num_epochs" --eval_batch_size "$eval_batch_size" --train_batch_size "$train_batch_size" --gamma_train_batch_size "$gamma_train_batch_size" --tolerance "$tolerance" --min_delta "$min_delta" --lr "$lr" --gamma_lr "$gamma_lr" --momentum "$momentum" --weight_decay "$weight_decay" --dropout_rate_rb "$dropout_rate_rb" --dropout_rate_fc "$dropout_rate_fc" --fine_tune "$fine_tune" --transfer_learning "$transfer_learning" --test "$is_test" --increases_trainset "$increases_trainset" --image_size "$image_size" --step "$step" --dropout_pos_rb "$dropout_pos_rb" --dropout_pos_fc "$dropout_pos_fc" --checkpoint "$checkpoint" --lr_scheduler "$lr_scheduler" --online_aug_step_size "$online_aug_step_size"
+python ./main.py --architecture "$architecture" --cls "${cls[*]}" --num_classes "$num_classes" --num_epochs "$num_epochs" --eval_batch_size "$eval_batch_size" --train_batch_size "$train_batch_size" --gamma_train_batch_size "$gamma_train_batch_size" --tolerance "$tolerance" --min_delta "$min_delta" --lr "$lr" --gamma_lr "$gamma_lr" --momentum "$momentum" --weight_decay "$weight_decay" --dropout_rate_rb "$dropout_rate_rb" --dropout_rate_fc "$dropout_rate_fc" --fine_tune "$fine_tune" --transfer_learning "$transfer_learning" --test "$is_test" --increases_trainset "$increases_trainset" --image_size "$image_size" --step "$step" --dropout_pos_rb "$dropout_pos_rb" --dropout_pos_fc "$dropout_pos_fc" --checkpoint "$checkpoint" --lr_scheduler "$lr_scheduler" --online_aug_step_size "$online_aug_step_size"

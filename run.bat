@@ -21,7 +21,7 @@ SET dropout_pos_fc=0
 REM dropout rate of dropout layer in the head, 0.0 means no dropout
 SET dropout_rate_fc=0.7
 
-REM cls is the class that we want in the classification task
+REM cls is the classes that we want in the classification task
 REM test is the flag to test the model on a pre-defined classes (10 classes from Tiny ImageNet dataset)
 SET cls=0
 SET num_classes=2

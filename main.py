@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import random
+from typing import List
 import torch
 import torchvision
 
@@ -29,7 +30,8 @@ parser.add_argument(
     help="Specific class that we want in the set of classes. The rest of the classes will be random.",
     required=True,
     default="",
-    type=int,
+    type=lambda s: [int(item) for item in s.split(" ")],
+    nargs="+",
 )
 parser.add_argument(
     "--num_classes",
@@ -204,7 +206,9 @@ args = parser.parse_args()
 
 architecture = args.architecture
 checkpoint = args.checkpoint
-c = args.cls
+c = args.cls[0]
+print(c)
+print(args.cls)
 num_classes = args.num_classes
 num_epochs = args.num_epochs
 eval_batch_size = args.eval_batch_size
@@ -247,19 +251,17 @@ if dropout_pos_rb < 0 or dropout_pos_rb > 2:
 if dropout_pos_fc < 0 or dropout_pos_fc > 1:
     dropout_pos_fc = 0
 lr_scheduler = args.lr_scheduler
-if c < 0 or c > 199:
-    c = 0
 if num_classes < 1 or num_classes > 200:
     num_classes = 200
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def classes_list(given_class, num_classes=200, test=False):
+def classes_list(given_class: List[int], num_classes=200, test=False):
     """
     Randomly select classes from the dataset.
     Args:
-        given_class (int): Specific class that we want in the set of classes. The rest of the classes will be random.
+        given_class (List[int]): Specific classes that we want in the set of classes.
         num_classes (int, optional): Number of classes to return. Defaults to 200.
     """
     if test:
@@ -267,18 +269,20 @@ def classes_list(given_class, num_classes=200, test=False):
     classes = [i for i in range(200)]
     if num_classes == 200:
         return classes
-    classes.remove(given_class)
-    size = num_classes - 1
+    for c in given_class:
+        classes.remove(c)
+    size = num_classes - len(given_class)
     # select random classes
     classes = random.sample(classes, size)
-    classes.append(given_class)
+    for c in given_class:
+        classes.append(c)
     return classes
 
 
 def main(
     architecture: str = "resnet50",
     checkpoint: str = "none",
-    c: int = 0,
+    c: List[int] = [0],
     num_classes: int = 200,
     num_epochs: int = 10,
     eval_batch_size: int = 100,
@@ -309,7 +313,7 @@ def main(
     Args:
         architecture (str, optional): Type of resnet architecture. Defaults to "resnet50".
         checkpoint (str, optional): Path to the checkpoint to load the model from. Defaults to "none".
-        c (int, optional): Class that you want include in the classes list to classify. Defaults to 0.
+        c (List[int], optional): Specific classes that we want in the set of classes. Defaults to [0].
         num_classes (int, optional): Number of class to classify. Defaults to 200.
         num_epochs (int, optional): Number of epochs. Defaults to 10.
         eval_batch_size (int, optional): Batch size of validation and test set. Defaults to 100.
