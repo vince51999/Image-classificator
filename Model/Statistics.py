@@ -10,33 +10,41 @@ class Statistics:
 
     Attributes:
         classes (List[int]): The list of class labels.
-        sample_class (int): The class label of the sample.
         epochs (List[int]): The list of epochs.
-        losses (List[float]): The list of loss values.
-        accuracy (List[float]): The list of accuracy values.
-        f_measure (List[float]): The list of F-measure values.
-        recall (List[float]): The list of recall values.
-        precision (List[float]): The list of precision values.
+        losses (List[float]): The list of losses.
+        accuracy (List[float]): The list of accuracies.
+        f_measure (List[float]): The list of F-measures.
+        recall (List[float]): The list of recalls.
+        precision (List[float]): The list of precisions.
         conf_matrix (torch.Tensor): The confusion matrix.
+        res (Res): The results class to print the statistics.
+
 
     Methods:
-        update(preds, labels): Updates the confusion matrix based on the predicted and true labels.
-        save_epoch(epoch, loss): Saves the epoch and loss values.
-        print(str): Prints the statistics.
-        reset(): Resets the confusion matrix.
-        get_accuracy(): Calculates the accuracy.
-        get_classes_recall(): Calculates the recall for each class.
-        get_classes_precision(): Calculates the precision for each class.
-        get_recall(): Calculates the macro-averaged recall.
-        get_precision(): Calculates the macro-averaged precision.
-        get_f_measure(): Calculates the F-measure.
-        get_confusion_matrix(): Returns the confusion matrix.
-        get_classes(): Returns the list of class labels.
+        update(preds, labels): Update the confusion matrix with the predictions and labels.
+        step(epoch, loss, name, verbose, log): Update the statistics and print them.
+        print(name): Print the statistics.
+        log(name, epoch): Log the statistics.
+        reset(): Reset the confusion matrix.
+        get_accuracy(): Calculate the accuracy.
+        get_classes_recall(): Calculate the recall for each class.
+        get_classes_precision(): Calculate the precision for each class.
+        get_recall(): Calculate the recall.
+        get_precision(): Calculate the precision.
+        get_f_measure(): Calculate the F-measure.
+        get_confusion_matrix(): Get the confusion matrix.
+        get_classes(): Get the list of classes.
     """
 
-    def __init__(self, classes: List[int], sample_class: int, res: Res):
+    def __init__(self, classes: List[int], res: Res):
+        """
+        Initializes the statistics class.
+
+        Args:
+            classes (List[int]): The list of class labels.
+            res (Res): The results class to print the statistics.
+        """
         self.classes = classes
-        self.sample_class = sample_class
         self.epochs = []
         self.losses = []
         self.accuracy = []
