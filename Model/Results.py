@@ -16,7 +16,27 @@ from torch.utils.tensorboard import SummaryWriter
 
 
 class Results:
+    """
+    The results class to store the results of the training and validation.
+    
+    Attributes:
+        directory (str): The directory to store the results.
+        output (str): The output file to store the results.
+        logs (str): The base path for the logs.
+        trainWriter (SummaryWriter): The writer for the training logs.
+        valWriter (SummaryWriter): The writer for the validation logs.
+    
+    Methods:
+        open(): Opens the writers for the training and validation logs.
+        close(): Closes the writers.
+        print(content): Prints the content and writes it to a file.
+        createConfusionMatrix(cm, classes, name, epoch): Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
+        addScalar(label, name, value, step): Adds a scalar to the TensorBoard.
+    """
     def __init__(self) -> None:
+        """
+        Initializes the results class.
+        """
         directory = "./results"
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -35,16 +55,25 @@ class Results:
         self.logs = logs_directory
 
     def open(self) -> None:
+        """
+        Opens the writers for the training and validation logs.
+        """
         log_dir = self.logs + "Train"
         self.trainWriter = SummaryWriter(log_dir)
         log_dir = self.logs + "Val"
         self.valWriter = SummaryWriter(log_dir)
 
     def close(self) -> None:
+        """
+        Closes the writers.
+        """
         self.trainWriter.close()
         self.valWriter.close()
 
     def print(self, content):
+        """
+        Prints the content and writes it to a file.
+        """
         print(content)
         with open(self.output, "a") as file:
             file.write(content + "\n")
@@ -56,8 +85,10 @@ class Results:
         Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
 
         Args:
-            stat (Statistics): An instance of the Statistics class containing the necessary data for creating the confusion matrix.
-            writer (SummaryWriter): TensorBoard SummaryWriter object.
+            cm (torch.Tensor): The confusion matrix.
+            classes (List[int]): The list of class labels.
+            name (str): The name of the confusion matrix.
+            epoch (int, optional): The epoch number. Defaults to 0.
 
         Returns:
             None
@@ -100,6 +131,18 @@ class Results:
         value: list,
         step: list,
     ):
+        """
+        Adds a scalar to the TensorBoard.
+
+        Args:
+            label (str): The label for the scalar.
+            name (str): String to check if it is train or val.
+            value (list): The value of the scalar.
+            step (list): The step of the scalar.
+            
+        Returns:
+            None
+        """
         name = name.lower()
         if "train" in name:
             self.trainWriter.add_scalar(label, value, step)
