@@ -1,4 +1,22 @@
 /.~lock.project_assignment_22.docx#
 /__pycache__
 Model/__pycache__
-/results
+
+# results
+
+/results/all_images/fine tune/checkpoints
+/results/all_images/transfer learning/checkpoints
+
+/results/architecture/resnet18/fine tune/checkpoints
+/results/architecture/resnet18/transfer learning/checkpoints
+/results/architecture/resnet18/scratch/checkpoints
+/results/architecture/resnet50/fine tune/checkpoints
+/results/architecture/resnet50/transfer learning/checkpoints
+/results/architecture/resnet50/scratch/checkpoints
+/results/architecture/resnet101/fine tune/checkpoints
+/results/architecture/resnet101/transfer learning/checkpoints
+/results/architecture/resnet101/scratch/res1/checkpoints
+/results/architecture/resnet101/scratch/res2/checkpoints
+
+/results/aug_offline/checkpoints
+/results/aug_online/checkpoints
