@@ -1,0 +1,96 @@
+Test mode on 10 classes: [183, 93, 137, 124, 69, 134, 23, 165, 39, 0]
+Num epochs: 50, Train batch size: 32, Eval batch size: 4
+BR scheduler: stepBR, step size: 2, gamma: 1.0
+Train size: 35000, Val size: 500, Test size: 500, Image size: 64
+EarlyStopping tolerance:3 min delta:0.05
+Architecture: not-pretrained resnet18
+Dropout rate basicBlock: 0.0, Dropout rate final layer: 0.0
+Criterion: CrossEntropyLoss
+Optimizer: SGD, lr: 0.001, momentum: 0.9, weight_decay: 0.0
+LR scheduler: StepLR, step size: 2, gamma: 1.0
+
+EPOCH 1 of 50
+
+Train
+Loss: 1.606
+Accuracy: 0.447
+F-Measure: 0.444
+Recall: 0.447
+Precision: 0.442
+
+Val
+Loss: 1.023
+Accuracy: 0.654
+F-Measure: 0.652
+Recall: 0.654
+Precision: 0.649
+
+Batch size: 32
+Learning rate: 0.001
+Best model saved at epoch 1 with loss 1.0228819309473038
+
+EPOCH 2 of 50
+
+Train
+Loss: 0.913
+Accuracy: 0.700
+F-Measure: 0.700
+Recall: 0.700
+Precision: 0.699
+
+Val
+Loss: 1.106
+Accuracy: 0.638
+F-Measure: 0.642
+Recall: 0.638
+Precision: 0.646
+
+Batch size: 32
+Learning rate: 0.001
+
+EPOCH 3 of 50
+
+Train
+Loss: 0.557
+Accuracy: 0.821
+F-Measure: 0.821
+Recall: 0.821
+Precision: 0.821
+
+Val
+Loss: 1.106
+Accuracy: 0.632
+F-Measure: 0.636
+Recall: 0.632
+Precision: 0.639
+
+Batch size: 32
+Learning rate: 0.001
+
+EPOCH 4 of 50
+
+Train
+Loss: 0.338
+Accuracy: 0.893
+F-Measure: 0.893
+Recall: 0.893
+Precision: 0.893
+
+Val
+Loss: 1.329
+Accuracy: 0.622
+F-Measure: 0.624
+Recall: 0.622
+Precision: 0.625
+
+Batch size: 32
+Learning rate: 0.001
+Early stopping at epoch 4
+Test
+Loss: 1.329
+Accuracy: 0.622
+F-Measure: 0.624
+Recall: 0.622
+Precision: 0.625
+
+Training time: 2 minutes, 47 seconds
