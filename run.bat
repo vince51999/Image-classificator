@@ -22,6 +22,7 @@ REM dropout rate of dropout layer in the head, 0.0 means no dropout
 SET dropout_rate_fc=0.7
 
 REM cls is the classes that we want in the classification task
+REM num_classes is the number of classes in the classification task, if cls length is < than num_classes, the other classes are selected randomly
 REM test is the flag to test the model on a pre-defined classes (10 classes from Tiny ImageNet dataset)
 SET cls=0
 SET num_classes=2
