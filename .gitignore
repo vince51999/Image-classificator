@@ -41,3 +41,6 @@ Model/__pycache__
 /results/dropout_after_relu/checkpoints
 
 /results/dropout_before_avg/checkpoints
+
+/results/dropout_before_relu/res1/checkpoints
+/results/dropout_before_relu/res2/checkpoints
