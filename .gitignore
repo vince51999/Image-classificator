@@ -20,3 +20,17 @@ Model/__pycache__
 
 /results/aug_offline/checkpoints
 /results/aug_online/checkpoints
+
+/results/step/bs/checkpoints
+/results/step/lr/checkpoints
+/results/step/hybrid/checkpoints
+
+/results/image_improvement/checkpoints
+
+/results/no_aug/checkpoints
+
+/results/one dropout_foreach_resblock/checkpoints
+
+/results/weight_decay/scratchResnet18/0.001/checkpoints
+/results/weight_decay/scratchResnet18/0.0001/checkpoints
+/results/weight_decay/scratchResnet18/0.00001/checkpoints

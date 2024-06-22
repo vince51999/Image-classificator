@@ -1,0 +1,179 @@
+Test mode on 10 classes: [183, 93, 137, 124, 69, 134, 23, 165, 39, 0]
+Num epochs: 50, Train batch size: 32, Eval batch size: 4
+BR scheduler: stepBR, step size: 2, gamma: 1.0
+Train size: 20000, Val size: 500, Test size: 500, Image size: 128
+EarlyStopping tolerance:3 min delta:0.05
+Architecture: not-pretrained resnet18
+Dropout rate basicBlock: 0.0, Dropout rate final layer: 0.0
+Criterion: CrossEntropyLoss
+Optimizer: SGD, lr: 0.001, momentum: 0.9, weight_decay: 0.0
+LR scheduler: StepLR, step size: 2, gamma: 1.0
+
+EPOCH 1 of 50
+
+Train
+Loss: 1.795
+Accuracy: 0.370
+F-Measure: 0.365
+Recall: 0.370
+Precision: 0.361
+
+Val
+Loss: 1.273
+Accuracy: 0.566
+F-Measure: 0.587
+Recall: 0.566
+Precision: 0.610
+
+Batch size: 32
+Learning rate: 0.001
+Best model saved at epoch 1 with loss 1.273007160305977
+
+EPOCH 2 of 50
+
+Train
+Loss: 1.286
+Accuracy: 0.563
+F-Measure: 0.561
+Recall: 0.563
+Precision: 0.558
+
+Val
+Loss: 0.985
+Accuracy: 0.692
+F-Measure: 0.694
+Recall: 0.692
+Precision: 0.695
+
+Batch size: 32
+Learning rate: 0.001
+Train set augmented.
+Best model saved at epoch 2 with loss 0.9847149581313134
+
+EPOCH 3 of 50
+
+Train
+Loss: 1.094
+Accuracy: 0.630
+F-Measure: 0.628
+Recall: 0.630
+Precision: 0.626
+
+Val
+Loss: 0.954
+Accuracy: 0.680
+F-Measure: 0.682
+Recall: 0.680
+Precision: 0.684
+
+Batch size: 32
+Learning rate: 0.001
+Best model saved at epoch 3 with loss 0.9542353840917349
+
+EPOCH 4 of 50
+
+Train
+Loss: 0.857
+Accuracy: 0.714
+F-Measure: 0.713
+Recall: 0.714
+Precision: 0.713
+
+Val
+Loss: 0.827
+Accuracy: 0.726
+F-Measure: 0.724
+Recall: 0.726
+Precision: 0.722
+
+Batch size: 32
+Learning rate: 0.001
+Train set augmented.
+Best model saved at epoch 4 with loss 0.8272280394211411
+
+EPOCH 5 of 50
+
+Train
+Loss: 0.810
+Accuracy: 0.732
+F-Measure: 0.731
+Recall: 0.732
+Precision: 0.731
+
+Val
+Loss: 0.830
+Accuracy: 0.708
+F-Measure: 0.706
+Recall: 0.708
+Precision: 0.705
+
+Batch size: 32
+Learning rate: 0.001
+
+EPOCH 6 of 50
+
+Train
+Loss: 0.565
+Accuracy: 0.822
+F-Measure: 0.822
+Recall: 0.822
+Precision: 0.822
+
+Val
+Loss: 0.954
+Accuracy: 0.722
+F-Measure: 0.730
+Recall: 0.722
+Precision: 0.739
+
+Batch size: 32
+Learning rate: 0.001
+Train set augmented.
+
+EPOCH 7 of 50
+
+Train
+Loss: 0.626
+Accuracy: 0.798
+F-Measure: 0.798
+Recall: 0.798
+Precision: 0.798
+
+Val
+Loss: 0.882
+Accuracy: 0.722
+F-Measure: 0.726
+Recall: 0.722
+Precision: 0.729
+
+Batch size: 32
+Learning rate: 0.001
+
+EPOCH 8 of 50
+
+Train
+Loss: 0.374
+Accuracy: 0.884
+F-Measure: 0.884
+Recall: 0.884
+Precision: 0.884
+
+Val
+Loss: 0.872
+Accuracy: 0.728
+F-Measure: 0.734
+Recall: 0.728
+Precision: 0.741
+
+Batch size: 32
+Learning rate: 0.001
+Train set augmented.
+Early stopping at epoch 8
+Test
+Loss: 0.872
+Accuracy: 0.728
+F-Measure: 0.734
+Recall: 0.728
+Precision: 0.741
+
+Training time: 6 minutes, 40 seconds
