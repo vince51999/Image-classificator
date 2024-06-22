@@ -44,3 +44,9 @@ Model/__pycache__
 
 /results/dropout_before_relu/res1/checkpoints
 /results/dropout_before_relu/res2/checkpoints
+
+/results/diff_num_classes/a/checkpoints
+/results/diff_num_classes/b1/checkpoints
+/results/diff_num_classes/b2/checkpoints
+/results/diff_num_classes/b3/checkpoints
+/results/diff_num_classes/c/checkpoints
