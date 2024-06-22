@@ -37,7 +37,8 @@ dropout_pos_fc=1
 # Dropout rate of dropout layer in the head, 0.0 means no dropout
 dropout_rate_fc=0.6
 
-# cls is the class that we want in the classification task
+# cls is the classes that we want in the classification task
+# num_classes is the number of classes in the classification task, if cls length is < than num_classes, the other classes are selected randomly
 # test is the flag to test the model on a predefined classes (10 classes from Tiny ImageNet dataset)
 cls=(0 180 184 18 17 13 44 186 36 45)
 num_classes=10
