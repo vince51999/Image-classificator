@@ -34,3 +34,10 @@ Model/__pycache__
 /results/weight_decay/scratchResnet18/0.001/checkpoints
 /results/weight_decay/scratchResnet18/0.0001/checkpoints
 /results/weight_decay/scratchResnet18/0.00001/checkpoints
+
+/results/dropout_after_avg/res1/checkpoints
+/results/dropout_after_avg/res2/checkpoints
+
+/results/dropout_after_relu/checkpoints
+
+/results/dropout_before_avg/checkpoints
