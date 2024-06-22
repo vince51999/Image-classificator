@@ -23,8 +23,11 @@ def train_loop(
     val_stats: Statistics,
     res: Res,
 ):
+    # Setup early stopping
     early_stopping = EarlyStopping.EarlyStopping(tolerance, min_delta)
+    # Setup best epoch loss
     best_epoch_val_loss = float("inf")
+    # Setup last epoch (simple way to swith between training from epoch 0 and training from a checkpoint)
     last_epoch = start_epoch + epochs
 
     for epoch in range(start_epoch, last_epoch):
@@ -45,8 +48,10 @@ def train_loop(
         )
         epoch_train_loss = sum(train_loss_list) / len(dataset.train_dataloader)
         epoch_val_loss = sum(val_loss_list) / len(dataset.val_dataloader)
+        # Update statistics and print them
         train_stats.step(epoch + 1, epoch_train_loss, "Train")
         val_stats.step(epoch + 1, epoch_val_loss, "Val")
+        # Update schedulers and dataset
         dataset.step(verbose=True)
         optimizer.step(verbose=True)
         dataset.augumentation(verbose=True)
@@ -57,6 +62,7 @@ def train_loop(
             "Val conf matrix",
             epoch + 1,
         )
+        # Save best model
         if epoch_val_loss < best_epoch_val_loss:
             NNArchitecture.save_checkpoint(
                 res.directory,

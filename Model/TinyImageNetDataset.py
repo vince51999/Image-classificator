@@ -16,7 +16,37 @@ class TinyImageNetDataset(Dataset):
     Each class has 500 training images, 50 validation images and 50 test images.
     Test set is not labeled.
 
-    The format of each image is: (3, 64, 64).
+    The oniginal format of each image is: (3, 64, 64).
+    
+    Attributes:
+        image_size (int): The size of the image.
+        increment (int): The number of times to augment the dataset.
+        train_batch_size (int): The batch size of the training set.
+        step_size (int): The step size of the batch size scheduler.
+        online_aug_step_size (int): The step size of the online augmentation scheduler.
+        gamma (int): The gamma value for the batch size scheduler.
+        itr (int): The iteration of the batch size scheduler.
+        online_aug_itr (int): The iteration of the online augmentation scheduler.
+        res (Res): The results class to print the dataset details.
+        num_classes (int): The number of classes in the dataset.
+        train (List): The training set.
+        aug_train (List): The augmented training set.
+        val (List): The validation set.
+        test (List): The test set.
+        train_dataloader (DataLoader): The training dataloader.
+        val_dataloader (DataLoader): The validation dataloader.
+        test_dataloader (DataLoader): The test dataloader.
+        
+    Methods:
+        __split_classes(dataset, num_classes, itr_break, isVal): Split the dataset into classes.
+        __update_labels(dataset, classes, isVal): Update the labels of the dataset.
+        __get_trainset(basic_trasform, train): Get the training set with the basic transform and the augmentation.
+        __apply_transforms(dataset, transform): Apply the transforms to the dataset.
+        step(verbose): Update the batch size.
+        augumentation(verbose): Update the training set.
+        state_dict(): Return the state dictionary of the dataset.
+        load_state_dict(state_dict): Load the state dictionary of the dataset.
+    
     """
 
     def __init__(
@@ -50,6 +80,8 @@ class TinyImageNetDataset(Dataset):
             ]
         )
         if image_size > 64:
+            # If the image size is greater than 64, we need to trasform the image 64x64
+            # into image with the desired size
             transform = transforms.Compose(
                 [
                     transforms.Resize(
@@ -76,6 +108,8 @@ class TinyImageNetDataset(Dataset):
             transform=transform,
         )
         if classes is not None and len(classes) < 200:
+            # If we are less than 200 classes is necessary to split the dataset
+            # and update the labels, otherwise the criterion not work
             self.num_classes = len(classes)
             train = self.__split_classes(train, classes, 500)
             val = self.__split_classes(val, classes, 50, isVal=True)
@@ -146,6 +180,9 @@ class TinyImageNetDataset(Dataset):
         basic_trasform,
         train=None,
     ):
+        """
+        Get the training set with the basic transform and the augmentation.
+        """
         policy = transforms.AutoAugmentPolicy.IMAGENET
         augmenter = transforms.AutoAugment(policy)
         transform = transforms.Compose(
@@ -164,6 +201,9 @@ class TinyImageNetDataset(Dataset):
         return new_train
 
     def __apply_transforms(self, dataset, transform):
+        """
+        Apply the transforms to the dataset.
+        """
         newset = []
         for i in range(len(dataset)):
             newset.append(tuple([transform(dataset[i][0]), dataset[i][1]]))

@@ -27,7 +27,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--cls",
-    help="Specific class that we want in the set of classes. The rest of the classes will be random.",
+    help="Specific classes that we want in the set of classes. The rest of the classes will be random.",
     required=True,
     default="",
     type=lambda s: [int(item) for item in s.split(" ")],
@@ -207,8 +207,6 @@ args = parser.parse_args()
 architecture = args.architecture
 checkpoint = args.checkpoint
 c = args.cls[0]
-print(c)
-print(args.cls)
 num_classes = args.num_classes
 num_epochs = args.num_epochs
 eval_batch_size = args.eval_batch_size
@@ -460,6 +458,7 @@ def trainig_model(
         optimizer (torch.optim.Optimizer): The optimizer to use for training.
         criterion (torch.nn.Module): The criterion to use for training.
         num_classes (int): Number of classes in the dataset.
+        start_epoch (int): The epoch to start training from.
         num_epochs (int): Number of epochs to train for.
         tolerance (int): Early stopping tolerance.
         min_delta (float): Minimum change in validation loss to be considered as an improvement.
