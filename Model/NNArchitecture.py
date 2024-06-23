@@ -40,7 +40,7 @@ def get_nn_architecture(
     if fine_tune is False and transfer_learning is False:
         res.print(f"Architecture: not-pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type)
-        model.apply(__init_weights)
+        model.apply(init_weights)
     elif fine_tune is True or transfer_learning is True:
         res.print(f"Architecture: pretrained {type}")
         model = torch.hub.load("pytorch/vision:v0.17.0", type, weights="IMAGENET1K_V1")
@@ -57,13 +57,13 @@ def get_nn_architecture(
     )
     if dropout_rate_rb > 0:
         if dropout_pos_rb == 1:
-            __append_dropout_before_each_relu(model, rate=dropout_rate_rb)
+            append_dropout_before_each_relu(model, rate=dropout_rate_rb)
             res.print("Dropout before each ReLU")
         elif dropout_pos_rb == 2:
-            __append_dropout_after_each_relu(model, rate=dropout_rate_rb)
+            append_dropout_after_each_relu(model, rate=dropout_rate_rb)
             res.print("Dropout after each ReLU")
         else:
-            __append_dropout(model, type, rate=dropout_rate_rb)
+            append_dropout(model, type, rate=dropout_rate_rb)
             res.print("Dropout before the last convolutional layer")
     # define a new head for the detector with required number of classes
     if dropout_rate_fc > 0:
@@ -83,7 +83,7 @@ def get_nn_architecture(
     return model
 
 
-def __append_dropout(model, type, rate=0.2):
+def append_dropout(model, type, rate=0.2):
     dropout_before = ""
     if type == "resnet50" or type == "resnet101":
         dropout_before = "conv3"
@@ -118,7 +118,7 @@ def __append_dropout(model, type, rate=0.2):
         # out = self.relu(out)
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
-            __append_dropout(module, type, rate=rate)
+            append_dropout(module, type, rate=rate)
         if isinstance(module, nn.Conv2d):
             # inplace=false to avoid the error: one of the variables needed for gradient computation has been modified by an inplace operation
             # When we set implace=true we overwrite input tensor (can give error when we use this tensor but use less memory)
@@ -131,25 +131,25 @@ def __append_dropout(model, type, rate=0.2):
                 setattr(model, name, new)
 
 
-def __append_dropout_before_each_relu(model, rate=0.2):
+def append_dropout_before_each_relu(model, rate=0.2):
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
-            __append_dropout_before_each_relu(module, rate=rate)
+            append_dropout_before_each_relu(module, rate=rate)
         if isinstance(module, nn.ReLU):
             new = nn.Sequential(nn.Dropout2d(p=rate, inplace=False), module)
             setattr(model, name, new)
 
 
-def __append_dropout_after_each_relu(model, rate=0.2):
+def append_dropout_after_each_relu(model, rate=0.2):
     for name, module in model.named_children():
         if len(list(module.children())) > 0:
-            __append_dropout_after_each_relu(module, rate=rate)
+            append_dropout_after_each_relu(module, rate=rate)
         if isinstance(module, nn.ReLU):
             new = nn.Sequential(module, nn.Dropout2d(p=rate, inplace=False))
             setattr(model, name, new)
 
 
-def __init_weights(self):
+def init_weights(self):
     for m in self.modules():
         if isinstance(m, nn.Conv2d):
             # Specifically designed for deep neural network with the ReLU activation
