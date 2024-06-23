@@ -107,7 +107,7 @@ def __train(trainset, model, optimizer, criterion, device, train_stats):
         outputs = model(inputs)
         if len(train_stats.get_classes()) == 1:
             outputs = outputs.view(-1)
-            labels = torch.tensor([1.0 for l in labels]).to(device)
+            labels = torch.tensor([1.0 if l == 1 else 0.0 for l in labels]).to(device)
 
         loss = criterion(outputs, labels)
         loss_value = loss.item()
@@ -136,7 +136,7 @@ def val(valset, model, criterion, device, val_stats):
 
         if len(val_stats.get_classes()) == 1:
             outputs = outputs.view(-1)
-            labels = torch.tensor([1.0 for l in labels]).to(device)
+            labels = torch.tensor([1.0 if l == 1 else 0.0 for l in labels]).to(device)
 
         loss = criterion(outputs, labels)
 

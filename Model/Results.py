@@ -18,14 +18,14 @@ from torch.utils.tensorboard import SummaryWriter
 class Results:
     """
     The results class to store the results of the training and validation.
-    
+
     Attributes:
         directory (str): The directory to store the results.
         output (str): The output file to store the results.
         logs (str): The base path for the logs.
         trainWriter (SummaryWriter): The writer for the training logs.
         valWriter (SummaryWriter): The writer for the validation logs.
-    
+
     Methods:
         open(): Opens the writers for the training and validation logs.
         close(): Closes the writers.
@@ -33,6 +33,7 @@ class Results:
         createConfusionMatrix(cm, classes, name, epoch): Creates a confusion matrix using the provided statistics and saves it to TensorBoard.
         addScalar(label, name, value, step): Adds a scalar to the TensorBoard.
     """
+
     def __init__(self) -> None:
         """
         Initializes the results class.
@@ -93,6 +94,8 @@ class Results:
         Returns:
             None
         """
+        if len(classes) == 1:
+            classes = [1, 0]
         df_cm = pd.DataFrame(
             cm,
             index=classes,
@@ -139,7 +142,7 @@ class Results:
             name (str): String to check if it is train or val.
             value (list): The value of the scalar.
             step (list): The step of the scalar.
-            
+
         Returns:
             None
         """

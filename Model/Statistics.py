@@ -9,6 +9,7 @@ class Statistics:
     A class to calculate and store statistics for a classification model.
 
     Attributes:
+        num_classes (int): The number of classes.
         classes (List[int]): The list of class labels.
         epochs (List[int]): The list of epochs.
         losses (List[float]): The list of losses.
@@ -44,6 +45,9 @@ class Statistics:
             classes (List[int]): The list of class labels.
             res (Res): The results class to print the statistics.
         """
+        self.num_classes = len(classes)
+        if self.num_classes == 1:
+            self.num_classes += 1
         self.classes = classes
         self.epochs = []
         self.losses = []
@@ -51,13 +55,16 @@ class Statistics:
         self.f_measure = []
         self.recall = []
         self.precision = []
-        self.conf_matrix = torch.zeros(len(classes), len(classes))
+        self.conf_matrix = torch.zeros(self.num_classes, self.num_classes)
         self.res = res
 
     def update(self, preds, labels):
         if len(self.classes) == 1:
             preds = (preds > 0.5).float()
-            self.conf_matrix[0, 0] += torch.sum(preds == True).item()
+            for p, l in zip(preds, labels):
+                p = bool(p)
+                l = l > 0.5
+                self.conf_matrix[int(not l), int(not p)] += 1
         else:
             _, preds = torch.max(preds, 1)
             for t, p in zip(labels.view(-1), preds.view(-1)):
@@ -99,7 +106,7 @@ class Statistics:
         self.res.addScalar(f"Precision", name, self.precision[l], epoch)
 
     def reset(self):
-        self.conf_matrix = torch.zeros(len(self.classes), len(self.classes))
+        self.conf_matrix = torch.zeros(self.num_classes, self.num_classes)
 
     def get_accuracy(self):
         # accuracy = (TP + TN) / (TP + TN + FP + FN)
@@ -115,10 +122,10 @@ class Statistics:
 
     # We calc recall and precision for all classes with macro-averaging because each class have the same number of samples
     def get_recall(self):
-        return self.get_classes_recall().sum() / len(self.classes)
+        return self.get_classes_recall().sum() / self.num_classes
 
     def get_precision(self):
-        return self.get_classes_precision().sum() / len(self.classes)
+        return self.get_classes_precision().sum() / self.num_classes
 
     def get_f_measure(self):
         precision = self.get_precision()

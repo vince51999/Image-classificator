@@ -114,7 +114,7 @@ class TinyImageNetDataset(Dataset):
             train = self.__split_classes(train, classes, 500)
             val = self.__split_classes(val, classes, 50, isVal=True)
             train = self.__update_labels(train, classes)
-            val = self.__update_labels(val, classes, isVal=True)
+            val = self.__update_labels(val, classes)
         else:
             self.num_classes = 200
 
@@ -157,13 +157,13 @@ class TinyImageNetDataset(Dataset):
 
         return new_dataset
 
-    def __update_labels(self, dataset, classes, isVal=False):
+    def __update_labels(self, dataset, classes):
         """
         Update the labels of the dataset
         """
         tmp = []
         # Check if is one class classifier and we are updating the validation set
-        if self.num_classes == 1 and isVal:
+        if self.num_classes == 1:
             for i in range(len(dataset)):
                 if dataset[i][1] == classes[0]:
                     tmp.append(tuple([dataset[i][0], 1]))
