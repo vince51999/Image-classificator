@@ -465,8 +465,8 @@ def trainig_model(
         res (Res): The results object to log the training.
     """
 
-    train_stats = Statistics.Statistics(classes, len(dataset.train) / num_classes, res)
-    val_stats = Statistics.Statistics(classes, len(dataset.val) / num_classes, res)
+    train_stats = Statistics.Statistics(classes, res)
+    val_stats = Statistics.Statistics(classes, res)
 
     Training.train_loop(
         dataset=dataset,
@@ -483,7 +483,7 @@ def trainig_model(
         epochs=num_epochs,
     )
 
-    test_stats = Statistics.Statistics(classes, len(dataset.test) / num_classes, res)
+    test_stats = Statistics.Statistics(classes, res)
     test_losses = Training.val(
         dataset.test_dataloader, model, criterion.criterion, DEVICE, test_stats
     )
