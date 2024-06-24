@@ -10,7 +10,7 @@ class Criterion:
     Attributes:
         criterion (nn.Module): The criterion to calculate the loss.
         num_classes (int): The number of classes in the dataset.
-        
+
     Methods:
         state_dict(): Returns the state dictionary of the criterion.
         load_state_dict(state_dict): Load the state dictionary of the criterion.

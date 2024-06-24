@@ -104,7 +104,7 @@ def load_model(
     return model
 
 
-def test_model(model, input, device, oneClass = False):
+def test_model(model, input, device, oneClass=False):
     """
     Function to test the model with the specified image.
 

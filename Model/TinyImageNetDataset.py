@@ -17,7 +17,7 @@ class TinyImageNetDataset(Dataset):
     Test set is not labeled.
 
     The oniginal format of each image is: (3, 64, 64).
-    
+
     Attributes:
         image_size (int): The size of the image.
         increment (int): The number of times to augment the dataset.
@@ -36,7 +36,7 @@ class TinyImageNetDataset(Dataset):
         train_dataloader (DataLoader): The training dataloader.
         val_dataloader (DataLoader): The validation dataloader.
         test_dataloader (DataLoader): The test dataloader.
-        
+
     Methods:
         __split_classes(dataset, num_classes, itr_break, isVal): Split the dataset into classes.
         __update_labels(dataset, classes, isVal): Update the labels of the dataset.
@@ -46,7 +46,7 @@ class TinyImageNetDataset(Dataset):
         augumentation(verbose): Update the training set.
         state_dict(): Return the state dictionary of the dataset.
         load_state_dict(state_dict): Load the state dictionary of the dataset.
-    
+
     """
 
     def __init__(

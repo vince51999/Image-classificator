@@ -228,7 +228,7 @@ def load_checkpoint(
 ):
     """
     Function to load the trained model
-    
+
     Args:
         path (str): The path to load the model.
         model (torch.nn.Module): The model to load.
@@ -239,7 +239,7 @@ def load_checkpoint(
         gamma_lr (float): Multiplicative factor of learning rate decay.
         step (float): Step size for the learning rate scheduler.
         criterion (Crit): The criterion to load.
-    
+
     Returns:
         int: The epoch.
         torch.nn.Module: The model.

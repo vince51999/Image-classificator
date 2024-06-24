@@ -6,12 +6,12 @@ from Model.Results import Results as Res
 class Optimizer:
     """
     Optimizer class to initialize the optimizer and the learning rate scheduler.
-    
+
     Attributes:
         res (Res): The results class to print the optimizer and scheduler details.
         optimizer (optim.Optimizer): The optimizer to optimize the model.
         scheduler (optim.lr_scheduler): The learning rate scheduler to update the learning rate.
-        
+
     Methods:
         state_dict(): Return the state dictionary of the optimizer and the scheduler.
         load_state_dict(optimizer_state_dict, scheduler_state_dict): Load the state dictionary of the optimizer and the scheduler.
