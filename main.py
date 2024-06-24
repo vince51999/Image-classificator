@@ -387,7 +387,7 @@ def main(
         scheduler=lr_scheduler,
     )
     if checkpoint != "none":
-        print(f"Loading checkpoint: {checkpoint}")
+        res.print(f"Loading checkpoint: {checkpoint}")
         start_epoch, model, optimizer, dataset, criterion = (
             NNArchitecture.load_checkpoint(
                 checkpoint,
